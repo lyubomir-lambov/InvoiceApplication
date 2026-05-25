@@ -26,23 +26,29 @@ public class UserServiceImpl implements UserService {
     public UserRegistrationResponseDTO registerUser(UserRegistrationRequestDTO userRegistrationRequestDTO) {
 
         //! Проверка дали съвпадат двете пароли
-        //! Проверка дали съшествува user  със същото име
-        //! Проверка дали съшествува user  със същия email
+        if (userRegistrationRequestDTO.getPassword().equals(userRegistrationRequestDTO.getPasswordConfirm())) {
+            throw  new IllegalArgumentException("Passwords do not match");//! Да променя грешката, която хвърля
+        }
+        //! Проверка дали съществува user  със същото име
+        if (userRepository.findByUsername(userRegistrationRequestDTO.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username is already in use"); //! Да променя грешката, която хвърля
+        }
+        //! Проверка дали съществува user  със същия email
+        if (userRepository.findByEmail(userRegistrationRequestDTO.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email is already in use");//! Да променя грешката, която хвърля
+        }
         //! encode password
         String encodedPassword = passwordEncoder.encode(userRegistrationRequestDTO.getPassword());
         //! new pass to DTO
         userRegistrationRequestDTO.setPassword(encodedPassword);
         //! mapper to user
-        User userToRegister = UserMapper.fromUserRegistrationRequestDTOtoUser(userRegistrationRequestDTO);
+        User userToRegister = userMapper.fromUserRegistrationRequestDTOtoUser(userRegistrationRequestDTO);
         //! user Save
         userRepository.save(userToRegister);
         //! user toDTO
-        UserRegistrationResponseDTO userRegistrationResponseDTO = UserMapper.......
+        UserRegistrationResponseDTO userRegistrationResponseDTO = userMapper.fromUserToUserRegistrationResponseDTO(userToRegister);
         //! return DTO
-
-
-
-        return null;
+        return userRegistrationResponseDTO;
     }
 }
 
