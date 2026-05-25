@@ -18,13 +18,13 @@ import java.time.LocalDateTime;
 public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true)
-    private String username;                    //! Да направя проверка за дублиран username в service
+    private String username;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, unique = true)
-    private String email;                       //! Да направя проверка за дублиран email в service. Анотация @Email в DTO-то
+    private String email;
 
     private String firstName;
 
