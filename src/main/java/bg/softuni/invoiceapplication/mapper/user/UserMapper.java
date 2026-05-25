@@ -2,7 +2,6 @@ package bg.softuni.invoiceapplication.mapper.user;
 
 import bg.softuni.invoiceapplication.model.User;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
