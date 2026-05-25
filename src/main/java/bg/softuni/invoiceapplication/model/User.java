@@ -43,7 +43,7 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role;
+    private UserRole role = UserRole.USER;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
