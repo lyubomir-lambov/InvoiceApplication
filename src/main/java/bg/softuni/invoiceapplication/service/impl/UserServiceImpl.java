@@ -16,3 +16,12 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 }
+
+
+
+
+//        if (userRegistrationRequestDTO.getEmail().equals(userRegistrationRequestDTO.getPasswordConfirm())){
+//        return null; //! Какво ще върна ако не съвпадат двете пароли
+//        }
+
+//! Проверка дали съвпадат двета пароли

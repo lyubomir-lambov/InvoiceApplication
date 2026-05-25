@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Column(nullable = false, unique = true)
-    private String email;                       //! Да направя проверка за дублиран email в service. Анотация @Email
+    private String email;                       //! Да направя проверка за дублиран email в service. Анотация @Email в DTO-то
 
     private String firstName;
 
@@ -36,9 +36,11 @@ public class User extends BaseEntity {
 
     private String profilePicture;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean active = true;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
