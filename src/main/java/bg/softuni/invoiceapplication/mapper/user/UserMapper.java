@@ -15,7 +15,6 @@ public class UserMapper {
 
         return User.builder()
                 .username(userRegistrationRequestDTO.getUsername())
-                .password(userRegistrationRequestDTO.getPassword())
                 .email(userRegistrationRequestDTO.getEmail())
                 .build();
 

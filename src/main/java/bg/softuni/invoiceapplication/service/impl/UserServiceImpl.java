@@ -35,13 +35,14 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Email is already in use");//! Да променя грешката, която хвърля
         }
 
-        String encodedPassword = passwordEncoder.encode(userRegistrationRequestDTO.getPassword());
-        userRegistrationRequestDTO.setPassword(encodedPassword);
-
         User userToRegister = userMapper.fromUserRegistrationRequestDTOtoUser(userRegistrationRequestDTO);
-        userRepository.save(userToRegister);
 
-        UserRegistrationResponseDTO userRegistrationResponseDTO = userMapper.fromUserToUserRegistrationResponseDTO(userToRegister);
+        String encodedPassword = passwordEncoder.encode(userRegistrationRequestDTO.getPassword());
+        userToRegister.setPassword(encodedPassword);
+
+        User savedUser = userRepository.save(userToRegister);
+
+        UserRegistrationResponseDTO userRegistrationResponseDTO = userMapper.fromUserToUserRegistrationResponseDTO(savedUser);
 
         return userRegistrationResponseDTO;
     }
