@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Основна навигация">
+        <a th:href="@{/login}">Вход</a>
+        <a th:href="@{/register}">Регистрация</a>
+        <a th:href="@{/invoices}">Фактури</a>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Управление на фактури на едно място</h1>
+            <p>
+                Създавайте, преглеждайте и следете фактурите си бързо и подредено.
+                Приложението е подготвено за потребители, роли и бъдещи работни процеси по фактуриране.
+            </p>
+            <div class="actions">
+                <a class="button button-primary" th:href="@{/login}">Вход в системата</a>
+                <a class="button button-secondary" th:href="@{/register}">Създай профил</a>
+            </div>
+        </div>
+
+        <aside class="summary-panel" aria-label="Обобщение">
+            <h2>Бърз преглед</h2>
+            <ul class="summary-list">
+                <li class="summary-item">
+                    <span class="summary-label">Статус</span>
+                    <span class="summary-value status">Активно</span>
+                </li>
+                <li class="summary-item">
+                    <span class="summary-label">Модул</span>
+                    <span class="summary-value">Фактури</span>
+                </li>
+                <li class="summary-item">
+                    <span class="summary-label">Потребители</span>
+                    <span class="summary-value">Роли</span>
+                </li>
+            </ul>
+        </aside>
+    </section>
+</main>
+</body>
+</html>
