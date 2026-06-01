@@ -10,9 +10,8 @@
 <header class="page-header">
     <a class="brand" th:href="@{/}">Invoice Application</a>
     <nav class="navigation" aria-label="Основна навигация">
-        <a th:href="@{/login}">Вход</a>
-        <a th:href="@{/register}">Регистрация</a>
-        <a th:href="@{/invoices}">Фактури</a>
+        <a th:href="@{/register}">Register</a>
+        <a th:href="@{/login}">Login</a>
     </nav>
 </header>
 
@@ -25,28 +24,14 @@
                 Приложението е подготвено за потребители, роли и бъдещи работни процеси по фактуриране.
             </p>
             <div class="actions">
-                <a class="button button-primary" th:href="@{/login}">Вход в системата</a>
-                <a class="button button-secondary" th:href="@{/register}">Създай профил</a>
+                <a class="button button-primary" th:href="@{/register}">Register</a>
+                <a class="button button-secondary" th:href="@{/login}">Login</a>
             </div>
         </div>
 
-        <aside class="summary-panel" aria-label="Обобщение">
-            <h2>Бърз преглед</h2>
-            <ul class="summary-list">
-                <li class="summary-item">
-                    <span class="summary-label">Статус</span>
-                    <span class="summary-value status">Активно</span>
-                </li>
-                <li class="summary-item">
-                    <span class="summary-label">Модул</span>
-                    <span class="summary-value">Фактури</span>
-                </li>
-                <li class="summary-item">
-                    <span class="summary-label">Потребители</span>
-                    <span class="summary-value">Роли</span>
-                </li>
-            </ul>
-        </aside>
+        <div class="hero-image">
+            <img th:src="@{/images/index-hero.png}" src="/images/index-image.png" alt="Invoice dashboard preview">
+        </div>
     </section>
 </main>
 </body>
