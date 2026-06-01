@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,8 +31,11 @@ public class UserController {
         return "user-register";
     }
 
-    @PostMapping("/register")//! Binding result
-    public String registerUser(@Valid UserRegistrationRequestDTO userRegistrationRequestDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    @PostMapping("/register")
+    public String registerUser(@Valid @ModelAttribute("user")UserRegistrationRequestDTO userRegistrationRequestDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "user-register";
+        }
         UserRegistrationResponseDTO userRegistrationResponseDTO = userService.registerUser(userRegistrationRequestDTO);
         redirectAttributes.addFlashAttribute("user", userRegistrationResponseDTO);
         return "redirect:/users/register/success";
