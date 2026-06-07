@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.web;
 
 import bg.softuni.invoiceapplication.model.dto.UserLoginRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.UserLoginResponseDTO;
 import bg.softuni.invoiceapplication.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,16 @@ public class AuthController {
         }
         //! Тук след време ще трябва да върна сесия
         //! За момента само минаваме през проверките за Login и пренасочваме към invoices
-        userService.login(user);
+//        userService.login(user);
 //        UserLoginResponseDTO userLoginResponseDTO = userService.login(user);
 //        model.addAttribute("user", userLoginResponseDTO);
+
+        UserLoginResponseDTO userLoginResponseDTO = userService.login(user);
+
+        System.out.println("Logged user id: " + userLoginResponseDTO.getId());
+        System.out.println("Logged username: " + userLoginResponseDTO.getUsername());
+        System.out.println("Logged user role: " + userLoginResponseDTO.getRole());
+
         return "redirect:/invoices";
     }
 
