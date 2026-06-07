@@ -22,150 +22,68 @@
             <p>Hardcoded client records matching the Client entity fields.</p>
         </div>
 
-        <div class="clients-grid">
-            <article class="client-card">
-                <div class="client-card-header">
-                    <div>
-                        <h2>Acme Sofia</h2>
-                        <p>Acme Bulgaria Ltd.</p>
-                    </div>
-                    <span class="status-badge status-active">Active</span>
-                </div>
-                <dl class="client-details">
-                    <div>
-                        <dt>Email</dt>
-                        <dd>billing@acme.bg</dd>
-                    </div>
-                    <div>
-                        <dt>Phone</dt>
-                        <dd>+359 888 123 456</dd>
-                    </div>
-                    <div>
-                        <dt>Country</dt>
-                        <dd>BULGARIA</dd>
-                    </div>
-                    <div>
-                        <dt>Address</dt>
-                        <dd>15 Vitosha Blvd, Sofia</dd>
-                    </div>
-                    <div>
-                        <dt>VAT Registered</dt>
-                        <dd>Yes</dd>
-                    </div>
-                    <div>
-                        <dt>VAT Number</dt>
-                        <dd>BG123456789</dd>
-                    </div>
-                </dl>
-            </article>
-
-            <article class="client-card">
-                <div class="client-card-header">
-                    <div>
-                        <h2>Balkan Trade</h2>
-                        <p>Balkan Trade Group SRL</p>
-                    </div>
-                    <span class="status-badge status-active">Active</span>
-                </div>
-                <dl class="client-details">
-                    <div>
-                        <dt>Email</dt>
-                        <dd>office@balkantrade.ro</dd>
-                    </div>
-                    <div>
-                        <dt>Phone</dt>
-                        <dd>+40 721 555 019</dd>
-                    </div>
-                    <div>
-                        <dt>Country</dt>
-                        <dd>ROMANIA</dd>
-                    </div>
-                    <div>
-                        <dt>Address</dt>
-                        <dd>8 Unirii Square, Bucharest</dd>
-                    </div>
-                    <div>
-                        <dt>VAT Registered</dt>
-                        <dd>Yes</dd>
-                    </div>
-                    <div>
-                        <dt>VAT Number</dt>
-                        <dd>RO987654321</dd>
-                    </div>
-                </dl>
-            </article>
-
-            <article class="client-card">
-                <div class="client-card-header">
-                    <div>
-                        <h2>Aegean Studio</h2>
-                        <p>Aegean Digital Services</p>
-                    </div>
-                    <span class="status-badge status-active">Active</span>
-                </div>
-                <dl class="client-details">
-                    <div>
-                        <dt>Email</dt>
-                        <dd>accounts@aegeanstudio.gr</dd>
-                    </div>
-                    <div>
-                        <dt>Phone</dt>
-                        <dd>+30 210 000 4432</dd>
-                    </div>
-                    <div>
-                        <dt>Country</dt>
-                        <dd>GREECE</dd>
-                    </div>
-                    <div>
-                        <dt>Address</dt>
-                        <dd>22 Ermou Street, Athens</dd>
-                    </div>
-                    <div>
-                        <dt>VAT Registered</dt>
-                        <dd>No</dd>
-                    </div>
-                    <div>
-                        <dt>VAT Number</dt>
-                        <dd>-</dd>
-                    </div>
-                </dl>
-            </article>
-
-            <article class="client-card">
-                <div class="client-card-header">
-                    <div>
-                        <h2>Nord Office</h2>
-                        <p>Nord Office Supplies BV</p>
-                    </div>
-                    <span class="status-badge status-inactive">Inactive</span>
-                </div>
-                <dl class="client-details">
-                    <div>
-                        <dt>Email</dt>
-                        <dd>finance@nordoffice.nl</dd>
-                    </div>
-                    <div>
-                        <dt>Phone</dt>
-                        <dd>+31 20 123 7788</dd>
-                    </div>
-                    <div>
-                        <dt>Country</dt>
-                        <dd>NETHERLANDS</dd>
-                    </div>
-                    <div>
-                        <dt>Address</dt>
-                        <dd>40 Herengracht, Amsterdam</dd>
-                    </div>
-                    <div>
-                        <dt>VAT Registered</dt>
-                        <dd>Yes</dd>
-                    </div>
-                    <div>
-                        <dt>VAT Number</dt>
-                        <dd>NL001234567B01</dd>
-                    </div>
-                </dl>
-            </article>
+        <div class="table-card">
+            <table class="clients-table">
+                <thead>
+                <tr>
+                    <th>Display Name</th>
+                    <th>Company Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Country</th>
+                    <th>Address</th>
+                    <th>VAT</th>
+                    <th>VAT Number</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Acme Sofia</td>
+                    <td>Acme Bulgaria Ltd.</td>
+                    <td>billing@acme.bg</td>
+                    <td>+359 888 123 456</td>
+                    <td>BULGARIA</td>
+                    <td>15 Vitosha Blvd, Sofia</td>
+                    <td>Yes</td>
+                    <td>BG123456789</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                </tr>
+                <tr>
+                    <td>Balkan Trade</td>
+                    <td>Balkan Trade Group SRL</td>
+                    <td>office@balkantrade.ro</td>
+                    <td>+40 721 555 019</td>
+                    <td>ROMANIA</td>
+                    <td>8 Unirii Square, Bucharest</td>
+                    <td>Yes</td>
+                    <td>RO987654321</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                </tr>
+                <tr>
+                    <td>Aegean Studio</td>
+                    <td>Aegean Digital Services</td>
+                    <td>accounts@aegeanstudio.gr</td>
+                    <td>+30 210 000 4432</td>
+                    <td>GREECE</td>
+                    <td>22 Ermou Street, Athens</td>
+                    <td>No</td>
+                    <td>-</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                </tr>
+                <tr>
+                    <td>Nord Office</td>
+                    <td>Nord Office Supplies BV</td>
+                    <td>finance@nordoffice.nl</td>
+                    <td>+31 20 123 7788</td>
+                    <td>NETHERLANDS</td>
+                    <td>40 Herengracht, Amsterdam</td>
+                    <td>Yes</td>
+                    <td>NL001234567B01</td>
+                    <td><span class="status-badge status-inactive">Inactive</span></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 </main>
