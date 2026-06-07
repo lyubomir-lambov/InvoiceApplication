@@ -59,4 +59,19 @@ public class ClientController {
 
         return "client-edit";
     }
+
+    @PostMapping("/edit/{id}")
+    public String editClient(@PathVariable UUID id,
+                             @Valid @ModelAttribute("client")
+                             ClientEditRequestDTO clientEditRequestDTO,
+                             BindingResult bindingResult,
+                             Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("countries", Country.values());
+            return "client-edit";
+        }
+        clientEditRequestDTO.setId(id);
+        clientService.editClient(clientEditRequestDTO);
+        return "redirect:/clients";
+    }
 }
