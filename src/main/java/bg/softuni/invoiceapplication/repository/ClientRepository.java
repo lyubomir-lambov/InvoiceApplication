@@ -9,6 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
-    Optional<Client> findByDisplayName(String displayName);
-    Optional<Client> findByVatNumber(String vatNumber);
+    boolean existByDisplayName(String displayName);
+    boolean existByVatNumber(String vatNumber);
 }
