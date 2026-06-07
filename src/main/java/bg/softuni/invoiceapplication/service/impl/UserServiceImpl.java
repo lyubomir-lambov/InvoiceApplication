@@ -51,6 +51,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserLoginResponseDTO login(UserLoginRequestDTO userLoginRequestDTO) {
+        //! 1. find user by username
+        //! 2. ако няма user -> грешка
+        //! 3. провери password
+        //! 4. ако password не съвпада -> грешка
+        //! 5. върни UserLoginResponseDTO
         return null;
     }
 }
