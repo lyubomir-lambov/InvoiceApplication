@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.web;
 
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.Country;
 import bg.softuni.invoiceapplication.service.ClientService;
 import jakarta.validation.Valid;
@@ -8,10 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/clients")
@@ -48,5 +48,15 @@ public class ClientController {
         }
         clientService.createClient(clientCreateRequestDTO);
         return "redirect:/clients";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editClient(@PathVariable UUID id, Model model) {
+        ClientEditRequestDTO clientEditRequestDTO = clientService.getClientForEdit(id);
+
+        model.addAttribute("client", clientEditRequestDTO);
+        model.addAttribute("countries", Country.values());
+
+        return "client-edit";
     }
 }
