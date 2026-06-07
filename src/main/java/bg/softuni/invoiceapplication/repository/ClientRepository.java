@@ -11,4 +11,6 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
     boolean existsByDisplayName(String displayName);
 
     boolean existsByVatNumber(String vatNumber);
+
+    boolean existsByVatNumberAndIdNot(String vatNumber, UUID id);
 }
