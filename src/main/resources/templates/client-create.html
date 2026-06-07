@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Client | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button nav-button-active" th:href="@{/clients}" href="/clients">Clients</a>
+    </nav>
+</header>
+
+<main>
+    <section class="auth">
+        <div class="auth-panel auth-panel-wide">
+            <div class="auth-header">
+                <h1>Create client</h1>
+                <p>Hardcoded sample data matching ClientCreateRequestDTO fields.</p>
+            </div>
+
+            <form class="auth-form" th:action="@{/clients/create}" action="/clients/create" method="post">
+                <div class="form-group">
+                    <label for="displayName">Client name</label>
+                    <input id="displayName" name="displayName" type="text" value="Acme Sofia" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="companyName">Company name</label>
+                    <input id="companyName" name="companyName" type="text" value="Acme Bulgaria Ltd." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" value="billing@acme.bg">
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">Phone number</label>
+                    <input id="phoneNumber" name="phoneNumber" type="tel" value="+359 888 123 456">
+                </div>
+
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select id="country" name="country" required>
+                        <option value="BULGARIA" selected>Bulgaria</option>
+                        <option value="ROMANIA">Romania</option>
+                        <option value="GREECE">Greece</option>
+                        <option value="TURKEY">Turkey</option>
+                        <option value="SERBIA">Serbia</option>
+                        <option value="FRANCE">France</option>
+                        <option value="ENGLAND">England</option>
+                        <option value="NETHERLANDS">Netherlands</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address" rows="3">15 Vitosha Blvd, Sofia</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="vatRegistered">VAT registered</label>
+                    <select id="vatRegistered" name="vatRegistered" required>
+                        <option value="true" selected>Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="vatNumber">VAT number</label>
+                    <input id="vatNumber" name="vatNumber" type="text" value="BG123456789" maxlength="32">
+                </div>
+
+                <button class="button button-primary form-submit" type="submit">Create client</button>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>
