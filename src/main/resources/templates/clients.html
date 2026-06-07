@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a th:href="@{/clients}" href="/clients">Clients</a>
+        <a th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a th:href="@{/}" href="/">Logout</a>
+    </nav>
+</header>
+
+<main>
+    <section class="content-shell">
+        <div class="auth-header">
+            <h1>Clients</h1>
+            <p>Hardcoded client records matching the Client entity fields.</p>
+        </div>
+
+        <div class="clients-grid">
+            <article class="client-card">
+                <div class="client-card-header">
+                    <div>
+                        <h2>Acme Sofia</h2>
+                        <p>Acme Bulgaria Ltd.</p>
+                    </div>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <dl class="client-details">
+                    <div>
+                        <dt>Email</dt>
+                        <dd>billing@acme.bg</dd>
+                    </div>
+                    <div>
+                        <dt>Phone</dt>
+                        <dd>+359 888 123 456</dd>
+                    </div>
+                    <div>
+                        <dt>Country</dt>
+                        <dd>BULGARIA</dd>
+                    </div>
+                    <div>
+                        <dt>Address</dt>
+                        <dd>15 Vitosha Blvd, Sofia</dd>
+                    </div>
+                    <div>
+                        <dt>VAT Registered</dt>
+                        <dd>Yes</dd>
+                    </div>
+                    <div>
+                        <dt>VAT Number</dt>
+                        <dd>BG123456789</dd>
+                    </div>
+                </dl>
+            </article>
+
+            <article class="client-card">
+                <div class="client-card-header">
+                    <div>
+                        <h2>Balkan Trade</h2>
+                        <p>Balkan Trade Group SRL</p>
+                    </div>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <dl class="client-details">
+                    <div>
+                        <dt>Email</dt>
+                        <dd>office@balkantrade.ro</dd>
+                    </div>
+                    <div>
+                        <dt>Phone</dt>
+                        <dd>+40 721 555 019</dd>
+                    </div>
+                    <div>
+                        <dt>Country</dt>
+                        <dd>ROMANIA</dd>
+                    </div>
+                    <div>
+                        <dt>Address</dt>
+                        <dd>8 Unirii Square, Bucharest</dd>
+                    </div>
+                    <div>
+                        <dt>VAT Registered</dt>
+                        <dd>Yes</dd>
+                    </div>
+                    <div>
+                        <dt>VAT Number</dt>
+                        <dd>RO987654321</dd>
+                    </div>
+                </dl>
+            </article>
+
+            <article class="client-card">
+                <div class="client-card-header">
+                    <div>
+                        <h2>Aegean Studio</h2>
+                        <p>Aegean Digital Services</p>
+                    </div>
+                    <span class="status-badge status-active">Active</span>
+                </div>
+                <dl class="client-details">
+                    <div>
+                        <dt>Email</dt>
+                        <dd>accounts@aegeanstudio.gr</dd>
+                    </div>
+                    <div>
+                        <dt>Phone</dt>
+                        <dd>+30 210 000 4432</dd>
+                    </div>
+                    <div>
+                        <dt>Country</dt>
+                        <dd>GREECE</dd>
+                    </div>
+                    <div>
+                        <dt>Address</dt>
+                        <dd>22 Ermou Street, Athens</dd>
+                    </div>
+                    <div>
+                        <dt>VAT Registered</dt>
+                        <dd>No</dd>
+                    </div>
+                    <div>
+                        <dt>VAT Number</dt>
+                        <dd>-</dd>
+                    </div>
+                </dl>
+            </article>
+
+            <article class="client-card">
+                <div class="client-card-header">
+                    <div>
+                        <h2>Nord Office</h2>
+                        <p>Nord Office Supplies BV</p>
+                    </div>
+                    <span class="status-badge status-inactive">Inactive</span>
+                </div>
+                <dl class="client-details">
+                    <div>
+                        <dt>Email</dt>
+                        <dd>finance@nordoffice.nl</dd>
+                    </div>
+                    <div>
+                        <dt>Phone</dt>
+                        <dd>+31 20 123 7788</dd>
+                    </div>
+                    <div>
+                        <dt>Country</dt>
+                        <dd>NETHERLANDS</dd>
+                    </div>
+                    <div>
+                        <dt>Address</dt>
+                        <dd>40 Herengracht, Amsterdam</dd>
+                    </div>
+                    <div>
+                        <dt>VAT Registered</dt>
+                        <dd>Yes</dd>
+                    </div>
+                    <div>
+                        <dt>VAT Number</dt>
+                        <dd>NL001234567B01</dd>
+                    </div>
+                </dl>
+            </article>
+        </div>
+    </section>
+</main>
+</body>
+</html>
