@@ -29,8 +29,13 @@ public class ClientServiceImpl implements ClientService {
             //! След време да сменя грешката
         }
         String vatNumber = clientCreateRequestDTO.getVatNumber();
-        if (vatNumber != null && !vatNumber.isBlank()
-                && clientRepository.existsByVatNumber(vatNumber)) {
+        if (vatNumber != null) {
+            vatNumber = vatNumber.trim();
+            clientCreateRequestDTO.setVatNumber(vatNumber.isBlank() ? null : vatNumber);
+        }
+
+        if (clientCreateRequestDTO.getVatNumber() != null
+                && clientRepository.existsByVatNumber(clientCreateRequestDTO.getVatNumber())) {
             throw new RuntimeException("Client with vatNumber " + vatNumber + " already exists");
             //! След време да сменя грешката
         }
