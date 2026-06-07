@@ -3,6 +3,7 @@ package bg.softuni.invoiceapplication.service.impl;
 import bg.softuni.invoiceapplication.mapper.client.ClientMapper;
 import bg.softuni.invoiceapplication.model.Client;
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.service.ClientService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ClientServiceImpl implements ClientService {
@@ -53,6 +55,17 @@ public class ClientServiceImpl implements ClientService {
         List<ClientShowAllDTO> clientShowAllDTOS = clientMapper.fromAllClientsToClientsShowAllDTO(allClients);
 
         return clientShowAllDTOS;
+    }
+
+    @Override
+    public ClientEditRequestDTO getClientForEdit(UUID id) {
+
+        Client clientById = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Client with id " + id + " does not exist"));
+        //! Да се оправи грешката след време
+        ClientEditRequestDTO clientEditRequestDTO = clientMapper.fromClientToClientEditRequestDTO(clientById);
+
+        return clientEditRequestDTO;
     }
 
 }
