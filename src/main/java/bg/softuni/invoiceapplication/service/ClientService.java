@@ -12,4 +12,6 @@ public interface ClientService {
     Client createClient(ClientCreateRequestDTO clientCreateRequestDTO);
     List<ClientShowAllDTO> findAllClients();
     ClientEditRequestDTO getClientForEdit(UUID id);
+    void editClient(ClientEditRequestDTO clientEditRequestDTO);
+
 }

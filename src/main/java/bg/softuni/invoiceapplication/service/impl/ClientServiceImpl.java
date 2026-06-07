@@ -68,4 +68,14 @@ public class ClientServiceImpl implements ClientService {
         return clientEditRequestDTO;
     }
 
+    @Override
+    public void editClient(ClientEditRequestDTO clientEditRequestDTO) {
+        Client clientToEdit = clientRepository.findById(clientEditRequestDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Client with id " + clientEditRequestDTO.getId() + " does not exist"));
+        //! Да коригирам грешката след време
+        clientMapper.updateClientFromEditRequestDTO(clientToEdit, clientEditRequestDTO);
+        clientRepository.save(clientToEdit);
+    }
+
+
 }
