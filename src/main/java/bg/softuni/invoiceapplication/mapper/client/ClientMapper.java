@@ -69,4 +69,15 @@ public class ClientMapper {
                 .vatNumber(client.getVatNumber())
                 .build();
     }
+
+    public void updateClientFromEditRequestDTO(Client client, ClientEditRequestDTO clientEditRequestDTO) {
+        client.setDisplayName(clientEditRequestDTO.getDisplayName());
+        client.setCompanyName(clientEditRequestDTO.getCompanyName());
+        client.setEmail(clientEditRequestDTO.getEmail());
+        client.setPhoneNumber(clientEditRequestDTO.getPhoneNumber());
+        client.setCountry(clientEditRequestDTO.getCountry());
+        client.setAddress(clientEditRequestDTO.getAddress());
+        client.setVatRegistered(clientEditRequestDTO.getVatRegistered());
+        client.setVatNumber(clientEditRequestDTO.getVatNumber());
+    }
 }
