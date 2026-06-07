@@ -2,6 +2,7 @@ package bg.softuni.invoiceapplication.mapper.client;
 
 import bg.softuni.invoiceapplication.model.Client;
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
 import org.springframework.stereotype.Component;
 
@@ -50,5 +51,22 @@ public class ClientMapper {
             clientShowAllDTOs.add(clientShowAllDTO);
         });
         return clientShowAllDTOs;
+    }
+
+    public ClientEditRequestDTO fromClientToClientEditRequestDTO(Client client) {
+        if (client == null) {
+            return null;
+        }
+        return ClientEditRequestDTO.builder()
+                .id(client.getId())
+                .displayName(client.getDisplayName())
+                .companyName(client.getCompanyName())
+                .email(client.getEmail())
+                .phoneNumber(client.getPhoneNumber())
+                .country(client.getCountry())
+                .address(client.getAddress())
+                .vatRegistered(client.isVatRegistered())
+                .vatNumber(client.getVatNumber())
+                .build();
     }
 }
