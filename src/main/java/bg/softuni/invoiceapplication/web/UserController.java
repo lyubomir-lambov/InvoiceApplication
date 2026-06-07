@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("user")UserRegistrationRequestDTO userRegistrationRequestDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String registerUser(@Valid @ModelAttribute("user") UserRegistrationRequestDTO userRegistrationRequestDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user-register";
         }
@@ -45,6 +45,5 @@ public class UserController {
     public String registerSuccess() {
         return "user-register-success";
     }
-
 
 }
