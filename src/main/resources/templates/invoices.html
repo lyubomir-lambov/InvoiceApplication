@@ -9,40 +9,56 @@
 <body>
 <header class="page-header">
     <a class="brand" th:href="@{/}">Invoice Application</a>
-    <nav class="navigation">
-        <a th:href="@{/clients}" href="/clients">Clients</a>
-        <a th:href="@{/invoices}" href="/invoices">Invoices</a>
-        <a th:href="@{/}" href="/">Logout</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button nav-button-active" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
     </nav>
 </header>
 
 <main>
-    <section class="auth">
-        <div class="auth-panel">
-            <div class="auth-header">
-                <h1>Invoices</h1>
-                <p>Your recent invoices are listed below.</p>
-            </div>
+    <section class="content-shell">
+        <div class="auth-header">
+            <h1>Invoices</h1>
+            <p>Your recent invoices are listed below.</p>
+        </div>
 
-            <div class="form-group">
-                <label>INV-2026-001</label>
-                <p>Client: Acme Ltd. | Amount: 1,250.00 BGN | Status: Paid</p>
-            </div>
-
-            <div class="form-group">
-                <label>INV-2026-002</label>
-                <p>Client: Balkan Trade | Amount: 840.00 BGN | Status: Pending</p>
-            </div>
-
-            <div class="form-group">
-                <label>INV-2026-003</label>
-                <p>Client: Sofia Consulting | Amount: 2,400.00 BGN | Status: Overdue</p>
-            </div>
-
-            <div class="form-group">
-                <label>INV-2026-004</label>
-                <p>Client: Green Office | Amount: 630.00 BGN | Status: Draft</p>
-            </div>
+        <div class="table-card">
+            <table class="invoices-table">
+                <thead>
+                <tr>
+                    <th>Invoice</th>
+                    <th>Client</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>INV-2026-001</td>
+                    <td>Acme Ltd.</td>
+                    <td>1,250.00 BGN</td>
+                    <td><span class="status-badge status-paid">Paid</span></td>
+                </tr>
+                <tr>
+                    <td>INV-2026-002</td>
+                    <td>Balkan Trade</td>
+                    <td>840.00 BGN</td>
+                    <td><span class="status-badge status-pending">Pending</span></td>
+                </tr>
+                <tr>
+                    <td>INV-2026-003</td>
+                    <td>Sofia Consulting</td>
+                    <td>2,400.00 BGN</td>
+                    <td><span class="status-badge status-overdue">Overdue</span></td>
+                </tr>
+                <tr>
+                    <td>INV-2026-004</td>
+                    <td>Green Office</td>
+                    <td>630.00 BGN</td>
+                    <td><span class="status-badge status-draft">Draft</span></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 </main>

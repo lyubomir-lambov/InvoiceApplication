@@ -10,9 +10,8 @@
 <header class="page-header">
     <a class="brand" th:href="@{/}">Invoice Application</a>
     <nav class="navigation" aria-label="Main navigation">
-        <a th:href="@{/clients}" href="/clients">Clients</a>
-        <a th:href="@{/invoices}" href="/invoices">Invoices</a>
-        <a th:href="@{/}" href="/">Logout</a>
+        <a class="nav-button" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button nav-button-active" th:href="@{/clients}" href="/clients">Clients</a>
     </nav>
 </header>
 
