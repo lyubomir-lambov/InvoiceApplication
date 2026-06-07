@@ -34,7 +34,6 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(userRegistrationRequestDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email is already in use");//! Да променя грешката, която хвърля
         }
-        //! Тук трябва да има валидатор за рестрикциите в DTO-то - UserRegistrationRequestDTO
 
         User userToRegister = userMapper.fromUserRegistrationRequestDTOtoUser(userRegistrationRequestDTO);
 
