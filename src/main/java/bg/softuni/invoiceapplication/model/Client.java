@@ -1,0 +1,58 @@
+package bg.softuni.invoiceapplication.model;
+
+import bg.softuni.invoiceapplication.model.enums.Country;
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "clients")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Client extends BaseEntity {
+
+    @Column(nullable = false, unique = true)
+    private String displayName;
+
+    @Column(nullable = false)
+    private String companyName;
+
+    private String email;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Country country;
+
+    private String address;
+
+    @Column(nullable = false)
+    private boolean vatRegistered;
+
+    @Column(name = "vat_number", unique = true)
+    private String vatNumber;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean active = true;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdOn;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private LocalDateTime updatedOn;
+}
