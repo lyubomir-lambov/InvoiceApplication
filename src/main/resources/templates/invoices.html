@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoices | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation">
+        <a th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a th:href="@{/}" href="/">Logout</a>
+    </nav>
+</header>
+
+<main>
+    <section class="auth">
+        <div class="auth-panel">
+            <div class="auth-header">
+                <h1>Invoices</h1>
+                <p>Your recent invoices are listed below.</p>
+            </div>
+
+            <div class="form-group">
+                <label>INV-2026-001</label>
+                <p>Client: Acme Ltd. | Amount: 1,250.00 BGN | Status: Paid</p>
+            </div>
+
+            <div class="form-group">
+                <label>INV-2026-002</label>
+                <p>Client: Balkan Trade | Amount: 840.00 BGN | Status: Pending</p>
+            </div>
+
+            <div class="form-group">
+                <label>INV-2026-003</label>
+                <p>Client: Sofia Consulting | Amount: 2,400.00 BGN | Status: Overdue</p>
+            </div>
+
+            <div class="form-group">
+                <label>INV-2026-004</label>
+                <p>Client: Green Office | Amount: 630.00 BGN | Status: Draft</p>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>
