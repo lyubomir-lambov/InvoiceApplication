@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Client | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button nav-button-active" th:href="@{/clients}" href="/clients">Clients</a>
+    </nav>
+</header>
+
+<main>
+    <section class="auth">
+        <div class="auth-panel auth-panel-wide">
+            <div class="auth-header">
+                <h1>Edit client</h1>
+                <p>Update client details and save the changes.</p>
+            </div>
+
+            <form class="auth-form" th:object="${client}" th:action="@{/clients/edit}" action="/clients/edit" method="post">
+                <input th:field="*{id}" type="hidden">
+
+                <div class="form-group">
+                    <label for="displayName">Client name</label>
+                    <input id="displayName" th:field="*{displayName}" type="text" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('displayName')}" th:errors="*{displayName}">Client name error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="companyName">Company name</label>
+                    <input id="companyName" th:field="*{companyName}" type="text" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}">Company name error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" th:field="*{email}" type="email">
+                    <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">Phone number</label>
+                    <input id="phoneNumber" th:field="*{phoneNumber}" type="tel">
+                </div>
+
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select id="country" th:field="*{country}" required>
+                        <option th:each="country : ${countries}"
+                                th:value="${country}"
+                                th:text="${country}">
+                        </option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('country')}" th:errors="*{country}">Country error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" th:field="*{address}" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="vatRegistered">VAT registered</label>
+                    <select id="vatRegistered" th:field="*{vatRegistered}" required>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('vatRegistered')}" th:errors="*{vatRegistered}">VAT registered error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="vatNumber">VAT number</label>
+                    <input id="vatNumber" th:field="*{vatNumber}" type="text" maxlength="32">
+                    <p class="field-error" th:if="${#fields.hasErrors('vatNumber')}" th:errors="*{vatNumber}">VAT number error</p>
+                </div>
+
+                <button class="button button-primary form-submit" type="submit">Save changes</button>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>
