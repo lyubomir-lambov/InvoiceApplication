@@ -33,7 +33,7 @@ public class ClientServiceImpl implements ClientService {
         String vatNumber = clientCreateRequestDTO.getVatNumber();
         if (vatNumber != null) {
             vatNumber = vatNumber.trim();
-            clientCreateRequestDTO.setVatNumber(vatNumber.isBlank() ? null : vatNumber);
+            clientCreateRequestDTO.setVatNumber(vatNumber.isBlank() ? null : vatNumber.toUpperCase());
         }
 
         if (clientCreateRequestDTO.getVatNumber() != null
@@ -77,7 +77,7 @@ public class ClientServiceImpl implements ClientService {
         String vatNumber = clientEditRequestDTO.getVatNumber();
         if (vatNumber != null) {
             vatNumber = vatNumber.trim();
-            clientEditRequestDTO.setVatNumber(vatNumber.isBlank() ? null : vatNumber);
+            clientEditRequestDTO.setVatNumber(vatNumber.isBlank() ? null : vatNumber.toUpperCase());
         }
 
         if (clientEditRequestDTO.getVatNumber() != null
