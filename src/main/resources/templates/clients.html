@@ -19,7 +19,7 @@
     <section class="content-shell">
         <div class="auth-header">
             <h1>Clients</h1>
-            <p>Hardcoded client records matching the Client entity fields.</p>
+            <p>Client records from the database.</p>
         </div>
 
         <div class="table-card">
@@ -38,49 +38,23 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>Acme Sofia</td>
-                    <td>Acme Bulgaria Ltd.</td>
-                    <td>billing@acme.bg</td>
-                    <td>+359 888 123 456</td>
-                    <td>BULGARIA</td>
-                    <td>15 Vitosha Blvd, Sofia</td>
-                    <td>Yes</td>
-                    <td>BG123456789</td>
-                    <td><span class="status-badge status-active">Active</span></td>
+                <tr th:if="${#lists.isEmpty(clients)}">
+                    <td colspan="9">No clients found.</td>
                 </tr>
-                <tr>
-                    <td>Balkan Trade</td>
-                    <td>Balkan Trade Group SRL</td>
-                    <td>office@balkantrade.ro</td>
-                    <td>+40 721 555 019</td>
-                    <td>ROMANIA</td>
-                    <td>8 Unirii Square, Bucharest</td>
-                    <td>Yes</td>
-                    <td>RO987654321</td>
-                    <td><span class="status-badge status-active">Active</span></td>
-                </tr>
-                <tr>
-                    <td>Aegean Studio</td>
-                    <td>Aegean Digital Services</td>
-                    <td>accounts@aegeanstudio.gr</td>
-                    <td>+30 210 000 4432</td>
-                    <td>GREECE</td>
-                    <td>22 Ermou Street, Athens</td>
-                    <td>No</td>
-                    <td>-</td>
-                    <td><span class="status-badge status-active">Active</span></td>
-                </tr>
-                <tr>
-                    <td>Nord Office</td>
-                    <td>Nord Office Supplies BV</td>
-                    <td>finance@nordoffice.nl</td>
-                    <td>+31 20 123 7788</td>
-                    <td>NETHERLANDS</td>
-                    <td>40 Herengracht, Amsterdam</td>
-                    <td>Yes</td>
-                    <td>NL001234567B01</td>
-                    <td><span class="status-badge status-inactive">Inactive</span></td>
+                <tr th:each="client : ${clients}">
+                    <td th:text="${client.displayName}">Acme Sofia</td>
+                    <td th:text="${client.companyName}">Acme Bulgaria Ltd.</td>
+                    <td th:text="${client.email}">billing@acme.bg</td>
+                    <td th:text="${client.phoneNumber}">+359 888 123 456</td>
+                    <td th:text="${client.country}">BULGARIA</td>
+                    <td th:text="${client.address}">15 Vitosha Blvd, Sofia</td>
+                    <td th:text="${client.vatRegistered ? 'Yes' : 'No'}">Yes</td>
+                    <td th:text="${client.vatNumber != null && !client.vatNumber.isBlank() ? client.vatNumber : '-'}">BG123456789</td>
+                    <td>
+                        <span class="status-badge"
+                              th:classappend="${client.active ? 'status-active' : 'status-inactive'}"
+                              th:text="${client.active ? 'Active' : 'Inactive'}">Active</span>
+                    </td>
                 </tr>
                 </tbody>
             </table>
