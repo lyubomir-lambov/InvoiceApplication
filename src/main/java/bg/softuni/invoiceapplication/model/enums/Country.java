@@ -1,12 +1,12 @@
 package bg.softuni.invoiceapplication.model.enums;
 
 public enum Country {
-    Bulgaria,
-    Romania,
-    Greece,
-    Turkey,
-    Serbia,
-    France,
-    England,
-    Netherlands,
+    BULGARIA,
+    ROMANIA,
+    GREECE,
+    TURKEY,
+    SERBIA,
+    FRANCE,
+    ENGLAND,
+    NETHERLANDS
 }
