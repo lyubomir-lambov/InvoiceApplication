@@ -34,11 +34,12 @@
                     <th>VAT</th>
                     <th>VAT Number</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(clients)}">
-                    <td colspan="9">No clients found.</td>
+                    <td colspan="10">No clients found.</td>
                 </tr>
                 <tr th:each="client : ${clients}">
                     <td th:text="${client.displayName}">Acme Sofia</td>
@@ -53,6 +54,11 @@
                         <span class="status-badge"
                               th:classappend="${client.active ? 'status-active' : 'status-inactive'}"
                               th:text="${client.active ? 'Active' : 'Inactive'}">Active</span>
+                    </td>
+                    <td>
+                        <a class="nav-button"
+                           th:href="@{/clients/edit/{id}(id=${client.id})}"
+                           href="/clients/edit/client-id">Edit</a>
                     </td>
                 </tr>
                 </tbody>

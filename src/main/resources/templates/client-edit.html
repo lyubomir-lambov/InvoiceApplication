@@ -23,7 +23,7 @@
                 <p>Update client details and save the changes.</p>
             </div>
 
-            <form class="auth-form" th:object="${client}" th:action="@{/clients/edit}" action="/clients/edit" method="post">
+            <form class="auth-form" th:object="${client}" th:action="@{/clients/edit/{id}(id=*{id})}" action="/clients/edit/client-id" method="post">
                 <input th:field="*{id}" type="hidden">
 
                 <div class="form-group">
