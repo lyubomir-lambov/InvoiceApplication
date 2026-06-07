@@ -20,28 +20,31 @@
         <div class="auth-panel auth-panel-wide">
             <div class="auth-header">
                 <h1>Create client</h1>
-                <p>Hardcoded sample data matching ClientCreateRequestDTO fields.</p>
+                <p>Enter client details to create a new client record.</p>
             </div>
 
             <form class="auth-form" th:object="${client}" th:action="@{/clients/create}" action="/clients/create" method="post">
                 <div class="form-group">
                     <label for="displayName">Client name</label>
-                    <input th:field="*{displayName}" id="displayName" name="displayName" type="text" value="Acme Sofia" required>
+                    <input id="displayName" th:field="*{displayName}" type="text" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('displayName')}" th:errors="*{displayName}">Client name error</p>
                 </div>
 
                 <div class="form-group">
                     <label for="companyName">Company name</label>
-                    <input th:field="*{companyName}" id="companyName" name="companyName" type="text" value="Acme Bulgaria Ltd." required>
+                    <input id="companyName" th:field="*{companyName}" type="text" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}">Company name error</p>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input th:field="*{email}" id="email" name="email" type="email" value="billing@acme.bg">
+                    <input id="email" th:field="*{email}" type="email">
+                    <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</p>
                 </div>
 
                 <div class="form-group">
                     <label for="phoneNumber">Phone number</label>
-                    <input id="phoneNumber" name="phoneNumber" type="tel" value="+359 888 123 456">
+                    <input id="phoneNumber" th:field="*{phoneNumber}" type="tel">
                 </div>
 
                 <div class="form-group">
@@ -52,24 +55,27 @@
                                 th:text="${country}">
                         </option>
                     </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('country')}" th:errors="*{country}">Country error</p>
                 </div>
 
                 <div class="form-group">
                     <label for="address">Address</label>
-                    <textarea id="address" name="address" rows="3">15 Vitosha Blvd, Sofia</textarea>
+                    <textarea id="address" th:field="*{address}" rows="3"></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="vatRegistered">VAT registered</label>
-                    <select id="vatRegistered" name="vatRegistered" required>
-                        <option value="true" selected>Yes</option>
+                    <select id="vatRegistered" th:field="*{vatRegistered}" required>
+                        <option value="true">Yes</option>
                         <option value="false">No</option>
                     </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('vatRegistered')}" th:errors="*{vatRegistered}">VAT registered error</p>
                 </div>
 
                 <div class="form-group">
                     <label for="vatNumber">VAT number</label>
-                    <input id="vatNumber" name="vatNumber" type="text" value="BG123456789" maxlength="32">
+                    <input id="vatNumber" th:field="*{vatNumber}" type="text" maxlength="32">
+                    <p class="field-error" th:if="${#fields.hasErrors('vatNumber')}" th:errors="*{vatNumber}">VAT number error</p>
                 </div>
 
                 <button class="button button-primary form-submit" type="submit">Create client</button>
