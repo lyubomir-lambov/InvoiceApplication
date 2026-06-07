@@ -167,7 +167,7 @@ main {
 }
 
 .content-shell {
-    max-width: 1160px;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -282,6 +282,7 @@ main {
 }
 
 .table-card {
+    width: 100%;
     overflow-x: auto;
     border: 1px solid var(--border);
     border-radius: 8px;
