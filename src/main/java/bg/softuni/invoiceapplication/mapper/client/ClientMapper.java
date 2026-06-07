@@ -4,6 +4,8 @@ import bg.softuni.invoiceapplication.model.Client;
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ClientMapper {
     public Client fromClientCreateRequestDTOToClient(ClientCreateRequestDTO clientCreateRequestDTO) {
@@ -22,4 +24,6 @@ public class ClientMapper {
                 .vatNumber(clientCreateRequestDTO.getVatNumber())
                 .build();
     }
+
+    public List<Client> fromAllClientsTo.....
 }
