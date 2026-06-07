@@ -2,6 +2,8 @@ package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.mapper.user.UserMapper;
 import bg.softuni.invoiceapplication.model.User;
+import bg.softuni.invoiceapplication.model.dto.UserLoginRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.UserLoginResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationResponseDTO;
 import bg.softuni.invoiceapplication.repository.UserRepository;
@@ -45,5 +47,10 @@ public class UserServiceImpl implements UserService {
         UserRegistrationResponseDTO userRegistrationResponseDTO = userMapper.fromUserToUserRegistrationResponseDTO(savedUser);
 
         return userRegistrationResponseDTO;
+    }
+
+    @Override
+    public UserLoginResponseDTO login(UserLoginRequestDTO userLoginRequestDTO) {
+        return null;
     }
 }
