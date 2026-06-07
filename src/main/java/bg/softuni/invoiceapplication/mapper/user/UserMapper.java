@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.mapper.user;
 
 import bg.softuni.invoiceapplication.model.User;
+import bg.softuni.invoiceapplication.model.dto.UserLoginResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationResponseDTO;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,17 @@ public class UserMapper {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .createdOn(user.getCreatedOn())
+                .build();
+    }
+
+    public UserLoginResponseDTO fromUserToUserLoginResponseDTO(User user) {
+        if (user == null) {
+            return null;
+        }
+        return UserLoginResponseDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .role(user.getRole())
                 .build();
     }
 }
