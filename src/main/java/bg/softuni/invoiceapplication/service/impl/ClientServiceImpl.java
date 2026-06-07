@@ -73,7 +73,14 @@ public class ClientServiceImpl implements ClientService {
         Client clientToEdit = clientRepository.findById(clientEditRequestDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Client with id " + clientEditRequestDTO.getId() + " does not exist"));
         //! Да коригирам грешката след време
+
+        String vatNumber = clientEditRequestDTO.getVatNumber();
+        if (vatNumber != null) {
+            vatNumber = vatNumber.trim();
+            clientEditRequestDTO.setVatNumber(vatNumber.isBlank() ? null : vatNumber);
+        }
         clientMapper.updateClientFromEditRequestDTO(clientToEdit, clientEditRequestDTO);
+
         clientRepository.save(clientToEdit);
     }
 
