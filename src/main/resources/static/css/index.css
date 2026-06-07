@@ -30,6 +30,10 @@ body {
     border-bottom: 1px solid var(--border);
 }
 
+.page-header-split {
+    justify-content: space-between;
+}
+
 .brand {
     font-size: 20px;
     font-weight: 700;
