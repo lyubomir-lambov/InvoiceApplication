@@ -3,10 +3,13 @@ package bg.softuni.invoiceapplication.service.impl;
 import bg.softuni.invoiceapplication.mapper.client.ClientMapper;
 import bg.softuni.invoiceapplication.model.Client;
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ClientServiceImpl implements ClientService {
@@ -36,6 +39,15 @@ public class ClientServiceImpl implements ClientService {
         Client savedClient = clientRepository.save(clientToSave);
         return savedClient;
 
+    }
+
+    @Override
+    public List<ClientShowAllDTO> findAllClients() {
+
+        List<Client> allClients = clientRepository.findAll();
+        List<ClientShowAllDTO> clientShowAllDTOS = clientMapper.fromAllClientsToClientsShowAllDTO(allClients);
+
+        return clientShowAllDTOS;
     }
 
 }
