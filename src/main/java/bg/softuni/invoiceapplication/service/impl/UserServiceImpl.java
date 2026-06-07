@@ -11,6 +11,8 @@ import bg.softuni.invoiceapplication.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -28,7 +30,7 @@ public class UserServiceImpl implements UserService {
     public UserRegistrationResponseDTO registerUser(UserRegistrationRequestDTO userRegistrationRequestDTO) {
 
         if (!userRegistrationRequestDTO.getPassword().equals(userRegistrationRequestDTO.getPasswordConfirm())) {
-            throw  new IllegalArgumentException("Passwords do not match");//! Да променя грешката, която хвърля
+            throw new IllegalArgumentException("Passwords do not match");//! Да променя грешката, която хвърля
         }
         if (userRepository.findByUsername(userRegistrationRequestDTO.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username is already in use"); //! Да променя грешката, която хвърля
@@ -51,11 +53,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserLoginResponseDTO login(UserLoginRequestDTO userLoginRequestDTO) {
-        //! 1. find user by username
-        //! 2. ако няма user -> грешка
-        //! 3. провери password
-        //! 4. ако password не съвпада -> грешка
-        //! 5. върни UserLoginResponseDTO
-        return null;
+
+        Optional<User> userByUsername = userRepository.findByUsername(userLoginRequestDTO.getUsername());
+
+        if (userByUsername.isEmpty()) {
+            throw new IllegalArgumentException("Username doesn't exist in database");
+        }
+
+        User user = userByUsername.get();
+        if (!passwordEncoder.matches(userLoginRequestDTO.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+
+        return userMapper.fromUserToUserLoginResponseDTO(user);
     }
 }
