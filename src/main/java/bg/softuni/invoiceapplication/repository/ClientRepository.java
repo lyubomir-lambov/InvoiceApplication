@@ -1,6 +1,6 @@
 package bg.softuni.invoiceapplication.repository;
 
-import bg.softuni.invoiceapplication.model.Client;
+import bg.softuni.invoiceapplication.model.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package bg.softuni.invoiceapplication.model;
+package bg.softuni.invoiceapplication.model.entity;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

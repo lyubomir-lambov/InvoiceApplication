@@ -1,4 +1,4 @@
-package bg.softuni.invoiceapplication.model;
+package bg.softuni.invoiceapplication.model.entity;
 
 import bg.softuni.invoiceapplication.model.enums.Country;
 import jakarta.persistence.*;

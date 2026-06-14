@@ -1,7 +1,7 @@
 package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.mapper.user.UserMapper;
-import bg.softuni.invoiceapplication.model.User;
+import bg.softuni.invoiceapplication.model.entity.User;
 import bg.softuni.invoiceapplication.model.dto.UserLoginRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserLoginResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;

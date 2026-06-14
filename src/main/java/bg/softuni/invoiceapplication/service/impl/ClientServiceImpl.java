@@ -1,7 +1,7 @@
 package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.mapper.client.ClientMapper;
-import bg.softuni.invoiceapplication.model.Client;
+import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;

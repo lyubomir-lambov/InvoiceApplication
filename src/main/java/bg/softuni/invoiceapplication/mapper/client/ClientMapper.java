@@ -1,6 +1,6 @@
 package bg.softuni.invoiceapplication.mapper.client;
 
-import bg.softuni.invoiceapplication.model.Client;
+import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
