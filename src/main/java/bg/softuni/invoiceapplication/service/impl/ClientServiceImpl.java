@@ -61,6 +61,21 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public List<ClientShowAllDTO> findClientsByName(String clientName) {
+        if (clientName == null || clientName.isBlank()) {
+            return findAllClients();
+        }
+
+        String searchedClientName = clientName.trim();
+        List<Client> clients = clientRepository.findByDisplayNameContainingIgnoreCaseOrCompanyNameContainingIgnoreCase(
+                searchedClientName,
+                searchedClientName
+        );
+
+        return clientMapper.fromAllClientsToClientsShowAllDTO(clients);
+    }
+
+    @Override
     public ClientEditRequestDTO getClientForEdit(UUID id) {
 
         Client clientById = clientRepository.findById(id)

@@ -30,11 +30,14 @@ public class ClientController {
     }
 
     @GetMapping("")
-    public String clientsShowAll(HttpSession httpSession, Model model) {
+    public String clientsShowAll(@RequestParam(required = false) String clientName,
+                                 HttpSession httpSession,
+                                 Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
 
-        model.addAttribute("clients", clientService.findAllClients());
+        model.addAttribute("clients", clientService.findClientsByName(clientName));
+        model.addAttribute("clientName", clientName);
         model.addAttribute("username", username);
         return "clients";
     }

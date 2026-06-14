@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface ClientService {
     Client createClient(ClientCreateRequestDTO clientCreateRequestDTO);
     List<ClientShowAllDTO> findAllClients();
+    List<ClientShowAllDTO> findClientsByName(String clientName);
     ClientEditRequestDTO getClientForEdit(UUID id);
     void editClient(ClientEditRequestDTO clientEditRequestDTO);
     void toggleClientActive(UUID id);
