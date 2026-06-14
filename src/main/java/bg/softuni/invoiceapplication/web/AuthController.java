@@ -2,7 +2,9 @@ package bg.softuni.invoiceapplication.web;
 
 import bg.softuni.invoiceapplication.model.dto.UserLoginRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserLoginResponseDTO;
+import bg.softuni.invoiceapplication.security.SessionUser;
 import bg.softuni.invoiceapplication.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,15 +31,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("user") UserLoginRequestDTO user, BindingResult bindingResult, Model model) {
+    public String login(@Valid @ModelAttribute("user") UserLoginRequestDTO userLoginRequestDTO, BindingResult bindingResult, HttpSession httpSession) {
         if (bindingResult.hasErrors()) {
             return "user-login";
         }
-        //! Тук след време ще трябва да върна сесия
-        //! За момента само минаваме през проверките за Login и пренасочваме към invoices
-        userService.login(user);
-//        UserLoginResponseDTO userLoginResponseDTO = userService.login(user);
-//        model.addAttribute("user", userLoginResponseDTO);
+
+        UserLoginResponseDTO userLoginResponseDTO = userService.login(userLoginRequestDTO);
+        SessionUser.setUserId(httpSession, userLoginResponseDTO.getId());
 
         return "redirect:/invoices";
     }
