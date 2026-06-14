@@ -8,6 +8,7 @@ import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,7 +52,9 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<ClientShowAllDTO> findAllClients() {
 
-        List<Client> allClients = clientRepository.findAll();
+        List<Client> allClients = clientRepository.findAll(
+                Sort.by(Sort.Order.desc("active"), Sort.Order.asc("displayName"))
+        );
         List<ClientShowAllDTO> clientShowAllDTOS = clientMapper.fromAllClientsToClientsShowAllDTO(allClients);
 
         return clientShowAllDTOS;
