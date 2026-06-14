@@ -25,6 +25,15 @@
     <section class="content-shell">
         <div class="section-actions">
             <a class="nav-button" th:href="@{/clients/create}" href="/clients/create">Add client</a>
+            <form th:action="@{/clients}" action="/clients" method="get" style="display: inline-flex; align-items: center; gap: 10px; margin: 0 0 0 10px;">
+                <input type="search"
+                       name="clientName"
+                       th:value="${clientName}"
+                       placeholder="Search by client name"
+                       aria-label="Search by client name"
+                       style="min-height: 40px; padding: 0 16px; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 15px; font-weight: 700; background: var(--surface);">
+                <button class="nav-button" type="submit">Search</button>
+            </form>
         </div>
 
         <div class="table-card">
