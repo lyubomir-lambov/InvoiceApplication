@@ -1,6 +1,5 @@
 package bg.softuni.invoiceapplication.security;
 
-import bg.softuni.invoiceapplication.model.dto.UserSessionDTO;
 import bg.softuni.invoiceapplication.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,8 +14,6 @@ import java.util.UUID;
 @Component
 public class SessionInterceptor implements HandlerInterceptor {
     private final Set<String> PUBLIC_ENDPOINTS = Set.of("/", "/login", "/users/register", "/users/register/success");
-    private final Set<String> USERS_ENDPOINTS = Set.of("/invoices", "/clients");
-
     private final UserService userService;
 
     public SessionInterceptor(UserService userService) {
@@ -40,13 +37,12 @@ public class SessionInterceptor implements HandlerInterceptor {
 
         UUID userId = SessionUser.getUserId(session);
         if (userId == null) {
+            session.invalidate();
             httpServletResponse.sendRedirect("/login");
             return false;
         }
 
-        UserSessionDTO user = userService.getUserSessionById(userId);
-
-        if (user == null || !user.isActive()) {
+        if (!userService.isUserActive(userId)) {
             session.invalidate();
             httpServletResponse.sendRedirect("/login");
             return false;

@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -67,4 +68,12 @@ public class UserServiceImpl implements UserService {
 
         return userMapper.fromUserToUserLoginResponseDTO(user);
     }
+
+    @Override
+    public boolean isUserActive(UUID userId) {
+        return userRepository.findById(userId)
+                .map(User::isActive)
+                .orElse(false);
+    }
+
 }
