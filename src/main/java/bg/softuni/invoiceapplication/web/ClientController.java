@@ -83,4 +83,10 @@ public class ClientController {
         clientService.editClient(clientEditRequestDTO);
         return "redirect:/clients";
     }
+
+    @PostMapping("/{id}/toggle-status")
+    public String toggleClientStatus(@PathVariable UUID id) {
+        clientService.toggleClientActive(id);
+        return "redirect:/clients";
+    }
 }

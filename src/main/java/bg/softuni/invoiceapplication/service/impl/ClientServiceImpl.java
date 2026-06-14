@@ -93,5 +93,14 @@ public class ClientServiceImpl implements ClientService {
         clientRepository.save(clientToEdit);
     }
 
+    @Override
+    public void toggleClientActive(UUID id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Client with id " + id + " does not exist"));
+        //! Да коригирам грешката след време
+        client.setActive(!client.isActive());
+        clientRepository.save(client);
+    }
+
 
 }

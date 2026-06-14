@@ -241,6 +241,21 @@ main {
     background: #fee4e2;
 }
 
+.status-switch-form {
+    margin: 0;
+}
+
+.status-toggle-button {
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.status-toggle-button:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.18);
+    outline-offset: 2px;
+}
+
 .status-paid {
     color: #067647;
     background: #dcfae6;

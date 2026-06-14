@@ -13,5 +13,6 @@ public interface ClientService {
     List<ClientShowAllDTO> findAllClients();
     ClientEditRequestDTO getClientForEdit(UUID id);
     void editClient(ClientEditRequestDTO clientEditRequestDTO);
+    void toggleClientActive(UUID id);
 
 }

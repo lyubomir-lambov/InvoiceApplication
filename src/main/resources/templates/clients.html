@@ -57,9 +57,16 @@
                     <td th:text="${client.vatRegistered ? 'Yes' : 'No'}">Yes</td>
                     <td th:text="${client.vatNumber != null && !client.vatNumber.isBlank() ? client.vatNumber : '-'}">BG123456789</td>
                     <td>
-                        <span class="status-badge"
-                              th:classappend="${client.active ? 'status-active' : 'status-inactive'}"
-                              th:text="${client.active ? 'Active' : 'Inactive'}">Active</span>
+                        <form class="status-switch-form"
+                              th:action="@{/clients/{id}/toggle-status(id=${client.id})}"
+                              action="/clients/client-id/toggle-status"
+                              method="post">
+                            <button class="status-badge status-toggle-button"
+                                    th:classappend="${client.active ? ' status-active' : ' status-inactive'}"
+                                    type="submit"
+                                    th:attr="title=${client.active ? 'Set inactive' : 'Set active'}"
+                                    th:text="${client.active ? 'Active' : 'Inactive'}">Active</button>
+                        </form>
                     </td>
                     <td>
                         <a class="nav-button"
