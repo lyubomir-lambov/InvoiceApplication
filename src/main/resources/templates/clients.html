@@ -14,7 +14,7 @@
         <a class="nav-button nav-button-active" th:href="@{/clients}" href="/clients">Clients</a>
     </nav>
     <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
-        <span>username</span>
+        <span th:text="${username}">username</span>
         <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
             <button class="nav-button" type="submit">Logout</button>
         </form>

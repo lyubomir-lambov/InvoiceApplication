@@ -3,7 +3,10 @@ package bg.softuni.invoiceapplication.web;
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.Country;
+import bg.softuni.invoiceapplication.security.SessionUser;
 import bg.softuni.invoiceapplication.service.ClientService;
+import bg.softuni.invoiceapplication.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,15 +21,21 @@ import java.util.UUID;
 public class ClientController {
 
     private final ClientService clientService;
+    private final UserService userService;
 
     @Autowired
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, UserService userService) {
         this.clientService = clientService;
+        this.userService = userService;
     }
 
     @GetMapping("")
-    public String clientsShowAll(Model model) {
+    public String clientsShowAll(HttpSession httpSession, Model model) {
+        UUID userId = SessionUser.getUserId(httpSession);
+        String username = userService.getUsernameById(userId);
+
         model.addAttribute("clients", clientService.findAllClients());
+        model.addAttribute("username", username);
         return "clients";
     }
 

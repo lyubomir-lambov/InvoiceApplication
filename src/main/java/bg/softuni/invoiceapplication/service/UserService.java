@@ -8,4 +8,6 @@ public interface UserService {
     UserRegistrationResponseDTO registerUser(UserRegistrationRequestDTO userRegistrationRequestDTO);
     UserLoginResponseDTO login(UserLoginRequestDTO userLoginRequestDTO);
     boolean isUserActive(UUID userId);
+
+    String getUsernameById(UUID userId);
 }

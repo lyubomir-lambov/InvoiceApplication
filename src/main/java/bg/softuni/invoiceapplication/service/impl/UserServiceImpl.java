@@ -76,4 +76,9 @@ public class UserServiceImpl implements UserService {
                 .orElse(false);
     }
 
+    @Override
+    public String getUsernameById(UUID userId) {
+        return userRepository.findById(userId).map(User::getUsername).orElse(null);
+    }
+
 }
