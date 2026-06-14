@@ -42,4 +42,9 @@ public class AuthController {
         return "redirect:/invoices";
     }
 
+    @PostMapping("/logout")
+    public String logout(HttpSession httpSession) {
+        httpSession.invalidate();
+        return "redirect:/";
+    }
 }
