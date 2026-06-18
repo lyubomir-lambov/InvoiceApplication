@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -30,9 +31,7 @@ public class ClientController {
     }
 
     @GetMapping("")
-    public String clientsShowAll(@RequestParam(required = false) String clientName,
-                                 HttpSession httpSession,
-                                 Model model) {
+    public String clientsShowAll(@RequestParam(required = false) String clientName, HttpSession httpSession, Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
 
@@ -50,10 +49,7 @@ public class ClientController {
     }
 
     @PostMapping("/create")
-    public String createClient(@Valid @ModelAttribute("client")
-                               ClientCreateRequestDTO clientCreateRequestDTO,
-                               BindingResult bindingResult,
-                               Model model) {
+    public String createClient(@Valid @ModelAttribute("client") ClientCreateRequestDTO clientCreateRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("countries", Country.values());
             return "client-create";
@@ -73,16 +69,27 @@ public class ClientController {
     }
 
     @PostMapping("/edit/{id}")
-    public String editClient(@PathVariable UUID id,
-                             @Valid @ModelAttribute("client")
-                             ClientEditRequestDTO clientEditRequestDTO,
-                             BindingResult bindingResult,
-                             Model model) {
+    public String editClient(@PathVariable UUID id, @Valid @ModelAttribute("client") ClientEditRequestDTO clientEditRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("countries", Country.values());
             return "client-edit";
         }
         clientEditRequestDTO.setId(id);
+        Optional<String> duplicateField = clientService.findDuplicateFieldForEdit(clientEditRequestDTO);
+        if (duplicateField.isPresent()) {
+            String errorMessage = duplicateField.get().equals("displayName")
+                    ? "Client with this display name already exists"
+                    : "Client with this VAT number already exists";
+
+            bindingResult.rejectValue(
+                    duplicateField.get(),
+                    "client.duplicate",
+                    errorMessage
+            );
+            model.addAttribute("countries", Country.values());
+            return "client-edit";
+        }
+
         clientService.editClient(clientEditRequestDTO);
         return "redirect:/clients";
     }

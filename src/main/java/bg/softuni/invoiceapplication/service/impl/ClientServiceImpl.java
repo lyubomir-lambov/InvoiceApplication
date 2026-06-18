@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,6 +28,10 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client createClient(ClientCreateRequestDTO clientCreateRequestDTO) {
+        if (clientCreateRequestDTO == null) {
+            throw new IllegalArgumentException("Client create request must not be null");
+        }
+
         if (clientRepository.existsByDisplayName(clientCreateRequestDTO.getDisplayName())) {
             throw new RuntimeException("Client with display name " + clientCreateRequestDTO.getDisplayName() + " already exists");
             //! След време да сменя грешката
@@ -87,10 +92,43 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public Optional<String> findDuplicateFieldForEdit(ClientEditRequestDTO clientEditRequestDTO) {
+        Optional<Client> clientByDisplayName = clientRepository.findByDisplayNameAndIdNot(
+                clientEditRequestDTO.getDisplayName(),
+                clientEditRequestDTO.getId());
+
+        if (clientByDisplayName.isPresent()) {
+            return Optional.of("displayName");
+        }
+
+        String vatNumber = clientEditRequestDTO.getVatNumber();
+        if (vatNumber != null) {
+            vatNumber = vatNumber.trim();
+            clientEditRequestDTO.setVatNumber(vatNumber.isBlank() ? null : vatNumber.toUpperCase());
+        }
+
+        if (clientEditRequestDTO.getVatNumber() == null) {
+            return Optional.empty();
+        }
+
+        return clientRepository.findByVatNumberAndIdNot(
+                clientEditRequestDTO.getVatNumber(),
+                clientEditRequestDTO.getId()
+        ).map(client -> "vatNumber");
+    }
+
+    @Override
     public void editClient(ClientEditRequestDTO clientEditRequestDTO) {
         Client clientToEdit = clientRepository.findById(clientEditRequestDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Client with id " + clientEditRequestDTO.getId() + " does not exist"));
         //! Да коригирам грешката след време
+
+        if (clientRepository.existsByDisplayNameAndIdNot(
+                clientEditRequestDTO.getDisplayName(),
+                clientEditRequestDTO.getId())) {
+            throw new RuntimeException("Client with display name " + clientEditRequestDTO.getDisplayName() + " already exists");
+            //! Да коригирам грешката след време
+        }
 
         String vatNumber = clientEditRequestDTO.getVatNumber();
         if (vatNumber != null) {
