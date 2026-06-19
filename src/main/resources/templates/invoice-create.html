@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Invoice | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button nav-button-active" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
+    </nav>
+    <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
+        <span th:text="${username}" style="display: inline-flex; align-items: center; min-height: 40px; color: var(--primary); font-size: 15px; font-weight: 700;">username</span>
+        <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <section class="auth">
+        <div class="auth-panel auth-panel-wide">
+            <div class="auth-header">
+                <h1>Create invoice</h1>
+                <p>Enter invoice details and select the client for this invoice.</p>
+            </div>
+
+            <form class="auth-form" th:object="${invoice}" th:action="@{/invoices/create}" action="/invoices/create" method="post">
+                <div class="form-group">
+                    <label for="invoiceType">Document type</label>
+                    <select id="invoiceType" th:field="*{invoiceType}" required>
+                        <option th:each="invoiceType : ${invoiceTypes}"
+                                th:value="${invoiceType}"
+                                th:text="${invoiceType.displayName}">
+                        </option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('invoiceType')}" th:errors="*{invoiceType}">Invoice type error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="invoiceSequence">Sequence</label>
+                    <input id="invoiceSequence" th:field="*{invoiceSequence}" type="number" min="1" readonly>
+                    <p class="field-error" th:if="${#fields.hasErrors('invoiceSequence')}" th:errors="*{invoiceSequence}">Sequence error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="invoiceNumber">Invoice number</label>
+                    <input id="invoiceNumber" th:field="*{invoiceNumber}" type="text" maxlength="10" readonly>
+                    <p class="field-error" th:if="${#fields.hasErrors('invoiceNumber')}" th:errors="*{invoiceNumber}">Invoice number error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="issueDate">Issue date</label>
+                    <input id="issueDate" th:field="*{issueDate}" type="date" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('issueDate')}" th:errors="*{issueDate}">Issue date error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueDate">Due date</label>
+                    <input id="dueDate" th:field="*{dueDate}" type="date" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}">Due date error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientId">Client</label>
+                    <select id="clientId" th:field="*{clientId}" required>
+                        <option value="">Select client</option>
+                        <option th:each="client : ${clients}"
+                                th:value="${client.id}"
+                                th:text="${client.displayName}">
+                        </option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('clientId')}" th:errors="*{clientId}">Client error</p>
+                </div>
+
+                <button class="button button-primary form-submit" type="submit">Create invoice</button>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>
