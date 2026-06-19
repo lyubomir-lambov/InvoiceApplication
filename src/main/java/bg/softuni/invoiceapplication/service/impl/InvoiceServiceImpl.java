@@ -78,7 +78,12 @@ public class InvoiceServiceImpl implements InvoiceService {
             throw new RuntimeException("Due date cannot be before issue date");
         }
 
-        Long nextInvoiceSequence = getNextInvoiceSequence();
+        Invoice lastInvoice = getLastInvoice();
+        if (lastInvoice != null && invoiceCreateRequestDTO.getIssueDate().isBefore(lastInvoice.getIssueDate())) {
+            throw new RuntimeException("Issue date cannot be before last invoice issue date");
+        }
+
+        Long nextInvoiceSequence = getNextInvoiceSequence(lastInvoice);
 
         Invoice invoice = Invoice.builder()
                 .invoiceType(invoiceCreateRequestDTO.getInvoiceType())
@@ -101,9 +106,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     private Long getNextInvoiceSequence() {
+        return getNextInvoiceSequence(getLastInvoice());
+    }
+
+    private Invoice getLastInvoice() {
         return invoiceRepository.findTopByOrderByInvoiceSequenceDesc()
-                .map(invoice -> invoice.getInvoiceSequence() + 1)
-                .orElse(1L);
+                .orElse(null);
+    }
+
+    private Long getNextInvoiceSequence(Invoice lastInvoice) {
+        return lastInvoice == null
+                ? 1L
+                : lastInvoice.getInvoiceSequence() + 1;
     }
 
     private String formatInvoiceNumber(Long invoiceSequence) {
