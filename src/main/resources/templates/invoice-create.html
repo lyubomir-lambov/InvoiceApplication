@@ -41,11 +41,7 @@
                     <p class="field-error" th:if="${#fields.hasErrors('invoiceType')}" th:errors="*{invoiceType}">Invoice type error</p>
                 </div>
 
-                <div class="form-group">
-                    <label for="invoiceSequence">Sequence</label>
-                    <input id="invoiceSequence" th:field="*{invoiceSequence}" type="number" min="1" readonly>
-                    <p class="field-error" th:if="${#fields.hasErrors('invoiceSequence')}" th:errors="*{invoiceSequence}">Sequence error</p>
-                </div>
+                <input th:field="*{invoiceSequence}" type="hidden">
 
                 <div class="form-group">
                     <label for="invoiceNumber">Invoice number</label>
