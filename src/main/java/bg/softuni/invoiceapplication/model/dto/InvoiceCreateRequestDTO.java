@@ -1,7 +1,11 @@
 package bg.softuni.invoiceapplication.model.dto;
 
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +18,15 @@ public class InvoiceCreateRequestDTO {
 
     @NotNull(message = "Invoice type required")
     private InvoiceType invoiceType;
+
+    @NotNull(message = "Invoice sequence required")
+    @Positive(message = "Invoice sequence must be positive")
+    private Long invoiceSequence;
+
+    @NotBlank(message = "Invoice number required")
+    @Size(min = 10, max = 10, message = "Invoice number must be exactly 10 characters")
+    @Pattern(regexp = "\\d{10}", message = "Invoice number must contain exactly 10 digits")
+    private String invoiceNumber;
 
     @NotNull(message = "Issue date required")
     private LocalDate issueDate;
