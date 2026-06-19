@@ -37,7 +37,10 @@ public class Invoice extends BaseEntity {
     @Column(name = "invoice_type", nullable = false)
     private InvoiceType invoiceType;
 
-    @Column(name = "invoice_number", nullable = false, unique = true)
+    @Column(name = "invoice_sequence", nullable = false, unique = true)
+    private Long invoiceSequence;
+
+    @Column(name = "invoice_number", nullable = false, unique = true, length = 10)
     private String invoiceNumber;
 
     @Column(name = "issue_date", nullable = false)
