@@ -16,6 +16,8 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
 
     Optional<Client> findByDisplayNameAndIdNot(String displayName, UUID id);
 
+    List<Client> findAllByActiveTrueOrderByDisplayNameAsc();
+
     List<Client> findByDisplayNameContainingIgnoreCaseOrCompanyNameContainingIgnoreCase(String displayName, String companyName);
 
     boolean existsByVatNumber(String vatNumber);
