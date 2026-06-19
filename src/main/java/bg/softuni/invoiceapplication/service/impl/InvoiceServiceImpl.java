@@ -1,11 +1,14 @@
 package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
+import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.service.InvoiceService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -16,9 +19,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     private static final int INVOICE_NUMBER_LENGTH = 10;
 
     private final InvoiceRepository invoiceRepository;
+    private final ClientRepository clientRepository;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, ClientRepository clientRepository) {
         this.invoiceRepository = invoiceRepository;
+        this.clientRepository = clientRepository;
     }
 
     @Override
@@ -37,8 +42,43 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    @Transactional
     public Invoice createInvoice(InvoiceCreateRequestDTO invoiceCreateRequestDTO) {
-        throw new UnsupportedOperationException("Invoice creation is not implemented yet");
+        if (invoiceCreateRequestDTO == null) {
+            throw new IllegalArgumentException("Invoice create request must not be null");
+        }
+
+        Client client = clientRepository.findById(invoiceCreateRequestDTO.getClientId())
+                .orElseThrow(() -> new RuntimeException("Client with id " + invoiceCreateRequestDTO.getClientId() + " does not exist"));
+
+        if (!client.isActive()) {
+            throw new RuntimeException("Cannot create invoice for inactive client");
+        }
+
+        if (invoiceCreateRequestDTO.getDueDate().isBefore(invoiceCreateRequestDTO.getIssueDate())) {
+            throw new RuntimeException("Due date cannot be before issue date");
+        }
+
+        Long nextInvoiceSequence = getNextInvoiceSequence();
+
+        Invoice invoice = Invoice.builder()
+                .invoiceType(invoiceCreateRequestDTO.getInvoiceType())
+                .invoiceSequence(nextInvoiceSequence)
+                .invoiceNumber(formatInvoiceNumber(nextInvoiceSequence))
+                .issueDate(invoiceCreateRequestDTO.getIssueDate())
+                .dueDate(invoiceCreateRequestDTO.getDueDate())
+                .client(client)
+                .clientDisplayName(client.getDisplayName())
+                .clientCompanyName(client.getCompanyName())
+                .clientEmail(client.getEmail())
+                .clientPhoneNumber(client.getPhoneNumber())
+                .clientVatRegistered(client.isVatRegistered())
+                .clientVatNumber(client.getVatNumber())
+                .clientCountry(client.getCountry())
+                .clientAddress(client.getAddress())
+                .build();
+
+        return invoiceRepository.save(invoice);
     }
 
     private Long getNextInvoiceSequence() {
