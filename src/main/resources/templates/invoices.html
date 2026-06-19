@@ -32,35 +32,22 @@
                 <thead>
                 <tr>
                     <th>Invoice</th>
+                    <th>Type</th>
                     <th>Client</th>
+                    <th>Issue date</th>
                     <th>Amount</th>
-                    <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>INV-2026-001</td>
-                    <td>Acme Ltd.</td>
-                    <td>1,250.00 BGN</td>
-                    <td><span class="status-badge status-paid">Paid</span></td>
+                <tr th:if="${#lists.isEmpty(invoices)}">
+                    <td colspan="5">No invoices found.</td>
                 </tr>
-                <tr>
-                    <td>INV-2026-002</td>
-                    <td>Balkan Trade</td>
-                    <td>840.00 BGN</td>
-                    <td><span class="status-badge status-pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>INV-2026-003</td>
-                    <td>Sofia Consulting</td>
-                    <td>2,400.00 BGN</td>
-                    <td><span class="status-badge status-overdue">Overdue</span></td>
-                </tr>
-                <tr>
-                    <td>INV-2026-004</td>
-                    <td>Green Office</td>
-                    <td>630.00 BGN</td>
-                    <td><span class="status-badge status-draft">Draft</span></td>
+                <tr th:each="invoice : ${invoices}">
+                    <td th:text="${invoice.invoiceNumber}">0000000001</td>
+                    <td th:text="${invoice.invoiceType.displayName}">Invoice</td>
+                    <td th:text="${invoice.clientCompanyName}">Acme Ltd.</td>
+                    <td th:text="${invoice.issueDate}">2026-06-19</td>
+                    <td th:text="${invoice.totalAmount} + ' BGN'">0 BGN</td>
                 </tr>
                 </tbody>
             </table>

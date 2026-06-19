@@ -37,6 +37,7 @@ public class InvoiceController {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
         model.addAttribute("username", username);
+        model.addAttribute("invoices", invoiceService.findAllInvoices());
         return "invoices";
     }
 

@@ -1,16 +1,20 @@
 package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.service.InvoiceService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -24,6 +28,21 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, ClientRepository clientRepository) {
         this.invoiceRepository = invoiceRepository;
         this.clientRepository = clientRepository;
+    }
+
+    @Override
+    public List<InvoiceShowAllDTO> findAllInvoices() {
+        return invoiceRepository.findAll(Sort.by(Sort.Order.desc("invoiceSequence")))
+                .stream()
+                .map(invoice -> InvoiceShowAllDTO.builder()
+                        .id(invoice.getId())
+                        .invoiceType(invoice.getInvoiceType())
+                        .invoiceNumber(invoice.getInvoiceNumber())
+                        .clientCompanyName(invoice.getClientCompanyName())
+                        .issueDate(invoice.getIssueDate())
+                        .totalAmount(BigDecimal.ZERO)
+                        .build())
+                .toList();
     }
 
     @Override
