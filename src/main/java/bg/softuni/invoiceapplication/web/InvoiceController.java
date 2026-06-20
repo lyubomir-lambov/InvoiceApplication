@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -50,6 +51,19 @@ public class InvoiceController {
         model.addAttribute("invoice", invoiceService.prepareCreateInvoiceForm());
 
         return "invoice-create";
+    }
+
+    @GetMapping("/{invoiceId}")
+    public String showInvoice(@PathVariable UUID invoiceId,
+                              HttpSession httpSession,
+                              Model model) {
+        UUID userId = SessionUser.getUserId(httpSession);
+        String username = userService.getUsernameById(userId);
+
+        model.addAttribute("username", username);
+        model.addAttribute("invoice", invoiceService.findInvoiceById(invoiceId));
+
+        return "invoice-details";
     }
 
     @PostMapping("/create")

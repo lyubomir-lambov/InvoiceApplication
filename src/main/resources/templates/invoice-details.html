@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${invoice.invoiceType.displayName + ' #' + invoice.invoiceNumber + ' | Invoice Application'}">Invoice | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button nav-button-active" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
+    </nav>
+    <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
+        <span th:text="${username}" style="display: inline-flex; align-items: center; min-height: 40px; color: var(--primary); font-size: 15px; font-weight: 700;">username</span>
+        <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main class="invoice-document-page">
+    <section class="invoice-document-actions">
+        <a class="nav-button" th:href="@{/invoices}" href="/invoices">Back to invoices</a>
+        <button class="nav-button" type="button" onclick="window.print()">Print</button>
+    </section>
+
+    <article class="invoice-document" th:classappend="${invoice.status.name() == 'CANCELLED'} ? ' invoice-document-cancelled'">
+        <div class="invoice-document-status" th:if="${invoice.status.name() == 'CANCELLED'}">Cancelled</div>
+
+        <header class="invoice-document-header">
+            <div>
+                <p class="invoice-document-eyebrow" th:text="${invoice.invoiceType.displayName}">Invoice</p>
+                <h1 th:text="'#' + ${invoice.invoiceNumber}">#0000000001</h1>
+                <p class="invoice-document-muted" th:text="${invoice.status.displayName}">Issued</p>
+            </div>
+
+            <dl class="invoice-document-meta">
+                <div>
+                    <dt>Issue date</dt>
+                    <dd th:text="${invoice.issueDate}">2026-06-19</dd>
+                </div>
+                <div>
+                    <dt>Due date</dt>
+                    <dd th:text="${invoice.dueDate != null ? invoice.dueDate : '-'}">2026-07-03</dd>
+                </div>
+                <div>
+                    <dt>Currency</dt>
+                    <dd th:text="${invoice.currency.displayName + ' (' + invoice.currency.code + ')'}">Bulgarian lev (BGN)</dd>
+                </div>
+            </dl>
+        </header>
+
+        <section class="invoice-document-parties" aria-label="Invoice parties">
+            <div>
+                <h2>Supplier</h2>
+                <p class="invoice-document-name">Invoice Application</p>
+                <p>Generated invoice document</p>
+            </div>
+
+            <div>
+                <h2>Bill to</h2>
+                <p class="invoice-document-name" th:text="${invoice.clientCompanyName}">Acme Ltd.</p>
+                <p th:text="${invoice.clientDisplayName != null && !#strings.isEmpty(invoice.clientDisplayName) ? invoice.clientDisplayName : '-'}">Client display name</p>
+                <p th:text="${invoice.clientEmail != null && !#strings.isEmpty(invoice.clientEmail) ? invoice.clientEmail : '-'}">client@example.com</p>
+                <p th:text="${invoice.clientPhoneNumber != null && !#strings.isEmpty(invoice.clientPhoneNumber) ? invoice.clientPhoneNumber : '-'}">+359888000000</p>
+                <p th:text="${invoice.clientVatRegistered && invoice.clientVatNumber != null && !#strings.isEmpty(invoice.clientVatNumber) ? 'VAT: ' + invoice.clientVatNumber : 'Not VAT registered'}">VAT: BG123456789</p>
+                <p th:text="${invoice.clientCountry}">BULGARIA</p>
+                <p th:text="${invoice.clientAddress != null && !#strings.isEmpty(invoice.clientAddress) ? invoice.clientAddress : '-'}">Sofia</p>
+            </div>
+        </section>
+
+        <section class="invoice-document-lines" aria-label="Invoice line items">
+            <table>
+                <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit</th>
+                    <th>Unit price</th>
+                    <th>VAT</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="lineItem : ${invoice.lineItems}">
+                    <td th:text="${lineItem.description}">Service</td>
+                    <td th:text="${lineItem.quantity}">1</td>
+                    <td th:text="${lineItem.measurementUnit.displayName}">Service</td>
+                    <td th:text="${lineItem.unitPrice + ' ' + invoice.currency.code}">100.00 BGN</td>
+                    <td th:text="${lineItem.vatRate.percentage + '%'}">20%</td>
+                    <td th:text="${lineItem.lineTotalWithVat + ' ' + invoice.currency.code}">120.00 BGN</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="invoice-document-summary" aria-label="Invoice summary">
+            <dl>
+                <div>
+                    <dt>Subtotal</dt>
+                    <dd th:text="${invoice.subtotalAmount + ' ' + invoice.currency.code}">100.00 BGN</dd>
+                </div>
+                <div>
+                    <dt>VAT</dt>
+                    <dd th:text="${invoice.vatAmount + ' ' + invoice.currency.code}">20.00 BGN</dd>
+                </div>
+                <div class="invoice-document-total">
+                    <dt>Total</dt>
+                    <dd th:text="${invoice.totalAmount + ' ' + invoice.currency.code}">120.00 BGN</dd>
+                </div>
+            </dl>
+        </section>
+    </article>
+</main>
+</body>
+</html>

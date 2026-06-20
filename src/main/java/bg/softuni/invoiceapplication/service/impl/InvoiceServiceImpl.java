@@ -1,6 +1,8 @@
 package bg.softuni.invoiceapplication.service.impl;
 
+import bg.softuni.invoiceapplication.mapper.invoice.InvoiceMapper;
 import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.InvoiceDetailsDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceLineItemCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
@@ -16,8 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -30,27 +30,25 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final ClientRepository clientRepository;
+    private final InvoiceMapper invoiceMapper;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, ClientRepository clientRepository) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, ClientRepository clientRepository, InvoiceMapper invoiceMapper) {
         this.invoiceRepository = invoiceRepository;
         this.clientRepository = clientRepository;
+        this.invoiceMapper = invoiceMapper;
     }
 
     @Override
     public List<InvoiceShowAllDTO> findAllInvoices() {
-        return invoiceRepository.findAll(Sort.by(Sort.Order.desc("invoiceSequence")))
-                .stream()
-                .map(invoice -> InvoiceShowAllDTO.builder()
-                        .id(invoice.getId())
-                        .invoiceType(invoice.getInvoiceType())
-                        .invoiceNumber(invoice.getInvoiceNumber())
-                        .currency(invoice.getCurrency() == null ? InvoiceCurrency.BGN : invoice.getCurrency())
-                        .status(invoice.getStatus() == null ? InvoiceStatus.ISSUED : invoice.getStatus())
-                        .clientCompanyName(invoice.getClientCompanyName())
-                        .issueDate(invoice.getIssueDate())
-                        .totalAmount(calculateInvoiceTotalAmount(invoice))
-                        .build())
-                .toList();
+        return invoiceMapper.fromAllInvoicesToInvoiceShowAllDTOs(
+                invoiceRepository.findAll(Sort.by(Sort.Order.desc("invoiceSequence"))));
+    }
+
+    @Override
+    public InvoiceDetailsDTO findInvoiceById(UUID invoiceId) {
+        return invoiceRepository.findById(invoiceId)
+                .map(invoiceMapper::fromInvoiceToInvoiceDetailsDTO)
+                .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceId + " does not exist"));
     }
 
     @Override
@@ -154,13 +152,5 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private String formatInvoiceNumber(Long invoiceSequence) {
         return String.format("%0" + INVOICE_NUMBER_LENGTH + "d", invoiceSequence);
-    }
-
-    private BigDecimal calculateInvoiceTotalAmount(Invoice invoice) {
-        return invoice.getLineItems()
-                .stream()
-                .map(InvoiceLineItem::getLineTotalWithVat)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
     }
 }

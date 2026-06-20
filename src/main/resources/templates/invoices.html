@@ -45,7 +45,18 @@
                 </tr>
                 <tr th:each="invoice : ${invoices}"
                     th:classappend="${invoice.status.name() == 'CANCELLED'} ? 'invoice-cancelled-row'">
-                    <td th:text="${invoice.invoiceNumber}">0000000001</td>
+                    <td>
+                        <div class="invoice-number-cell">
+                            <a class="invoice-link-icon"
+                               th:href="@{/invoices/{invoiceId}(invoiceId=${invoice.id})}"
+                               href="/invoices/00000000-0000-0000-0000-000000000000"
+                               aria-label="Open invoice"
+                               title="Open invoice">
+                                <span aria-hidden="true">i</span>
+                            </a>
+                            <span th:text="${invoice.invoiceNumber}">0000000001</span>
+                        </div>
+                    </td>
                     <td th:text="${invoice.issueDate}">2026-06-19</td>
                     <td th:text="${invoice.invoiceType.displayName}">Invoice</td>
                     <td th:text="${invoice.clientCompanyName}">Acme Ltd.</td>
