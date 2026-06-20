@@ -18,6 +18,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,6 +29,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class InvoiceLineItem extends BaseEntity {
+
+    private static final int MONEY_SCALE = 2;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "invoice_id", nullable = false)
@@ -59,15 +62,18 @@ public class InvoiceLineItem extends BaseEntity {
     private LocalDateTime updatedOn;
 
     public BigDecimal getLineTotalWithoutVat() {
-        return this.quantity.multiply(this.unitPrice);
+        return this.quantity.multiply(this.unitPrice)
+                .setScale(MONEY_SCALE, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal getVatAmount() {
+        return getLineTotalWithoutVat()
+                .multiply(BigDecimal.valueOf(this.vatRate.getPercentage()))
+                .divide(BigDecimal.valueOf(100), MONEY_SCALE, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getLineTotalWithVat() {
-        BigDecimal vatMultiplier = BigDecimal.ONE.add(
-                BigDecimal.valueOf(this.vatRate.getPercentage())
-                        .divide(BigDecimal.valueOf(100))
-        );
-
-        return getLineTotalWithoutVat().multiply(vatMultiplier);
+        return getLineTotalWithoutVat().add(getVatAmount())
+                .setScale(MONEY_SCALE, RoundingMode.HALF_UP);
     }
 }
