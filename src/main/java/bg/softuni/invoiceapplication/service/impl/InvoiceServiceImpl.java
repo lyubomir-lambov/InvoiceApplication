@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.InvoiceLineItemCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
@@ -56,6 +57,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceCreateRequestDTO.setInvoiceNumber(formatInvoiceNumber(nextInvoiceSequence));
         invoiceCreateRequestDTO.setIssueDate(issueDate);
         invoiceCreateRequestDTO.setDueDate(issueDate.plusDays(DEFAULT_DUE_DAYS));
+        invoiceCreateRequestDTO.getLineItems().add(new InvoiceLineItemCreateRequestDTO());
 
         return invoiceCreateRequestDTO;
     }
