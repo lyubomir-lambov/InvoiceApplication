@@ -42,7 +42,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         .invoiceNumber(invoice.getInvoiceNumber())
                         .clientCompanyName(invoice.getClientCompanyName())
                         .issueDate(invoice.getIssueDate())
-                        .totalAmount(BigDecimal.ZERO)
+                        .totalAmount(calculateInvoiceTotalAmount(invoice))
                         .build())
                 .toList();
     }
@@ -136,5 +136,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private String formatInvoiceNumber(Long invoiceSequence) {
         return String.format("%0" + INVOICE_NUMBER_LENGTH + "d", invoiceSequence);
+    }
+
+    private BigDecimal calculateInvoiceTotalAmount(Invoice invoice) {
+        return invoice.getLineItems()
+                .stream()
+                .map(InvoiceLineItem::getLineTotalWithVat)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
