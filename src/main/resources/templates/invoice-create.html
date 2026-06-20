@@ -75,54 +75,165 @@
                     </div>
                 </div>
 
-                <div class="invoice-line-grid">
-                    <div class="form-group invoice-line-description">
-                        <label for="lineItemDescription">Description</label>
-                        <input id="lineItemDescription" th:field="*{lineItems[0].description}" type="text" maxlength="255" required>
-                        <p class="field-error" th:if="${#fields.hasErrors('lineItems[0].description')}" th:errors="*{lineItems[0].description}">Description error</p>
-                    </div>
+                <div class="invoice-lines" id="invoiceLines">
+                    <div class="invoice-line-grid" th:each="lineItem, itemStat : *{lineItems}">
+                        <div class="form-group invoice-line-description">
+                            <label th:for="${'lineItemDescription' + itemStat.index}">Description</label>
+                            <input th:id="${'lineItemDescription' + itemStat.index}"
+                                   th:field="*{lineItems[__${itemStat.index}__].description}"
+                                   type="text"
+                                   maxlength="255"
+                                   required>
+                            <p class="field-error"
+                               th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].description')}"
+                               th:errors="*{lineItems[__${itemStat.index}__].description}">Description error</p>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="lineItemQuantity">Quantity</label>
-                        <input id="lineItemQuantity" th:field="*{lineItems[0].quantity}" type="number" min="0.01" step="0.01" required>
-                        <p class="field-error" th:if="${#fields.hasErrors('lineItems[0].quantity')}" th:errors="*{lineItems[0].quantity}">Quantity error</p>
-                    </div>
+                        <div class="form-group">
+                            <label th:for="${'lineItemQuantity' + itemStat.index}">Quantity</label>
+                            <input th:id="${'lineItemQuantity' + itemStat.index}"
+                                   th:field="*{lineItems[__${itemStat.index}__].quantity}"
+                                   type="number"
+                                   min="0.01"
+                                   step="0.01"
+                                   required>
+                            <p class="field-error"
+                               th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].quantity')}"
+                               th:errors="*{lineItems[__${itemStat.index}__].quantity}">Quantity error</p>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="lineItemMeasurementUnit">Unit</label>
-                        <select id="lineItemMeasurementUnit" th:field="*{lineItems[0].measurementUnit}" required>
-                            <option value="">Select unit</option>
-                            <option th:each="measurementUnit : ${measurementUnits}"
-                                    th:value="${measurementUnit}"
-                                    th:text="${measurementUnit.displayName}">
-                            </option>
-                        </select>
-                        <p class="field-error" th:if="${#fields.hasErrors('lineItems[0].measurementUnit')}" th:errors="*{lineItems[0].measurementUnit}">Measurement unit error</p>
-                    </div>
+                        <div class="form-group">
+                            <label th:for="${'lineItemMeasurementUnit' + itemStat.index}">Unit</label>
+                            <select th:id="${'lineItemMeasurementUnit' + itemStat.index}"
+                                    th:field="*{lineItems[__${itemStat.index}__].measurementUnit}"
+                                    required>
+                                <option value="">Select unit</option>
+                                <option th:each="measurementUnit : ${measurementUnits}"
+                                        th:value="${measurementUnit}"
+                                        th:text="${measurementUnit.displayName}">
+                                </option>
+                            </select>
+                            <p class="field-error"
+                               th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].measurementUnit')}"
+                               th:errors="*{lineItems[__${itemStat.index}__].measurementUnit}">Measurement unit error</p>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="lineItemUnitPrice">Unit price</label>
-                        <input id="lineItemUnitPrice" th:field="*{lineItems[0].unitPrice}" type="number" min="0" step="0.000001" required>
-                        <p class="field-error" th:if="${#fields.hasErrors('lineItems[0].unitPrice')}" th:errors="*{lineItems[0].unitPrice}">Unit price error</p>
-                    </div>
+                        <div class="form-group">
+                            <label th:for="${'lineItemUnitPrice' + itemStat.index}">Unit price</label>
+                            <input th:id="${'lineItemUnitPrice' + itemStat.index}"
+                                   th:field="*{lineItems[__${itemStat.index}__].unitPrice}"
+                                   type="number"
+                                   min="0"
+                                   step="0.000001"
+                                   required>
+                            <p class="field-error"
+                               th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].unitPrice')}"
+                               th:errors="*{lineItems[__${itemStat.index}__].unitPrice}">Unit price error</p>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="lineItemVatRate">VAT</label>
-                        <select id="lineItemVatRate" th:field="*{lineItems[0].vatRate}" required>
-                            <option value="">Select VAT</option>
-                            <option th:each="vatRate : ${vatRates}"
-                                    th:value="${vatRate}"
-                                    th:text="${vatRate.percentage + '%'}">
-                            </option>
-                        </select>
-                        <p class="field-error" th:if="${#fields.hasErrors('lineItems[0].vatRate')}" th:errors="*{lineItems[0].vatRate}">VAT rate error</p>
+                        <div class="form-group">
+                            <label th:for="${'lineItemVatRate' + itemStat.index}">VAT</label>
+                            <select th:id="${'lineItemVatRate' + itemStat.index}"
+                                    th:field="*{lineItems[__${itemStat.index}__].vatRate}"
+                                    required>
+                                <option value="">Select VAT</option>
+                                <option th:each="vatRate : ${vatRates}"
+                                        th:value="${vatRate}"
+                                        th:text="${vatRate.percentage + '%'}">
+                                </option>
+                            </select>
+                            <p class="field-error"
+                               th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].vatRate')}"
+                               th:errors="*{lineItems[__${itemStat.index}__].vatRate}">VAT rate error</p>
+                        </div>
                     </div>
                 </div>
+
+                <button class="button button-secondary invoice-add-row-button" id="addInvoiceLineButton" type="button">Add row</button>
 
                 <button class="button button-primary form-submit" type="submit">Create invoice</button>
             </form>
         </div>
     </section>
 </main>
+<template id="invoiceLineTemplate">
+    <div class="invoice-line-grid">
+        <div class="form-group invoice-line-description">
+            <label data-for-template="lineItemDescription">Description</label>
+            <input data-id-template="lineItemDescription"
+                   data-name-template="lineItems[__index__].description"
+                   type="text"
+                   maxlength="255"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label data-for-template="lineItemQuantity">Quantity</label>
+            <input data-id-template="lineItemQuantity"
+                   data-name-template="lineItems[__index__].quantity"
+                   type="number"
+                   min="0.01"
+                   step="0.01"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label data-for-template="lineItemMeasurementUnit">Unit</label>
+            <select data-id-template="lineItemMeasurementUnit"
+                    data-name-template="lineItems[__index__].measurementUnit"
+                    required>
+                <option value="">Select unit</option>
+                <option th:each="measurementUnit : ${measurementUnits}"
+                        th:value="${measurementUnit}"
+                        th:text="${measurementUnit.displayName}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label data-for-template="lineItemUnitPrice">Unit price</label>
+            <input data-id-template="lineItemUnitPrice"
+                   data-name-template="lineItems[__index__].unitPrice"
+                   type="number"
+                   min="0"
+                   step="0.000001"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label data-for-template="lineItemVatRate">VAT</label>
+            <select data-id-template="lineItemVatRate"
+                    data-name-template="lineItems[__index__].vatRate"
+                    required>
+                <option value="">Select VAT</option>
+                <option th:each="vatRate : ${vatRates}"
+                        th:value="${vatRate}"
+                        th:text="${vatRate.percentage + '%'}">
+                </option>
+            </select>
+        </div>
+    </div>
+</template>
+<script>
+    const invoiceLines = document.getElementById('invoiceLines');
+    const invoiceLineTemplate = document.getElementById('invoiceLineTemplate');
+    const addInvoiceLineButton = document.getElementById('addInvoiceLineButton');
+
+    addInvoiceLineButton.addEventListener('click', () => {
+        const nextIndex = invoiceLines.querySelectorAll('.invoice-line-grid').length;
+        const newLine = invoiceLineTemplate.content.cloneNode(true);
+
+        newLine.querySelectorAll('[data-name-template]').forEach((field) => {
+            field.name = field.dataset.nameTemplate.replace('__index__', nextIndex);
+            field.id = `${field.dataset.idTemplate}${nextIndex}`;
+        });
+
+        newLine.querySelectorAll('[data-for-template]').forEach((label) => {
+            label.htmlFor = `${label.dataset.forTemplate}${nextIndex}`;
+        });
+
+        invoiceLines.appendChild(newLine);
+    });
+</script>
 </body>
 </html>

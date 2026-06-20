@@ -433,6 +433,17 @@ main {
     align-items: start;
 }
 
+.invoice-lines {
+    display: grid;
+    gap: 16px;
+}
+
+.invoice-add-row-button {
+    justify-self: start;
+    cursor: pointer;
+    font: inherit;
+}
+
 @media (max-width: 760px) {
     .page-header {
         align-items: flex-start;
