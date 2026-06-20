@@ -32,9 +32,9 @@
                 <thead>
                 <tr>
                     <th>Invoice</th>
+                    <th>Issue date</th>
                     <th>Type</th>
                     <th>Client</th>
-                    <th>Issue date</th>
                     <th>Amount</th>
                 </tr>
                 </thead>
@@ -44,9 +44,9 @@
                 </tr>
                 <tr th:each="invoice : ${invoices}">
                     <td th:text="${invoice.invoiceNumber}">0000000001</td>
+                    <td th:text="${invoice.issueDate}">2026-06-19</td>
                     <td th:text="${invoice.invoiceType.displayName}">Invoice</td>
                     <td th:text="${invoice.clientCompanyName}">Acme Ltd.</td>
-                    <td th:text="${invoice.issueDate}">2026-06-19</td>
                     <td th:text="${invoice.totalAmount} + ' BGN'">0 BGN</td>
                 </tr>
                 </tbody>
