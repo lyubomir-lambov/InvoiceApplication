@@ -75,10 +75,20 @@
                     </div>
                 </div>
 
-                <div class="invoice-lines" id="invoiceLines">
-                    <div class="invoice-line-grid" th:each="lineItem, itemStat : *{lineItems}">
-                        <div class="form-group invoice-line-description">
-                            <label th:for="${'lineItemDescription' + itemStat.index}">Description</label>
+                <div class="invoice-lines table-card">
+                    <table class="invoice-lines-table">
+                        <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Unit price</th>
+                            <th>VAT</th>
+                        </tr>
+                        </thead>
+                        <tbody id="invoiceLines">
+                        <tr th:each="lineItem, itemStat : *{lineItems}">
+                            <td>
                             <input th:id="${'lineItemDescription' + itemStat.index}"
                                    th:field="*{lineItems[__${itemStat.index}__].description}"
                                    type="text"
@@ -87,10 +97,9 @@
                             <p class="field-error"
                                th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].description')}"
                                th:errors="*{lineItems[__${itemStat.index}__].description}">Description error</p>
-                        </div>
+                            </td>
 
-                        <div class="form-group">
-                            <label th:for="${'lineItemQuantity' + itemStat.index}">Quantity</label>
+                            <td>
                             <input th:id="${'lineItemQuantity' + itemStat.index}"
                                    th:field="*{lineItems[__${itemStat.index}__].quantity}"
                                    type="number"
@@ -100,10 +109,9 @@
                             <p class="field-error"
                                th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].quantity')}"
                                th:errors="*{lineItems[__${itemStat.index}__].quantity}">Quantity error</p>
-                        </div>
+                            </td>
 
-                        <div class="form-group">
-                            <label th:for="${'lineItemMeasurementUnit' + itemStat.index}">Unit</label>
+                            <td>
                             <select th:id="${'lineItemMeasurementUnit' + itemStat.index}"
                                     th:field="*{lineItems[__${itemStat.index}__].measurementUnit}"
                                     required>
@@ -116,10 +124,9 @@
                             <p class="field-error"
                                th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].measurementUnit')}"
                                th:errors="*{lineItems[__${itemStat.index}__].measurementUnit}">Measurement unit error</p>
-                        </div>
+                            </td>
 
-                        <div class="form-group">
-                            <label th:for="${'lineItemUnitPrice' + itemStat.index}">Unit price</label>
+                            <td>
                             <input th:id="${'lineItemUnitPrice' + itemStat.index}"
                                    th:field="*{lineItems[__${itemStat.index}__].unitPrice}"
                                    type="number"
@@ -129,10 +136,9 @@
                             <p class="field-error"
                                th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].unitPrice')}"
                                th:errors="*{lineItems[__${itemStat.index}__].unitPrice}">Unit price error</p>
-                        </div>
+                            </td>
 
-                        <div class="form-group">
-                            <label th:for="${'lineItemVatRate' + itemStat.index}">VAT</label>
+                            <td>
                             <select th:id="${'lineItemVatRate' + itemStat.index}"
                                     th:field="*{lineItems[__${itemStat.index}__].vatRate}"
                                     required>
@@ -145,8 +151,10 @@
                             <p class="field-error"
                                th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].vatRate')}"
                                th:errors="*{lineItems[__${itemStat.index}__].vatRate}">VAT rate error</p>
-                        </div>
-                    </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <button class="button button-secondary invoice-add-row-button" id="addInvoiceLineButton" type="button">Add row</button>
@@ -157,28 +165,25 @@
     </section>
 </main>
 <template id="invoiceLineTemplate">
-    <div class="invoice-line-grid">
-        <div class="form-group invoice-line-description">
-            <label data-for-template="lineItemDescription">Description</label>
+    <tr>
+        <td>
             <input data-id-template="lineItemDescription"
                    data-name-template="lineItems[__index__].description"
                    type="text"
                    maxlength="255"
                    required>
-        </div>
+        </td>
 
-        <div class="form-group">
-            <label data-for-template="lineItemQuantity">Quantity</label>
+        <td>
             <input data-id-template="lineItemQuantity"
                    data-name-template="lineItems[__index__].quantity"
                    type="number"
                    min="0.01"
                    step="0.01"
                    required>
-        </div>
+        </td>
 
-        <div class="form-group">
-            <label data-for-template="lineItemMeasurementUnit">Unit</label>
+        <td>
             <select data-id-template="lineItemMeasurementUnit"
                     data-name-template="lineItems[__index__].measurementUnit"
                     required>
@@ -188,20 +193,18 @@
                         th:text="${measurementUnit.displayName}">
                 </option>
             </select>
-        </div>
+        </td>
 
-        <div class="form-group">
-            <label data-for-template="lineItemUnitPrice">Unit price</label>
+        <td>
             <input data-id-template="lineItemUnitPrice"
                    data-name-template="lineItems[__index__].unitPrice"
                    type="number"
                    min="0"
                    step="0.000001"
                    required>
-        </div>
+        </td>
 
-        <div class="form-group">
-            <label data-for-template="lineItemVatRate">VAT</label>
+        <td>
             <select data-id-template="lineItemVatRate"
                     data-name-template="lineItems[__index__].vatRate"
                     required>
@@ -211,8 +214,8 @@
                         th:text="${vatRate.percentage + '%'}">
                 </option>
             </select>
-        </div>
-    </div>
+        </td>
+    </tr>
 </template>
 <script>
     const invoiceLines = document.getElementById('invoiceLines');
@@ -220,16 +223,12 @@
     const addInvoiceLineButton = document.getElementById('addInvoiceLineButton');
 
     addInvoiceLineButton.addEventListener('click', () => {
-        const nextIndex = invoiceLines.querySelectorAll('.invoice-line-grid').length;
+        const nextIndex = invoiceLines.querySelectorAll('tr').length;
         const newLine = invoiceLineTemplate.content.cloneNode(true);
 
         newLine.querySelectorAll('[data-name-template]').forEach((field) => {
             field.name = field.dataset.nameTemplate.replace('__index__', nextIndex);
             field.id = `${field.dataset.idTemplate}${nextIndex}`;
-        });
-
-        newLine.querySelectorAll('[data-for-template]').forEach((label) => {
-            label.htmlFor = `${label.dataset.forTemplate}${nextIndex}`;
         });
 
         invoiceLines.appendChild(newLine);

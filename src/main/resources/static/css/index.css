@@ -434,14 +434,57 @@ main {
 }
 
 .invoice-lines {
-    display: grid;
-    gap: 16px;
+    overflow-x: auto;
 }
 
 .invoice-add-row-button {
     justify-self: start;
     cursor: pointer;
     font: inherit;
+}
+
+.invoice-lines-table {
+    width: 100%;
+    min-width: 860px;
+    border-collapse: collapse;
+}
+
+.invoice-lines-table th,
+.invoice-lines-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.invoice-lines-table th {
+    color: var(--muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: #f8fafc;
+}
+
+.invoice-lines-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.invoice-lines-table input,
+.invoice-lines-table select {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font: inherit;
+    background: #ffffff;
+}
+
+.invoice-lines-table input:focus,
+.invoice-lines-table select:focus {
+    outline: 3px solid rgba(37, 99, 235, 0.16);
+    border-color: var(--primary);
 }
 
 @media (max-width: 760px) {
