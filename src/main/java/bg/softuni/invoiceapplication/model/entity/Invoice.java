@@ -89,4 +89,13 @@ public class Invoice extends BaseEntity {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedOn;
+
+    public void addLineItem(InvoiceLineItem lineItem) {
+        if (lineItem == null) {
+            return;
+        }
+
+        this.lineItems.add(lineItem);
+        lineItem.setInvoice(this);
+    }
 }

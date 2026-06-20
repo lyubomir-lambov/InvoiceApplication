@@ -5,6 +5,7 @@ import bg.softuni.invoiceapplication.model.dto.InvoiceLineItemCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
+import bg.softuni.invoiceapplication.model.entity.InvoiceLineItem;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
@@ -103,6 +104,17 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .clientCountry(client.getCountry())
                 .clientAddress(client.getAddress())
                 .build();
+
+        invoiceCreateRequestDTO.getLineItems()
+                .stream()
+                .map(lineItemDTO -> InvoiceLineItem.builder()
+                        .description(lineItemDTO.getDescription())
+                        .quantity(lineItemDTO.getQuantity())
+                        .measurementUnit(lineItemDTO.getMeasurementUnit())
+                        .unitPrice(lineItemDTO.getUnitPrice())
+                        .vatRate(lineItemDTO.getVatRate())
+                        .build())
+                .forEach(invoice::addLineItem);
 
         return invoiceRepository.save(invoice);
     }
