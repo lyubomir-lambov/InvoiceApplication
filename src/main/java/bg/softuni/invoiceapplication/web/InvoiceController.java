@@ -2,6 +2,8 @@ package bg.softuni.invoiceapplication.web;
 
 import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
+import bg.softuni.invoiceapplication.model.enums.MeasurementUnit;
+import bg.softuni.invoiceapplication.model.enums.VatRate;
 import bg.softuni.invoiceapplication.security.SessionUser;
 import bg.softuni.invoiceapplication.service.ClientService;
 import bg.softuni.invoiceapplication.service.InvoiceService;
@@ -43,13 +45,8 @@ public class InvoiceController {
 
     @GetMapping("/create")
     public String showCreateInvoiceForm(HttpSession httpSession, Model model) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        String username = userService.getUsernameById(userId);
-
-        model.addAttribute("username", username);
+        addCreateInvoiceFormAttributes(httpSession, model);
         model.addAttribute("invoice", invoiceService.prepareCreateInvoiceForm());
-        model.addAttribute("invoiceTypes", InvoiceType.values());
-        model.addAttribute("clients", clientService.findAllActiveClientsForSelect());
 
         return "invoice-create";
     }
@@ -74,6 +71,8 @@ public class InvoiceController {
 
         model.addAttribute("username", username);
         model.addAttribute("invoiceTypes", InvoiceType.values());
+        model.addAttribute("measurementUnits", MeasurementUnit.values());
+        model.addAttribute("vatRates", VatRate.values());
         model.addAttribute("clients", clientService.findAllActiveClientsForSelect());
     }
 }
