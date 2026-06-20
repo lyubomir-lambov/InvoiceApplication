@@ -43,7 +43,8 @@
                 <tr th:if="${#lists.isEmpty(invoices)}">
                     <td colspan="6">No invoices found.</td>
                 </tr>
-                <tr th:each="invoice : ${invoices}">
+                <tr th:each="invoice : ${invoices}"
+                    th:classappend="${invoice.status.name() == 'CANCELLED'} ? 'invoice-cancelled-row'">
                     <td th:text="${invoice.invoiceNumber}">0000000001</td>
                     <td th:text="${invoice.issueDate}">2026-06-19</td>
                     <td th:text="${invoice.invoiceType.displayName}">Invoice</td>

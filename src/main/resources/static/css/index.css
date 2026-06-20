@@ -367,6 +367,11 @@ main {
     border-bottom: 0;
 }
 
+.invoice-cancelled-row td {
+    color: var(--muted);
+    text-decoration: line-through;
+}
+
 .auth-form {
     display: grid;
     gap: 18px;

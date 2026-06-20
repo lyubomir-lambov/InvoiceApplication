@@ -5,9 +5,11 @@ import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface InvoiceService {
     List<InvoiceShowAllDTO> findAllInvoices();
     InvoiceCreateRequestDTO prepareCreateInvoiceForm();
     Invoice createInvoice(InvoiceCreateRequestDTO invoiceCreateRequestDTO);
+    void cancelInvoice(UUID invoiceId);
 }

@@ -7,6 +7,7 @@ import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 import bg.softuni.invoiceapplication.model.entity.InvoiceLineItem;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
+import bg.softuni.invoiceapplication.model.enums.InvoiceStatus;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -43,6 +45,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         .invoiceType(invoice.getInvoiceType())
                         .invoiceNumber(invoice.getInvoiceNumber())
                         .currency(invoice.getCurrency() == null ? InvoiceCurrency.BGN : invoice.getCurrency())
+                        .status(invoice.getStatus() == null ? InvoiceStatus.ISSUED : invoice.getStatus())
                         .clientCompanyName(invoice.getClientCompanyName())
                         .issueDate(invoice.getIssueDate())
                         .totalAmount(calculateInvoiceTotalAmount(invoice))
@@ -97,6 +100,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .invoiceSequence(nextInvoiceSequence)
                 .invoiceNumber(formatInvoiceNumber(nextInvoiceSequence))
                 .currency(invoiceCreateRequestDTO.getCurrency())
+                .status(InvoiceStatus.ISSUED)
                 .issueDate(invoiceCreateRequestDTO.getIssueDate())
                 .dueDate(invoiceCreateRequestDTO.getDueDate())
                 .client(client)
@@ -122,6 +126,15 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .forEach(invoice::addLineItem);
 
         return invoiceRepository.save(invoice);
+    }
+
+    @Override
+    @Transactional
+    public void cancelInvoice(UUID invoiceId) {
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceId + " does not exist"));
+
+        invoice.setStatus(InvoiceStatus.CANCELLED);
     }
 
     private Long getNextInvoiceSequence() {
