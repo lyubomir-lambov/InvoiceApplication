@@ -178,6 +178,10 @@ main {
     width: min(100%, 640px);
 }
 
+.invoice-panel {
+    width: min(100%, 1120px);
+}
+
 .content-shell {
     width: 100%;
     margin: 0 auto;
@@ -416,6 +420,19 @@ main {
     font: inherit;
 }
 
+.invoice-header-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.invoice-line-grid {
+    display: grid;
+    grid-template-columns: minmax(240px, 2fr) minmax(110px, 0.7fr) minmax(150px, 1fr) minmax(130px, 0.9fr) minmax(110px, 0.7fr);
+    gap: 16px;
+    align-items: start;
+}
+
 @media (max-width: 760px) {
     .page-header {
         align-items: flex-start;
@@ -435,7 +452,9 @@ main {
     }
 
     .clients-grid,
-    .client-details {
+    .client-details,
+    .invoice-header-grid,
+    .invoice-line-grid {
         grid-template-columns: 1fr;
     }
 }
