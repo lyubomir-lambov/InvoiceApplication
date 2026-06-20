@@ -36,18 +36,20 @@
                     <th>Type</th>
                     <th>Client</th>
                     <th>Amount</th>
+                    <th>Currency</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(invoices)}">
-                    <td colspan="5">No invoices found.</td>
+                    <td colspan="6">No invoices found.</td>
                 </tr>
                 <tr th:each="invoice : ${invoices}">
                     <td th:text="${invoice.invoiceNumber}">0000000001</td>
                     <td th:text="${invoice.issueDate}">2026-06-19</td>
                     <td th:text="${invoice.invoiceType.displayName}">Invoice</td>
                     <td th:text="${invoice.clientCompanyName}">Acme Ltd.</td>
-                    <td th:text="${invoice.totalAmount} + ' BGN'">0 BGN</td>
+                    <td th:text="${invoice.totalAmount}">0.00</td>
+                    <td th:text="${invoice.currency.code}">BGN</td>
                 </tr>
                 </tbody>
             </table>

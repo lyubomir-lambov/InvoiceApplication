@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.model.dto;
 
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
+import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -32,6 +33,9 @@ public class InvoiceCreateRequestDTO {
     @Size(min = 10, max = 10, message = "Invoice number must be exactly 10 characters")
     @Pattern(regexp = "\\d{10}", message = "Invoice number must contain exactly 10 digits")
     private String invoiceNumber;
+
+    @NotNull(message = "Invoice currency required")
+    private InvoiceCurrency currency;
 
     @NotNull(message = "Issue date required")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

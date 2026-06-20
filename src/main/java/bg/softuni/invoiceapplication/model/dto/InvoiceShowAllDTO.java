@@ -1,5 +1,6 @@
 package bg.softuni.invoiceapplication.model.dto;
 
+import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,8 @@ public class InvoiceShowAllDTO {
     private InvoiceType invoiceType;
 
     private String invoiceNumber;
+
+    private InvoiceCurrency currency;
 
     private String clientCompanyName;
 

@@ -6,6 +6,7 @@ import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 import bg.softuni.invoiceapplication.model.entity.InvoiceLineItem;
+import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
@@ -41,6 +42,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         .id(invoice.getId())
                         .invoiceType(invoice.getInvoiceType())
                         .invoiceNumber(invoice.getInvoiceNumber())
+                        .currency(invoice.getCurrency() == null ? InvoiceCurrency.BGN : invoice.getCurrency())
                         .clientCompanyName(invoice.getClientCompanyName())
                         .issueDate(invoice.getIssueDate())
                         .totalAmount(calculateInvoiceTotalAmount(invoice))
@@ -55,6 +57,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         InvoiceCreateRequestDTO invoiceCreateRequestDTO = new InvoiceCreateRequestDTO();
         invoiceCreateRequestDTO.setInvoiceType(InvoiceType.INVOICE);
+        invoiceCreateRequestDTO.setCurrency(InvoiceCurrency.BGN);
         invoiceCreateRequestDTO.setInvoiceSequence(nextInvoiceSequence);
         invoiceCreateRequestDTO.setInvoiceNumber(formatInvoiceNumber(nextInvoiceSequence));
         invoiceCreateRequestDTO.setIssueDate(issueDate);
@@ -93,6 +96,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .invoiceType(invoiceCreateRequestDTO.getInvoiceType())
                 .invoiceSequence(nextInvoiceSequence)
                 .invoiceNumber(formatInvoiceNumber(nextInvoiceSequence))
+                .currency(invoiceCreateRequestDTO.getCurrency())
                 .issueDate(invoiceCreateRequestDTO.getIssueDate())
                 .dueDate(invoiceCreateRequestDTO.getDueDate())
                 .client(client)

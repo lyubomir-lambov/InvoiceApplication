@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.model.entity;
 
 import bg.softuni.invoiceapplication.model.enums.Country;
+import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -42,6 +43,10 @@ public class Invoice extends BaseEntity {
 
     @Column(name = "invoice_number", nullable = false, unique = true, length = 10)
     private String invoiceNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency", nullable = false, length = 3)
+    private InvoiceCurrency currency;
 
     @Column(name = "issue_date", nullable = false)
     private LocalDate issueDate;

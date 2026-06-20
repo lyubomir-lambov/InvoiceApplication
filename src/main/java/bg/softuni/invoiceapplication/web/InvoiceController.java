@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.web;
 
 import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.model.enums.MeasurementUnit;
 import bg.softuni.invoiceapplication.model.enums.VatRate;
@@ -71,6 +72,7 @@ public class InvoiceController {
 
         model.addAttribute("username", username);
         model.addAttribute("invoiceTypes", InvoiceType.values());
+        model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
         model.addAttribute("measurementUnits", MeasurementUnit.values());
         model.addAttribute("vatRates", VatRate.values());
         model.addAttribute("clients", clientService.findAllActiveClientsForSelect());
