@@ -508,6 +508,30 @@ main {
     overflow-wrap: anywhere;
 }
 
+.invoice-document-party-details {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+}
+
+.invoice-document-party-details div {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+}
+
+.invoice-document-party-details dt {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.invoice-document-party-details dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+}
+
 .invoice-document-name {
     color: #111827;
     font-size: 18px;
@@ -726,6 +750,11 @@ main {
     .invoice-document-header,
     .invoice-document-parties {
         grid-template-columns: 1fr;
+    }
+
+    .invoice-document-party-details div {
+        grid-template-columns: 1fr;
+        gap: 2px;
     }
 }
 

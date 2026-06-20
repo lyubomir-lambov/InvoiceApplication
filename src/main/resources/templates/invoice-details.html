@@ -46,29 +46,76 @@
                     <dt>Due date</dt>
                     <dd th:text="${invoice.dueDate != null ? invoice.dueDate : '-'}">2026-07-03</dd>
                 </div>
-                <div>
-                    <dt>Currency</dt>
-                    <dd th:text="${invoice.currency.displayName + ' (' + invoice.currency.code + ')'}">Bulgarian lev (BGN)</dd>
-                </div>
             </dl>
         </header>
 
         <section class="invoice-document-parties" aria-label="Invoice parties">
             <div>
                 <h2>Supplier</h2>
-                <p class="invoice-document-name">Invoice Application</p>
-                <p>Generated invoice document</p>
+                <dl class="invoice-document-party-details">
+                    <div>
+                        <dt>Company:</dt>
+                        <dd>Lyubomir Lambov Software Services</dd>
+                    </div>
+                    <div>
+                        <dt>VAT number:</dt>
+                        <dd>BG203456789</dd>
+                    </div>
+                    <div>
+                        <dt>VAT registered:</dt>
+                        <dd>Yes</dd>
+                    </div>
+                    <div>
+                        <dt>Email:</dt>
+                        <dd>lyubomir.lambov@example.com</dd>
+                    </div>
+                    <div>
+                        <dt>Phone:</dt>
+                        <dd>+359 888 123 456</dd>
+                    </div>
+                    <div>
+                        <dt>Country:</dt>
+                        <dd>BULGARIA</dd>
+                    </div>
+                    <div>
+                        <dt>Address:</dt>
+                        <dd>Varna, 12 Knyaz Boris I Blvd.</dd>
+                    </div>
+                </dl>
             </div>
 
             <div>
                 <h2>Bill to</h2>
-                <p class="invoice-document-name" th:text="${invoice.clientCompanyName}">Acme Ltd.</p>
-                <p th:text="${invoice.clientDisplayName != null && !#strings.isEmpty(invoice.clientDisplayName) ? invoice.clientDisplayName : '-'}">Client display name</p>
-                <p th:text="${invoice.clientEmail != null && !#strings.isEmpty(invoice.clientEmail) ? invoice.clientEmail : '-'}">client@example.com</p>
-                <p th:text="${invoice.clientPhoneNumber != null && !#strings.isEmpty(invoice.clientPhoneNumber) ? invoice.clientPhoneNumber : '-'}">+359888000000</p>
-                <p th:text="${invoice.clientVatRegistered && invoice.clientVatNumber != null && !#strings.isEmpty(invoice.clientVatNumber) ? 'VAT: ' + invoice.clientVatNumber : 'Not VAT registered'}">VAT: BG123456789</p>
-                <p th:text="${invoice.clientCountry}">BULGARIA</p>
-                <p th:text="${invoice.clientAddress != null && !#strings.isEmpty(invoice.clientAddress) ? invoice.clientAddress : '-'}">Sofia</p>
+                <dl class="invoice-document-party-details">
+                    <div>
+                        <dt>Company:</dt>
+                        <dd th:text="${invoice.clientCompanyName}">Acme Ltd.</dd>
+                    </div>
+                    <div>
+                        <dt>VAT number:</dt>
+                        <dd th:text="${invoice.clientVatNumber != null && !#strings.isEmpty(invoice.clientVatNumber) ? invoice.clientVatNumber : '-'}">BG999999</dd>
+                    </div>
+                    <div>
+                        <dt>VAT registered:</dt>
+                        <dd th:text="${invoice.clientVatRegistered ? 'Yes' : 'No'}">Yes</dd>
+                    </div>
+                    <div>
+                        <dt>Email:</dt>
+                        <dd th:text="${invoice.clientEmail != null && !#strings.isEmpty(invoice.clientEmail) ? invoice.clientEmail : '-'}">client@example.com</dd>
+                    </div>
+                    <div>
+                        <dt>Phone:</dt>
+                        <dd th:text="${invoice.clientPhoneNumber != null && !#strings.isEmpty(invoice.clientPhoneNumber) ? invoice.clientPhoneNumber : '-'}">+359888000000</dd>
+                    </div>
+                    <div>
+                        <dt>Country:</dt>
+                        <dd th:text="${invoice.clientCountry}">BULGARIA</dd>
+                    </div>
+                    <div>
+                        <dt>Address:</dt>
+                        <dd th:text="${invoice.clientAddress != null && !#strings.isEmpty(invoice.clientAddress) ? invoice.clientAddress : '-'}">Sofia</dd>
+                    </div>
+                </dl>
             </div>
         </section>
 
