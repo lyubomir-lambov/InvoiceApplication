@@ -104,6 +104,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .client(client)
                 .clientDisplayName(client.getDisplayName())
                 .clientCompanyName(client.getCompanyName())
+                .clientLegalRepresentative(client.getLegalRepresentative())
                 .clientEmail(client.getEmail())
                 .clientPhoneNumber(client.getPhoneNumber())
                 .clientVatRegistered(client.isVatRegistered())

@@ -69,6 +69,9 @@ public class Invoice extends BaseEntity {
     @Column(name = "client_company_name", nullable = false)
     private String clientCompanyName;
 
+    @Column(name = "client_legal_representative")
+    private String clientLegalRepresentative;
+
     @Column(name = "client_email")
     private String clientEmail;
 

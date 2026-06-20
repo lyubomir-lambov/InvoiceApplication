@@ -20,6 +20,10 @@ public class ClientCreateRequestDTO {
     @Size(min = 2, max = 255, message = "Company name must be between 2 and 255 characters")
     private String companyName;
 
+    @NotBlank(message = "Legal representative required")
+    @Size(min = 2, max = 255, message = "Legal representative must be between 2 and 255 characters")
+    private String legalRepresentative;
+
     @Email(message = "Invalid email format")
     private String email;
 

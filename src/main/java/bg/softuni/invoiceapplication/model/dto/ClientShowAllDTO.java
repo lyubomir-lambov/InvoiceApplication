@@ -18,6 +18,8 @@ public class ClientShowAllDTO {
 
     private String companyName;
 
+    private String legalRepresentative;
+
     private String email;
 
     private String phoneNumber;

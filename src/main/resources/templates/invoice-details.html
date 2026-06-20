@@ -100,6 +100,10 @@
                         <dd th:text="${invoice.clientVatRegistered ? 'Yes' : 'No'}">Yes</dd>
                     </div>
                     <div>
+                        <dt>Legal representative:</dt>
+                        <dd th:text="${invoice.clientLegalRepresentative != null && !#strings.isEmpty(invoice.clientLegalRepresentative) ? invoice.clientLegalRepresentative : '-'}">Ivan Ivanov</dd>
+                    </div>
+                    <div>
                         <dt>Email:</dt>
                         <dd th:text="${invoice.clientEmail != null && !#strings.isEmpty(invoice.clientEmail) ? invoice.clientEmail : '-'}">client@example.com</dd>
                     </div>

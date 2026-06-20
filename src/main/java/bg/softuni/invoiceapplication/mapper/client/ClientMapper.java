@@ -20,6 +20,7 @@ public class ClientMapper {
         return Client.builder()
                 .displayName(clientCreateRequestDTO.getDisplayName())
                 .companyName(clientCreateRequestDTO.getCompanyName())
+                .legalRepresentative(clientCreateRequestDTO.getLegalRepresentative())
                 .email(clientCreateRequestDTO.getEmail())
                 .phoneNumber(clientCreateRequestDTO.getPhoneNumber())
                 .country(clientCreateRequestDTO.getCountry())
@@ -40,6 +41,7 @@ public class ClientMapper {
                     .id(client.getId())
                     .displayName(client.getDisplayName())
                     .companyName(client.getCompanyName())
+                    .legalRepresentative(client.getLegalRepresentative())
                     .email(client.getEmail())
                     .phoneNumber(client.getPhoneNumber())
                     .country(client.getCountry())
@@ -61,6 +63,7 @@ public class ClientMapper {
                 .id(client.getId())
                 .displayName(client.getDisplayName())
                 .companyName(client.getCompanyName())
+                .legalRepresentative(client.getLegalRepresentative())
                 .email(client.getEmail())
                 .phoneNumber(client.getPhoneNumber())
                 .country(client.getCountry())
@@ -73,6 +76,7 @@ public class ClientMapper {
     public void updateClientFromEditRequestDTO(Client client, ClientEditRequestDTO clientEditRequestDTO) {
         client.setDisplayName(clientEditRequestDTO.getDisplayName());
         client.setCompanyName(clientEditRequestDTO.getCompanyName());
+        client.setLegalRepresentative(clientEditRequestDTO.getLegalRepresentative());
         client.setEmail(clientEditRequestDTO.getEmail());
         client.setPhoneNumber(clientEditRequestDTO.getPhoneNumber());
         client.setCountry(clientEditRequestDTO.getCountry());

@@ -27,6 +27,9 @@ public class Client extends BaseEntity {
     @Column(nullable = false)
     private String companyName;
 
+    @Column(name = "legal_representative")
+    private String legalRepresentative;
+
     private String email;
 
     @Column(name = "phone_number")

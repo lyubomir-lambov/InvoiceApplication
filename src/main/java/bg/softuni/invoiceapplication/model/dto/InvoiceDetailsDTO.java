@@ -34,6 +34,8 @@ public class InvoiceDetailsDTO {
 
     private String clientDisplayName;
 
+    private String clientLegalRepresentative;
+
     private String clientEmail;
 
     private String clientPhoneNumber;

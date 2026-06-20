@@ -39,6 +39,12 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="legalRepresentative">Legal representative</label>
+                    <input id="legalRepresentative" th:field="*{legalRepresentative}" type="text" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('legalRepresentative')}" th:errors="*{legalRepresentative}">Legal representative error</p>
+                </div>
+
+                <div class="form-group">
                     <label for="email">Email</label>
                     <input id="email" th:field="*{email}" type="email">
                     <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</p>

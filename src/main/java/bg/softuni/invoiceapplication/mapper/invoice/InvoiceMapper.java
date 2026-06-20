@@ -57,6 +57,7 @@ public class InvoiceMapper {
                 .status(invoice.getStatus() == null ? InvoiceStatus.ISSUED : invoice.getStatus())
                 .clientCompanyName(invoice.getClientCompanyName())
                 .clientDisplayName(invoice.getClientDisplayName())
+                .clientLegalRepresentative(invoice.getClientLegalRepresentative())
                 .clientEmail(invoice.getClientEmail())
                 .clientPhoneNumber(invoice.getClientPhoneNumber())
                 .clientVatRegistered(invoice.isClientVatRegistered())
