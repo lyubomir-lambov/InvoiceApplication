@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.UUID;
 
@@ -91,6 +92,18 @@ public class PaymentController {
 
         paymentEditRequestDTO.setId(paymentId);
         paymentService.editPayment(paymentEditRequestDTO);
+        return "redirect:/payments";
+    }
+
+    @PostMapping("/{paymentId}/delete")
+    public String deletePayment(@PathVariable UUID paymentId, RedirectAttributes redirectAttributes) {
+        try {
+            paymentService.deletePayment(paymentId);
+            redirectAttributes.addFlashAttribute("message", "Payment deleted successfully");
+        } catch (RuntimeException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+        }
+
         return "redirect:/payments";
     }
 

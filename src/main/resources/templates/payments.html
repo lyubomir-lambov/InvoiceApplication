@@ -28,6 +28,11 @@
             <a class="nav-button" th:href="@{/payments/create}" href="/payments/create">Add payment</a>
         </div>
 
+        <p class="field-error"
+           th:if="${message != null}"
+           th:text="${message}"
+           style="margin: 0 0 16px;">Payment message</p>
+
         <div class="table-card">
             <table class="invoices-table">
                 <thead>
@@ -54,6 +59,14 @@
                         <a class="nav-button"
                            th:href="@{/payments/edit/{paymentId}(paymentId=${payment.id})}"
                            href="/payments/edit/00000000-0000-0000-0000-000000000000">Edit</a>
+                        <form th:action="@{/payments/{paymentId}/delete(paymentId=${payment.id})}"
+                              action="/payments/00000000-0000-0000-0000-000000000000/delete"
+                              method="post"
+                              style="display: inline-flex; margin: 0 0 0 8px;">
+                            <button class="button button-danger"
+                                    type="submit"
+                                    onclick="return confirm('Delete this payment?');">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>
