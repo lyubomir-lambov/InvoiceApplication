@@ -9,6 +9,9 @@ public interface UserService {
     UserRegistrationResponseDTO registerUser(UserRegistrationRequestDTO userRegistrationRequestDTO);
     UserLoginResponseDTO login(UserLoginRequestDTO userLoginRequestDTO);
     List<UserShowAllDTO> findAllUsers();
+    List<UserShowAllDTO> findUsersByUsername(String username);
+    void toggleUserActive(UUID userId);
+    void toggleUserRole(UUID userId);
     boolean isUserActive(UUID userId);
 
     String getUsernameById(UUID userId);

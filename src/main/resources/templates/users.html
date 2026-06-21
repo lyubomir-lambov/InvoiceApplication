@@ -28,7 +28,22 @@
     <section class="content-shell">
         <div class="section-actions">
             <a class="nav-button" th:href="@{/users/register}" href="/users/register">Add user</a>
+            <form th:action="@{/users}" action="/users" method="get" style="display: inline-flex; align-items: center; gap: 10px; margin: 0 0 0 10px;">
+                <input type="search"
+                       name="username"
+                       th:value="${searchedUsername}"
+                       placeholder="Search by username"
+                       aria-label="Search by username"
+                       onsearch="if (!this.value) this.form.submit();"
+                       style="min-height: 40px; padding: 0 16px; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 15px; font-weight: 700; background: var(--surface);">
+                <button class="nav-button" type="submit">Search</button>
+            </form>
         </div>
+
+        <p class="field-error"
+           th:if="${message != null}"
+           th:text="${message}"
+           style="margin: 0 0 16px;">User message</p>
 
         <div class="table-card">
             <table class="invoices-table">
@@ -48,11 +63,29 @@
                 <tr th:each="user : ${users}">
                     <td th:text="${user.username}">admin</td>
                     <td th:text="${user.email}">admin@example.com</td>
-                    <td th:text="${user.role}">ADMIN</td>
                     <td>
-                        <span class="status-badge"
-                              th:classappend="${user.active ? ' status-active' : ' status-inactive'}"
-                              th:text="${user.active ? 'Active' : 'Inactive'}">Active</span>
+                        <form class="status-switch-form"
+                              th:action="@{/users/{id}/toggle-role(id=${user.id})}"
+                              action="/users/user-id/toggle-role"
+                              method="post">
+                            <button class="status-badge status-toggle-button"
+                                    th:classappend="${user.role.name() == 'ADMIN' ? ' status-active' : ' status-draft'}"
+                                    type="submit"
+                                    th:attr="title=${user.role.name() == 'ADMIN' ? 'Set role to USER' : 'Set role to ADMIN'}"
+                                    th:text="${user.role}">ADMIN</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form class="status-switch-form"
+                              th:action="@{/users/{id}/toggle-status(id=${user.id})}"
+                              action="/users/user-id/toggle-status"
+                              method="post">
+                            <button class="status-badge status-toggle-button"
+                                    th:classappend="${user.active ? ' status-active' : ' status-inactive'}"
+                                    type="submit"
+                                    th:attr="title=${user.active ? 'Set inactive' : 'Set active'}"
+                                    th:text="${user.active ? 'Active' : 'Inactive'}">Active</button>
+                        </form>
                     </td>
                     <td th:text="${#temporals.format(user.createdOn, 'dd-MM-yyyy HH:mm')}">21-06-2026 19:00</td>
                 </tr>

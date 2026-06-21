@@ -78,6 +78,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserShowAllDTO> findUsersByUsername(String username) {
+        if (username == null || username.isBlank()) {
+            return findAllUsers();
+        }
+
+        return userMapper.fromAllUsersToUserShowAllDTOs(
+                userRepository.findByUsernameContainingIgnoreCaseOrderByUsernameAsc(username.trim())
+        );
+    }
+
+    @Override
+    public void toggleUserActive(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User with id " + userId + " does not exist"));
+
+        user.setActive(!user.isActive());
+        userRepository.save(user);
+    }
+
+    @Override
+    public void toggleUserRole(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User with id " + userId + " does not exist"));
+
+        user.setRole(UserRole.ADMIN.equals(user.getRole()) ? UserRole.USER : UserRole.ADMIN);
+        userRepository.save(user);
+    }
+
+    @Override
     public boolean isUserActive(UUID userId) {
         return userRepository.findById(userId)
                 .map(User::isActive)
