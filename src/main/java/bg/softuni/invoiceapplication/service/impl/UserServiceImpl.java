@@ -47,6 +47,9 @@ public class UserServiceImpl implements UserService {
 
         String encodedPassword = passwordEncoder.encode(userRegistrationRequestDTO.getPassword());
         userToRegister.setPassword(encodedPassword);
+        if (userRepository.count() == 0) {
+            userToRegister.setRole(UserRole.ADMIN);
+        }
 
         User savedUser = userRepository.save(userToRegister);
 
