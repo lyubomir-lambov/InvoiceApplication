@@ -1,5 +1,6 @@
 package bg.softuni.invoiceapplication.service;
 
+import bg.softuni.invoiceapplication.model.dto.PaymentCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.entity.Payment;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 
@@ -10,6 +11,8 @@ import java.util.UUID;
 public interface PaymentService {
 
     Payment createPayment(Payment payment);
+
+    Payment createPayment(PaymentCreateRequestDTO paymentCreateRequestDTO);
 
     List<Payment> findAllPayments();
 

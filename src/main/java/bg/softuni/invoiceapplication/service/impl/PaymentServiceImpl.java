@@ -1,5 +1,6 @@
 package bg.softuni.invoiceapplication.service.impl;
 
+import bg.softuni.invoiceapplication.model.dto.PaymentCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Payment;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
@@ -38,6 +39,26 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new RuntimeException("Client with id " + payment.getClient().getId() + " does not exist"));
 
         payment.setClient(client);
+
+        return paymentRepository.save(payment);
+    }
+
+    @Override
+    public Payment createPayment(PaymentCreateRequestDTO paymentCreateRequestDTO) {
+        if (paymentCreateRequestDTO == null) {
+            throw new IllegalArgumentException("Payment create request must not be null");
+        }
+
+        Client client = clientRepository.findById(paymentCreateRequestDTO.getClientId())
+                .orElseThrow(() -> new RuntimeException("Client with id " + paymentCreateRequestDTO.getClientId() + " does not exist"));
+
+        Payment payment = Payment.builder()
+                .client(client)
+                .amount(paymentCreateRequestDTO.getAmount())
+                .currency(paymentCreateRequestDTO.getCurrency())
+                .paymentDate(paymentCreateRequestDTO.getPaymentDate())
+                .notes(paymentCreateRequestDTO.getNotes())
+                .build();
 
         return paymentRepository.save(payment);
     }
