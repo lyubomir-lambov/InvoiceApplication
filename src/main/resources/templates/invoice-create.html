@@ -95,6 +95,7 @@
                             <th>Unit</th>
                             <th>Unit price</th>
                             <th>VAT</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody id="invoiceLines">
@@ -163,6 +164,14 @@
                                th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].vatRate')}"
                                th:errors="*{lineItems[__${itemStat.index}__].vatRate}">VAT rate error</p>
                             </td>
+
+                            <td class="invoice-line-actions">
+                                <button class="button invoice-remove-row-button"
+                                        type="button"
+                                        data-remove-line>
+                                    Remove
+                                </button>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -226,6 +235,14 @@
                 </option>
             </select>
         </td>
+
+        <td class="invoice-line-actions">
+            <button class="button invoice-remove-row-button"
+                    type="button"
+                    data-remove-line>
+                Remove
+            </button>
+        </td>
     </tr>
 </template>
 <script>
@@ -243,7 +260,43 @@
         });
 
         invoiceLines.appendChild(newLine);
+        updateRemoveButtons();
     });
+
+    invoiceLines.addEventListener('click', (event) => {
+        const removeButton = event.target.closest('[data-remove-line]');
+
+        if (!removeButton || removeButton.disabled) {
+            return;
+        }
+
+        removeButton.closest('tr').remove();
+        reindexInvoiceLines();
+        updateRemoveButtons();
+    });
+
+    function reindexInvoiceLines() {
+        invoiceLines.querySelectorAll('tr').forEach((line, index) => {
+            line.querySelectorAll('[name]').forEach((field) => {
+                field.name = field.name.replace(/lineItems\[\d+]/, `lineItems[${index}]`);
+            });
+
+            line.querySelectorAll('[id]').forEach((field) => {
+                field.id = field.id.replace(/\d+$/, index);
+            });
+        });
+    }
+
+    function updateRemoveButtons() {
+        const removeButtons = invoiceLines.querySelectorAll('[data-remove-line]');
+        const removeDisabled = removeButtons.length <= 1;
+
+        removeButtons.forEach((button) => {
+            button.disabled = removeDisabled;
+        });
+    }
+
+    updateRemoveButtons();
 </script>
 </body>
 </html>
