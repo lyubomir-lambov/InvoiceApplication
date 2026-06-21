@@ -69,7 +69,8 @@
                         <a class="nav-button"
                            th:href="@{/payments/edit/{paymentId}(paymentId=${payment.id})}"
                            href="/payments/edit/00000000-0000-0000-0000-000000000000">Edit</a>
-                        <form th:action="@{/payments/{paymentId}/delete(paymentId=${payment.id})}"
+                        <form th:if="${isAdmin}"
+                              th:action="@{/payments/{paymentId}/delete(paymentId=${payment.id})}"
                               action="/payments/00000000-0000-0000-0000-000000000000/delete"
                               method="post"
                               style="display: inline-flex; margin: 0 0 0 8px;">

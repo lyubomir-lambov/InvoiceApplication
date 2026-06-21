@@ -42,10 +42,12 @@ public class PaymentController {
                                   Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
+        boolean isAdmin = userService.isAdmin(userId);
 
         model.addAttribute("username", username);
         model.addAttribute("payments", paymentService.findPaymentsByCompanyName(companyName));
         model.addAttribute("companyName", companyName);
+        model.addAttribute("isAdmin", isAdmin);
 
         return "payments";
     }
@@ -100,7 +102,16 @@ public class PaymentController {
     }
 
     @PostMapping("/{paymentId}/delete")
-    public String deletePayment(@PathVariable UUID paymentId, RedirectAttributes redirectAttributes) {
+    public String deletePayment(@PathVariable UUID paymentId,
+                                HttpSession httpSession,
+                                RedirectAttributes redirectAttributes) {
+        UUID userId = SessionUser.getUserId(httpSession);
+
+        if (!userService.isAdmin(userId)) {
+            redirectAttributes.addFlashAttribute("message", "Only admins can delete payments");
+            return "redirect:/payments";
+        }
+
         try {
             paymentService.deletePayment(paymentId);
             redirectAttributes.addFlashAttribute("message", "Payment deleted successfully");
