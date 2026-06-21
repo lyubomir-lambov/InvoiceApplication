@@ -37,36 +37,45 @@
             </form>
         </div>
 
+        <p class="field-error"
+           th:if="${message != null}"
+           th:text="${message}"
+           style="margin: 0 0 16px;">Client message</p>
+
         <div class="table-card">
             <table class="clients-table">
                 <thead>
                 <tr>
-                    <th>Display Name</th>
-                    <th>Company Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Country</th>
+                    <th>Client</th>
+                    <th>Contact</th>
                     <th>Address</th>
                     <th>VAT</th>
-                    <th>VAT Number</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(clients)}">
-                    <td colspan="10">No clients found.</td>
+                    <td colspan="6">No clients found.</td>
                 </tr>
                 <tr th:each="client : ${clients}">
-                    <td th:text="${client.displayName}">Acme Sofia</td>
-                    <td th:text="${client.companyName}">Acme Bulgaria Ltd.</td>
-                    <td th:text="${client.email}">billing@acme.bg</td>
-                    <td th:text="${client.phoneNumber}">+359 888 123 456</td>
-                    <td th:text="${client.country}">BULGARIA</td>
-                    <td th:text="${client.address}">15 Vitosha Blvd, Sofia</td>
-                    <td th:text="${client.vatRegistered ? 'Yes' : 'No'}">Yes</td>
-                    <td th:text="${client.vatNumber != null && !client.vatNumber.isBlank() ? client.vatNumber : '-'}">BG123456789</td>
                     <td>
+                        <span class="client-table-primary" th:text="${client.displayName}">Acme Sofia</span>
+                        <span class="client-table-secondary" th:text="${client.companyName}">Acme Bulgaria Ltd.</span>
+                    </td>
+                    <td>
+                        <span class="client-table-primary" th:text="${client.email}">billing@acme.bg</span>
+                        <span class="client-table-secondary" th:text="${client.phoneNumber}">+359 888 123 456</span>
+                    </td>
+                    <td>
+                        <span class="client-table-primary" th:text="${client.country}">BULGARIA</span>
+                        <span class="client-table-secondary" th:text="${client.address}">15 Vitosha Blvd, Sofia</span>
+                    </td>
+                    <td>
+                        <span class="client-table-primary" th:text="${client.vatRegistered ? 'Yes' : 'No'}">Yes</span>
+                        <span class="client-table-secondary" th:text="${client.vatNumber != null && !client.vatNumber.isBlank() ? client.vatNumber : '-'}">BG123456789</span>
+                    </td>
+                    <td class="client-table-status">
                         <form class="status-switch-form"
                               th:action="@{/clients/{id}/toggle-status(id=${client.id})}"
                               action="/clients/client-id/toggle-status"
@@ -78,10 +87,21 @@
                                     th:text="${client.active ? 'Active' : 'Inactive'}">Active</button>
                         </form>
                     </td>
-                    <td>
-                        <a class="nav-button"
-                           th:href="@{/clients/edit/{id}(id=${client.id})}"
-                           href="/clients/edit/client-id">Edit</a>
+                    <td class="client-table-actions">
+                        <div class="client-actions">
+                            <a class="nav-button"
+                               th:href="@{/clients/edit/{id}(id=${client.id})}"
+                               href="/clients/edit/client-id">Edit</a>
+                            <form th:if="${isAdmin}"
+                                  th:action="@{/clients/{id}/delete(id=${client.id})}"
+                                  action="/clients/client-id/delete"
+                                  method="post"
+                                  style="margin: 0;">
+                                <button class="button button-danger"
+                                        type="submit"
+                                        onclick="return confirm('Delete this client?');">Delete</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 </tbody>

@@ -20,5 +20,6 @@ public interface ClientService {
     Optional<String> findDuplicateFieldForEdit(ClientEditRequestDTO clientEditRequestDTO);
     void editClient(ClientEditRequestDTO clientEditRequestDTO);
     void toggleClientActive(UUID id);
+    void deleteClient(UUID id);
 
 }

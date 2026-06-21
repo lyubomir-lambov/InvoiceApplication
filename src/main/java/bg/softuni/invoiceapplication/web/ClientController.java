@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -34,10 +35,12 @@ public class ClientController {
     public String clientsShowAll(@RequestParam(required = false) String clientName, HttpSession httpSession, Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
+        boolean isAdmin = userService.isAdmin(userId);
 
         model.addAttribute("clients", clientService.findClientsByName(clientName));
         model.addAttribute("clientName", clientName);
         model.addAttribute("username", username);
+        model.addAttribute("isAdmin", isAdmin);
         return "clients";
     }
 
@@ -97,6 +100,27 @@ public class ClientController {
     @PostMapping("/{id}/toggle-status")
     public String toggleClientStatus(@PathVariable UUID id) {
         clientService.toggleClientActive(id);
+        return "redirect:/clients";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteClient(@PathVariable UUID id, HttpSession httpSession, RedirectAttributes redirectAttributes) {
+        UUID userId = SessionUser.getUserId(httpSession);
+
+        if (!userService.isAdmin(userId)) {
+            return redirectToClientsWithMessage(redirectAttributes, "Only admins can delete clients");
+        }
+
+        try {
+            clientService.deleteClient(id);
+            return redirectToClientsWithMessage(redirectAttributes, "Client deleted successfully");
+        } catch (IllegalStateException ex) {
+            return redirectToClientsWithMessage(redirectAttributes, ex.getMessage());
+        }
+    }
+
+    private String redirectToClientsWithMessage(RedirectAttributes redirectAttributes, String message) {
+        redirectAttributes.addFlashAttribute("message", message);
         return "redirect:/clients";
     }
 }

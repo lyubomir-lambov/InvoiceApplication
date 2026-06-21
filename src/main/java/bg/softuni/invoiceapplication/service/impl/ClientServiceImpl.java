@@ -7,6 +7,7 @@ import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientSelectDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
+import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -20,11 +21,13 @@ import java.util.UUID;
 @Service
 public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
+    private final InvoiceRepository invoiceRepository;
     private final ClientMapper clientMapper;
 
     @Autowired
-    public ClientServiceImpl(ClientRepository clientRepository, ClientMapper clientMapper) {
+    public ClientServiceImpl(ClientRepository clientRepository, InvoiceRepository invoiceRepository, ClientMapper clientMapper) {
         this.clientRepository = clientRepository;
+        this.invoiceRepository = invoiceRepository;
         this.clientMapper = clientMapper;
     }
 
@@ -182,6 +185,18 @@ public class ClientServiceImpl implements ClientService {
         //! Да коригирам грешката след време
         client.setActive(!client.isActive());
         clientRepository.save(client);
+    }
+
+    @Override
+    public void deleteClient(UUID id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Client with id " + id + " does not exist"));
+
+        if (invoiceRepository.existsByClientId(id)) {
+            throw new IllegalStateException("Client cannot be deleted because issued invoices already exist");
+        }
+
+        clientRepository.delete(client);
     }
 
 }

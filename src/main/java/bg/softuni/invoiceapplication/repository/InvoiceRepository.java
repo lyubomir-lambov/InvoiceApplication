@@ -13,4 +13,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
     Optional<Invoice> findTopByOrderByInvoiceSequenceDesc();
 
     List<Invoice> findByClientCompanyNameContainingIgnoreCaseOrderByInvoiceSequenceDesc(String clientCompanyName);
+
+    boolean existsByClientId(UUID clientId);
 }

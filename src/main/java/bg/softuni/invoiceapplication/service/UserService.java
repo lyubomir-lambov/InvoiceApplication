@@ -10,4 +10,6 @@ public interface UserService {
     boolean isUserActive(UUID userId);
 
     String getUsernameById(UUID userId);
+
+    boolean isAdmin(UUID userId);
 }

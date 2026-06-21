@@ -6,6 +6,7 @@ import bg.softuni.invoiceapplication.model.dto.UserLoginRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserLoginResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationResponseDTO;
+import bg.softuni.invoiceapplication.model.enums.UserRole;
 import bg.softuni.invoiceapplication.repository.UserRepository;
 import bg.softuni.invoiceapplication.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -79,6 +80,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public String getUsernameById(UUID userId) {
         return userRepository.findById(userId).map(User::getUsername).orElse(null);
+    }
+
+    @Override
+    public boolean isAdmin(UUID userId) {
+        return userRepository.findById(userId)
+                .map(user -> UserRole.ADMIN.equals(user.getRole()))
+                .orElse(false);
     }
 
 }
