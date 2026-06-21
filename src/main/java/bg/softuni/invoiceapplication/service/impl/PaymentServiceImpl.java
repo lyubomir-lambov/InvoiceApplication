@@ -88,15 +88,14 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment with id " + paymentId + " does not exist"));
 
-        PaymentEditRequestDTO paymentEditRequestDTO = new PaymentEditRequestDTO();
-        paymentEditRequestDTO.setId(payment.getId());
-        paymentEditRequestDTO.setClientId(payment.getClient().getId());
-        paymentEditRequestDTO.setAmount(payment.getAmount());
-        paymentEditRequestDTO.setCurrency(payment.getCurrency());
-        paymentEditRequestDTO.setPaymentDate(payment.getPaymentDate());
-        paymentEditRequestDTO.setNotes(payment.getNotes());
-
-        return paymentEditRequestDTO;
+        return PaymentEditRequestDTO.builder()
+                .id(payment.getId())
+                .clientId(payment.getClient().getId())
+                .amount(payment.getAmount())
+                .currency(payment.getCurrency())
+                .paymentDate(payment.getPaymentDate())
+                .notes(payment.getNotes())
+                .build();
     }
 
     @Override

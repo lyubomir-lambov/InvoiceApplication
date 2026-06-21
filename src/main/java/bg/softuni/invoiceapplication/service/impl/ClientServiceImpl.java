@@ -80,7 +80,10 @@ public class ClientServiceImpl implements ClientService {
     public List<ClientSelectDTO> findAllActiveClientsForSelect() {
         return clientRepository.findAllByActiveTrueOrderByDisplayNameAsc()
                 .stream()
-                .map(client -> new ClientSelectDTO(client.getId(), client.getDisplayName()))
+                .map(client -> ClientSelectDTO.builder()
+                        .id(client.getId())
+                        .displayName(client.getDisplayName())
+                        .build())
                 .toList();
     }
 
@@ -93,7 +96,10 @@ public class ClientServiceImpl implements ClientService {
 
         if (selectedClientId != null && !selectedClientAlreadyIncluded) {
             clientRepository.findById(selectedClientId)
-                    .map(client -> new ClientSelectDTO(client.getId(), client.getDisplayName()))
+                    .map(client -> ClientSelectDTO.builder()
+                            .id(client.getId())
+                            .displayName(client.getDisplayName())
+                            .build())
                     .ifPresent(client -> activeClients.add(0, client));
         }
 

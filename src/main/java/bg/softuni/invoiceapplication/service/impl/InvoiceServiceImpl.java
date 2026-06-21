@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -68,16 +69,18 @@ public class InvoiceServiceImpl implements InvoiceService {
         Long nextInvoiceSequence = getNextInvoiceSequence();
         LocalDate issueDate = LocalDate.now();
 
-        InvoiceCreateRequestDTO invoiceCreateRequestDTO = new InvoiceCreateRequestDTO();
-        invoiceCreateRequestDTO.setInvoiceType(InvoiceType.INVOICE);
-        invoiceCreateRequestDTO.setCurrency(InvoiceCurrency.BGN);
-        invoiceCreateRequestDTO.setInvoiceSequence(nextInvoiceSequence);
-        invoiceCreateRequestDTO.setInvoiceNumber(formatInvoiceNumber(nextInvoiceSequence));
-        invoiceCreateRequestDTO.setIssueDate(issueDate);
-        invoiceCreateRequestDTO.setDueDate(issueDate.plusDays(DEFAULT_DUE_DAYS));
-        invoiceCreateRequestDTO.getLineItems().add(new InvoiceLineItemCreateRequestDTO());
+        List<InvoiceLineItemCreateRequestDTO> lineItems = new ArrayList<>();
+        lineItems.add(InvoiceLineItemCreateRequestDTO.builder().build());
 
-        return invoiceCreateRequestDTO;
+        return InvoiceCreateRequestDTO.builder()
+                .invoiceType(InvoiceType.INVOICE)
+                .currency(InvoiceCurrency.BGN)
+                .invoiceSequence(nextInvoiceSequence)
+                .invoiceNumber(formatInvoiceNumber(nextInvoiceSequence))
+                .issueDate(issueDate)
+                .dueDate(issueDate.plusDays(DEFAULT_DUE_DAYS))
+                .lineItems(lineItems)
+                .build();
     }
 
     @Override

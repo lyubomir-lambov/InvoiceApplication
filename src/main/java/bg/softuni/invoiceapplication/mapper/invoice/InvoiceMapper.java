@@ -80,18 +80,17 @@ public class InvoiceMapper {
             return null;
         }
 
-        InvoiceEditRequestDTO invoiceEditRequestDTO = new InvoiceEditRequestDTO();
-        invoiceEditRequestDTO.setId(invoice.getId());
-        invoiceEditRequestDTO.setInvoiceType(invoice.getInvoiceType());
-        invoiceEditRequestDTO.setInvoiceNumber(invoice.getInvoiceNumber());
-        invoiceEditRequestDTO.setCurrency(invoice.getCurrency() == null ? InvoiceCurrency.BGN : invoice.getCurrency());
-        invoiceEditRequestDTO.setStatus(invoice.getStatus() == null ? InvoiceStatus.ISSUED : invoice.getStatus());
-        invoiceEditRequestDTO.setIssueDate(invoice.getIssueDate());
-        invoiceEditRequestDTO.setDueDate(invoice.getDueDate());
-        invoiceEditRequestDTO.setClientId(invoice.getClient().getId());
-        invoiceEditRequestDTO.setLineItems(fromAllInvoiceLineItemsToInvoiceLineItemCreateRequestDTOs(invoice.getLineItems()));
-
-        return invoiceEditRequestDTO;
+        return InvoiceEditRequestDTO.builder()
+                .id(invoice.getId())
+                .invoiceType(invoice.getInvoiceType())
+                .invoiceNumber(invoice.getInvoiceNumber())
+                .currency(invoice.getCurrency() == null ? InvoiceCurrency.BGN : invoice.getCurrency())
+                .status(invoice.getStatus() == null ? InvoiceStatus.ISSUED : invoice.getStatus())
+                .issueDate(invoice.getIssueDate())
+                .dueDate(invoice.getDueDate())
+                .clientId(invoice.getClient().getId())
+                .lineItems(fromAllInvoiceLineItemsToInvoiceLineItemCreateRequestDTOs(invoice.getLineItems()))
+                .build();
     }
 
     public InvoiceLineItem fromInvoiceLineItemCreateRequestDTOToInvoiceLineItem(InvoiceLineItemCreateRequestDTO lineItemDTO) {
@@ -137,13 +136,13 @@ public class InvoiceMapper {
 
         List<InvoiceLineItemCreateRequestDTO> invoiceLineItemCreateRequestDTOs = new ArrayList<>();
         lineItems.forEach(lineItem -> {
-            InvoiceLineItemCreateRequestDTO invoiceLineItemCreateRequestDTO = new InvoiceLineItemCreateRequestDTO();
-            invoiceLineItemCreateRequestDTO.setDescription(lineItem.getDescription());
-            invoiceLineItemCreateRequestDTO.setQuantity(lineItem.getQuantity());
-            invoiceLineItemCreateRequestDTO.setMeasurementUnit(lineItem.getMeasurementUnit());
-            invoiceLineItemCreateRequestDTO.setUnitPrice(lineItem.getUnitPrice());
-            invoiceLineItemCreateRequestDTO.setVatRate(lineItem.getVatRate());
-
+            InvoiceLineItemCreateRequestDTO invoiceLineItemCreateRequestDTO = InvoiceLineItemCreateRequestDTO.builder()
+                    .description(lineItem.getDescription())
+                    .quantity(lineItem.getQuantity())
+                    .measurementUnit(lineItem.getMeasurementUnit())
+                    .unitPrice(lineItem.getUnitPrice())
+                    .vatRate(lineItem.getVatRate())
+                    .build();
             invoiceLineItemCreateRequestDTOs.add(invoiceLineItemCreateRequestDTO);
         });
         return invoiceLineItemCreateRequestDTOs;

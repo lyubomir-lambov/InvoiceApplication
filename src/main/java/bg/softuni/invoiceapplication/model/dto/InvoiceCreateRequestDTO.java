@@ -9,7 +9,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -20,6 +23,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class InvoiceCreateRequestDTO {
 
     @NotNull(message = "Invoice type required")
@@ -50,5 +56,6 @@ public class InvoiceCreateRequestDTO {
 
     @Valid
     @NotEmpty(message = "At least one invoice line item is required")
+    @Builder.Default
     private List<InvoiceLineItemCreateRequestDTO> lineItems = new ArrayList<>();
 }
