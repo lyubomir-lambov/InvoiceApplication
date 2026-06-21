@@ -25,22 +25,30 @@
 
 <main class="list-page">
     <section class="content-shell">
+        <div class="auth-header">
+            <h1>Payment Reports</h1>
+            <p>Totals by currency for issued invoices, payments, and outstanding amounts.</p>
+        </div>
+
         <div class="table-card">
             <table class="invoices-table">
                 <thead>
                 <tr>
-                    <th>Report</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>Currency</th>
+                    <th>Invoice total</th>
+                    <th>Payment total</th>
+                    <th>Due amount</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>Payment reports</td>
-                    <td>Not configured</td>
-                    <td>
-                        <a class="nav-button" th:href="@{/payments}" href="/payments">View payments</a>
-                    </td>
+                <tr th:each="report : ${reports}">
+                    <td th:text="${report.currency.code}">BGN</td>
+                    <td th:classappend="${report.invoiceTotal.signum() < 0} ? 'invoice-credit-amount'"
+                        th:text="${#numbers.formatDecimal(report.invoiceTotal, 1, 2)}">0.00</td>
+                    <td th:classappend="${report.paymentTotal.signum() < 0} ? 'invoice-credit-amount'"
+                        th:text="${#numbers.formatDecimal(report.paymentTotal, 1, 2)}">0.00</td>
+                    <td th:classappend="${report.dueAmount.signum() < 0} ? 'invoice-credit-amount'"
+                        th:text="${#numbers.formatDecimal(report.dueAmount, 1, 2)}">0.00</td>
                 </tr>
                 </tbody>
             </table>
