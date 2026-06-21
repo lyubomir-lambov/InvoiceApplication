@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Reports | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
+        <a class="nav-button" th:href="@{/payments}" href="/payments">Payments</a>
+        <a class="nav-button nav-button-active" th:href="@{/payment-reports}" href="/payment-reports">Payment Reports</a>
+    </nav>
+    <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
+        <span th:text="${username}" style="display: inline-flex; align-items: center; min-height: 40px; color: var(--primary); font-size: 15px; font-weight: 700;">username</span>
+        <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main class="list-page">
+    <section class="content-shell">
+        <div class="table-card">
+            <table class="invoices-table">
+                <thead>
+                <tr>
+                    <th>Report</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Payment reports</td>
+                    <td>Not configured</td>
+                    <td>
+                        <a class="nav-button" th:href="@{/payments}" href="/payments">View payments</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>
