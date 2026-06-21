@@ -40,31 +40,22 @@ public class InvoiceController {
     }
 
     @GetMapping("")
-    public String invoices(@RequestParam(required = false) String companyName, HttpSession httpSession, Model model) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        String username = userService.getUsernameById(userId);
-        model.addAttribute("username", username);
+    public String invoices(@RequestParam(required = false) String companyName, Model model) {
         model.addAttribute("invoices", invoiceService.findInvoicesByCompanyName(companyName));
         model.addAttribute("companyName", companyName);
         return "invoices";
     }
 
     @GetMapping("/create")
-    public String showCreateInvoiceForm(HttpSession httpSession, Model model) {
-        addCreateInvoiceFormAttributes(httpSession, model);
+    public String showCreateInvoiceForm(Model model) {
+        addCreateInvoiceFormAttributes(model);
         model.addAttribute("invoice", invoiceService.prepareCreateInvoiceForm());
 
         return "invoice-create";
     }
 
     @GetMapping("/{invoiceId}")
-    public String showInvoice(@PathVariable UUID invoiceId,
-                              HttpSession httpSession,
-                              Model model) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        String username = userService.getUsernameById(userId);
-
-        model.addAttribute("username", username);
+    public String showInvoice(@PathVariable UUID invoiceId, Model model) {
         model.addAttribute("invoice", invoiceService.findInvoiceById(invoiceId));
 
         return "invoice-details";
@@ -73,10 +64,9 @@ public class InvoiceController {
     @PostMapping("/create")
     public String createInvoice(@Valid @ModelAttribute("invoice") InvoiceCreateRequestDTO invoiceCreateRequestDTO,
                                 BindingResult bindingResult,
-                                HttpSession httpSession,
                                 Model model) {
         if (bindingResult.hasErrors()) {
-            addCreateInvoiceFormAttributes(httpSession, model);
+            addCreateInvoiceFormAttributes(model);
             return "invoice-create";
         }
 
@@ -137,11 +127,7 @@ public class InvoiceController {
         return "redirect:/invoices";
     }
 
-    private void addCreateInvoiceFormAttributes(HttpSession httpSession, Model model) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        String username = userService.getUsernameById(userId);
-
-        model.addAttribute("username", username);
+    private void addCreateInvoiceFormAttributes(Model model) {
         model.addAttribute("invoiceTypes", InvoiceType.values());
         model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
         model.addAttribute("measurementUnits", MeasurementUnit.values());
@@ -151,10 +137,8 @@ public class InvoiceController {
 
     private void addEditInvoiceFormAttributes(HttpSession httpSession, Model model, UUID selectedClientId) {
         UUID userId = SessionUser.getUserId(httpSession);
-        String username = userService.getUsernameById(userId);
         boolean isAdmin = userService.isAdmin(userId);
 
-        model.addAttribute("username", username);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("invoiceTypes", InvoiceType.values());
         model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());

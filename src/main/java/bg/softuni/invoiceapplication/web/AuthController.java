@@ -38,6 +38,7 @@ public class AuthController {
 
         UserLoginResponseDTO userLoginResponseDTO = userService.login(userLoginRequestDTO);
         SessionUser.setUserId(httpSession, userLoginResponseDTO.getId());
+        SessionUser.setUsername(httpSession, userLoginResponseDTO.getUsername());
 
         return "redirect:/invoices";
     }

@@ -41,7 +41,6 @@ public class UserController {
             return "redirect:/invoices";
         }
 
-        model.addAttribute("username", userService.getUsernameById(userId));
         model.addAttribute("users", userService.findUsersByUsername(username));
         model.addAttribute("searchedUsername", username);
 

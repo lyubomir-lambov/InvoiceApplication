@@ -41,10 +41,8 @@ public class PaymentController {
                                   HttpSession httpSession,
                                   Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
-        String username = userService.getUsernameById(userId);
         boolean isAdmin = userService.isAdmin(userId);
 
-        model.addAttribute("username", username);
         model.addAttribute("payments", paymentService.findPaymentsByCompanyName(companyName));
         model.addAttribute("companyName", companyName);
         model.addAttribute("isAdmin", isAdmin);
@@ -53,8 +51,8 @@ public class PaymentController {
     }
 
     @GetMapping("/create")
-    public String showCreatePaymentForm(HttpSession httpSession, Model model) {
-        addCreatePaymentFormAttributes(httpSession, model);
+    public String showCreatePaymentForm(Model model) {
+        addCreatePaymentFormAttributes(model);
         model.addAttribute("payment", new PaymentCreateRequestDTO());
 
         return "payment-create";
@@ -63,10 +61,9 @@ public class PaymentController {
     @PostMapping("/create")
     public String createPayment(@Valid @ModelAttribute("payment") PaymentCreateRequestDTO paymentCreateRequestDTO,
                                 BindingResult bindingResult,
-                                HttpSession httpSession,
                                 Model model) {
         if (bindingResult.hasErrors()) {
-            addCreatePaymentFormAttributes(httpSession, model);
+            addCreatePaymentFormAttributes(model);
             return "payment-create";
         }
 
@@ -79,7 +76,7 @@ public class PaymentController {
                                       HttpSession httpSession,
                                       Model model) {
         PaymentEditRequestDTO paymentEditRequestDTO = paymentService.getPaymentForEdit(paymentId);
-        addEditPaymentFormAttributes(httpSession, model, paymentEditRequestDTO.getClientId());
+        addEditPaymentFormAttributes(model, paymentEditRequestDTO.getClientId());
         model.addAttribute("payment", paymentEditRequestDTO);
 
         return "payment-edit";
@@ -92,7 +89,7 @@ public class PaymentController {
                               HttpSession httpSession,
                               Model model) {
         if (bindingResult.hasErrors()) {
-            addEditPaymentFormAttributes(httpSession, model, paymentEditRequestDTO.getClientId());
+            addEditPaymentFormAttributes(model, paymentEditRequestDTO.getClientId());
             return "payment-edit";
         }
 
@@ -122,20 +119,12 @@ public class PaymentController {
         return "redirect:/payments";
     }
 
-    private void addCreatePaymentFormAttributes(HttpSession httpSession, Model model) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        String username = userService.getUsernameById(userId);
-
-        model.addAttribute("username", username);
+    private void addCreatePaymentFormAttributes(Model model) {
         model.addAttribute("clients", clientService.findAllActiveClientsForSelect());
         model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
     }
 
-    private void addEditPaymentFormAttributes(HttpSession httpSession, Model model, UUID selectedClientId) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        String username = userService.getUsernameById(userId);
-
-        model.addAttribute("username", username);
+    private void addEditPaymentFormAttributes(Model model, UUID selectedClientId) {
         model.addAttribute("clients", clientService.findAllActiveClientsForSelect(selectedClientId));
         model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
     }

@@ -28,4 +28,29 @@ public class UserNavigationModelAdvice {
         UUID userId = SessionUser.getUserId(session);
         return userId != null && userService.isAdmin(userId);
     }
+
+    @ModelAttribute("username")
+    public String username(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+
+        String username = SessionUser.getUsername(session);
+        if (username != null) {
+            return username;
+        }
+
+        UUID userId = SessionUser.getUserId(session);
+        if (userId == null) {
+            return null;
+        }
+
+        username = userService.getUsernameById(userId);
+        if (username != null) {
+            SessionUser.setUsername(session, username);
+        }
+
+        return username;
+    }
 }
