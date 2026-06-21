@@ -1,13 +1,12 @@
 package bg.softuni.invoiceapplication.mapper.user;
 
-import bg.softuni.invoiceapplication.model.entity.User;
 import bg.softuni.invoiceapplication.model.dto.UserLoginResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.UserShowAllDTO;
+import bg.softuni.invoiceapplication.model.entity.User;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -22,7 +21,6 @@ public class UserMapper {
                 .username(userRegistrationRequestDTO.getUsername())
                 .email(userRegistrationRequestDTO.getEmail())
                 .build();
-
     }
 
     public UserRegistrationResponseDTO fromUserToUserRegistrationResponseDTO(User user) {
@@ -41,6 +39,7 @@ public class UserMapper {
         if (user == null) {
             return null;
         }
+
         return UserLoginResponseDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -53,16 +52,15 @@ public class UserMapper {
             return null;
         }
 
-        List<UserShowAllDTO> userShowAllDTOs = new ArrayList<>();
-        users.forEach(user -> userShowAllDTOs.add(UserShowAllDTO.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .active(user.isActive())
-                .createdOn(user.getCreatedOn())
-                .build()));
-
-        return userShowAllDTOs;
+        return users.stream()
+                .map(user -> UserShowAllDTO.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .role(user.getRole())
+                        .active(user.isActive())
+                        .createdOn(user.getCreatedOn())
+                        .build())
+                .toList();
     }
 }

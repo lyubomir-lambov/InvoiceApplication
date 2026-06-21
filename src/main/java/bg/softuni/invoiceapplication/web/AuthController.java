@@ -6,7 +6,6 @@ import bg.softuni.invoiceapplication.security.SessionUser;
 import bg.softuni.invoiceapplication.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,7 +18,6 @@ public class AuthController {
 
     private final UserService userService;
 
-    @Autowired
     public AuthController(UserService userService) {
         this.userService = userService;
     }
@@ -31,7 +29,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("user") UserLoginRequestDTO userLoginRequestDTO, BindingResult bindingResult, HttpSession httpSession) {
+    public String login(@Valid @ModelAttribute("user") UserLoginRequestDTO userLoginRequestDTO,
+                        BindingResult bindingResult,
+                        HttpSession httpSession) {
         if (bindingResult.hasErrors()) {
             return "user-login";
         }

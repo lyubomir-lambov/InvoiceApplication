@@ -73,7 +73,6 @@ public class PaymentController {
 
     @GetMapping("/edit/{paymentId}")
     public String showEditPaymentForm(@PathVariable UUID paymentId,
-                                      HttpSession httpSession,
                                       Model model) {
         PaymentEditRequestDTO paymentEditRequestDTO = paymentService.getPaymentForEdit(paymentId);
         addEditPaymentFormAttributes(model, paymentEditRequestDTO.getClientId());
@@ -86,7 +85,6 @@ public class PaymentController {
     public String editPayment(@PathVariable UUID paymentId,
                               @Valid @ModelAttribute("payment") PaymentEditRequestDTO paymentEditRequestDTO,
                               BindingResult bindingResult,
-                              HttpSession httpSession,
                               Model model) {
         if (bindingResult.hasErrors()) {
             addEditPaymentFormAttributes(model, paymentEditRequestDTO.getClientId());

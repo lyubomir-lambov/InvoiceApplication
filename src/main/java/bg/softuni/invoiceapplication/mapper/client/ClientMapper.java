@@ -1,12 +1,11 @@
 package bg.softuni.invoiceapplication.mapper.client;
 
-import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
+import bg.softuni.invoiceapplication.model.entity.Client;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -35,30 +34,28 @@ public class ClientMapper {
             return null;
         }
 
-        List<ClientShowAllDTO> clientShowAllDTOs = new ArrayList<>();
-        clients.forEach(client -> {
-            ClientShowAllDTO clientShowAllDTO = ClientShowAllDTO.builder()
-                    .id(client.getId())
-                    .displayName(client.getDisplayName())
-                    .companyName(client.getCompanyName())
-                    .legalRepresentative(client.getLegalRepresentative())
-                    .email(client.getEmail())
-                    .phoneNumber(client.getPhoneNumber())
-                    .country(client.getCountry())
-                    .address(client.getAddress())
-                    .vatRegistered(client.isVatRegistered())
-                    .vatNumber(client.getVatNumber())
-                    .active(client.isActive())
-                    .build();
-            clientShowAllDTOs.add(clientShowAllDTO);
-        });
-        return clientShowAllDTOs;
+        return clients.stream()
+                .map(client -> ClientShowAllDTO.builder()
+                        .id(client.getId())
+                        .displayName(client.getDisplayName())
+                        .companyName(client.getCompanyName())
+                        .legalRepresentative(client.getLegalRepresentative())
+                        .email(client.getEmail())
+                        .phoneNumber(client.getPhoneNumber())
+                        .country(client.getCountry())
+                        .address(client.getAddress())
+                        .vatRegistered(client.isVatRegistered())
+                        .vatNumber(client.getVatNumber())
+                        .active(client.isActive())
+                        .build())
+                .toList();
     }
 
     public ClientEditRequestDTO fromClientToClientEditRequestDTO(Client client) {
         if (client == null) {
             return null;
         }
+
         return ClientEditRequestDTO.builder()
                 .id(client.getId())
                 .displayName(client.getDisplayName())

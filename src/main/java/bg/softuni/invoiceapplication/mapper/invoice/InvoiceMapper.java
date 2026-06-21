@@ -13,20 +13,21 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class InvoiceMapper {
+
+    private static final int MONEY_SCALE = 2;
 
     public List<InvoiceShowAllDTO> fromAllInvoicesToInvoiceShowAllDTOs(List<Invoice> invoices) {
         if (invoices == null) {
             return null;
         }
 
-        List<InvoiceShowAllDTO> invoiceShowAllDTOs = new ArrayList<>();
-        invoices.forEach(invoice -> invoiceShowAllDTOs.add(fromInvoiceToInvoiceShowAllDTO(invoice)));
-        return invoiceShowAllDTOs;
+        return invoices.stream()
+                .map(this::fromInvoiceToInvoiceShowAllDTO)
+                .toList();
     }
 
     public InvoiceShowAllDTO fromInvoiceToInvoiceShowAllDTO(Invoice invoice) {
@@ -112,21 +113,18 @@ public class InvoiceMapper {
             return null;
         }
 
-        List<InvoiceLineItemShowDTO> invoiceLineItemShowDTOs = new ArrayList<>();
-        lineItems.forEach(lineItem -> {
-            InvoiceLineItemShowDTO invoiceLineItemShowDTO = InvoiceLineItemShowDTO.builder()
-                    .description(lineItem.getDescription())
-                    .quantity(lineItem.getQuantity())
-                    .measurementUnit(lineItem.getMeasurementUnit())
-                    .unitPrice(lineItem.getUnitPrice())
-                    .vatRate(lineItem.getVatRate())
-                    .lineTotalWithoutVat(lineItem.getLineTotalWithoutVat())
-                    .vatAmount(lineItem.getVatAmount())
-                    .lineTotalWithVat(lineItem.getLineTotalWithVat())
-                    .build();
-            invoiceLineItemShowDTOs.add(invoiceLineItemShowDTO);
-        });
-        return invoiceLineItemShowDTOs;
+        return lineItems.stream()
+                .map(lineItem -> InvoiceLineItemShowDTO.builder()
+                        .description(lineItem.getDescription())
+                        .quantity(lineItem.getQuantity())
+                        .measurementUnit(lineItem.getMeasurementUnit())
+                        .unitPrice(lineItem.getUnitPrice())
+                        .vatRate(lineItem.getVatRate())
+                        .lineTotalWithoutVat(lineItem.getLineTotalWithoutVat())
+                        .vatAmount(lineItem.getVatAmount())
+                        .lineTotalWithVat(lineItem.getLineTotalWithVat())
+                        .build())
+                .toList();
     }
 
     private List<InvoiceLineItemCreateRequestDTO> fromAllInvoiceLineItemsToInvoiceLineItemCreateRequestDTOs(List<InvoiceLineItem> lineItems) {
@@ -134,18 +132,15 @@ public class InvoiceMapper {
             return null;
         }
 
-        List<InvoiceLineItemCreateRequestDTO> invoiceLineItemCreateRequestDTOs = new ArrayList<>();
-        lineItems.forEach(lineItem -> {
-            InvoiceLineItemCreateRequestDTO invoiceLineItemCreateRequestDTO = InvoiceLineItemCreateRequestDTO.builder()
-                    .description(lineItem.getDescription())
-                    .quantity(lineItem.getQuantity())
-                    .measurementUnit(lineItem.getMeasurementUnit())
-                    .unitPrice(lineItem.getUnitPrice())
-                    .vatRate(lineItem.getVatRate())
-                    .build();
-            invoiceLineItemCreateRequestDTOs.add(invoiceLineItemCreateRequestDTO);
-        });
-        return invoiceLineItemCreateRequestDTOs;
+        return lineItems.stream()
+                .map(lineItem -> InvoiceLineItemCreateRequestDTO.builder()
+                        .description(lineItem.getDescription())
+                        .quantity(lineItem.getQuantity())
+                        .measurementUnit(lineItem.getMeasurementUnit())
+                        .unitPrice(lineItem.getUnitPrice())
+                        .vatRate(lineItem.getVatRate())
+                        .build())
+                .toList();
     }
 
     private BigDecimal calculateInvoiceTotalAmount(Invoice invoice) {
@@ -153,7 +148,7 @@ public class InvoiceMapper {
                 .stream()
                 .map(InvoiceLineItem::getLineTotalWithVat)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
+                .setScale(MONEY_SCALE, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateInvoiceSubtotalAmount(Invoice invoice) {
@@ -161,7 +156,7 @@ public class InvoiceMapper {
                 .stream()
                 .map(InvoiceLineItem::getLineTotalWithoutVat)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
+                .setScale(MONEY_SCALE, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateInvoiceVatAmount(Invoice invoice) {
@@ -169,6 +164,6 @@ public class InvoiceMapper {
                 .stream()
                 .map(InvoiceLineItem::getVatAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
+                .setScale(MONEY_SCALE, RoundingMode.HALF_UP);
     }
 }

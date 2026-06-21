@@ -8,12 +8,16 @@ import bg.softuni.invoiceapplication.service.ClientService;
 import bg.softuni.invoiceapplication.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -25,7 +29,6 @@ public class ClientController {
     private final ClientService clientService;
     private final UserService userService;
 
-    @Autowired
     public ClientController(ClientService clientService, UserService userService) {
         this.clientService = clientService;
         this.userService = userService;
@@ -50,7 +53,9 @@ public class ClientController {
     }
 
     @PostMapping("/create")
-    public String createClient(@Valid @ModelAttribute("client") ClientCreateRequestDTO clientCreateRequestDTO, BindingResult bindingResult, Model model) {
+    public String createClient(@Valid @ModelAttribute("client") ClientCreateRequestDTO clientCreateRequestDTO,
+                               BindingResult bindingResult,
+                               Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("countries", Country.values());
             return "client-create";
@@ -70,7 +75,10 @@ public class ClientController {
     }
 
     @PostMapping("/edit/{id}")
-    public String editClient(@PathVariable UUID id, @Valid @ModelAttribute("client") ClientEditRequestDTO clientEditRequestDTO, BindingResult bindingResult, Model model) {
+    public String editClient(@PathVariable UUID id,
+                             @Valid @ModelAttribute("client") ClientEditRequestDTO clientEditRequestDTO,
+                             BindingResult bindingResult,
+                             Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("countries", Country.values());
             return "client-edit";

@@ -6,7 +6,6 @@ import bg.softuni.invoiceapplication.security.SessionUser;
 import bg.softuni.invoiceapplication.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,8 +24,7 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
-    
-    @Autowired
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -54,7 +52,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("user") UserRegistrationRequestDTO userRegistrationRequestDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String registerUser(@Valid @ModelAttribute("user") UserRegistrationRequestDTO userRegistrationRequestDTO,
+                               BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user-register";
         }

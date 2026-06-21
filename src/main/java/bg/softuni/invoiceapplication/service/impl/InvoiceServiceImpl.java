@@ -8,7 +8,6 @@ import bg.softuni.invoiceapplication.model.dto.InvoiceLineItemCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
-import bg.softuni.invoiceapplication.model.entity.InvoiceLineItem;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import bg.softuni.invoiceapplication.model.enums.InvoiceStatus;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,9 +67,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         Long nextInvoiceSequence = getNextInvoiceSequence();
         LocalDate issueDate = LocalDate.now();
 
-        List<InvoiceLineItemCreateRequestDTO> lineItems = new ArrayList<>();
-        lineItems.add(InvoiceLineItemCreateRequestDTO.builder().build());
-
         return InvoiceCreateRequestDTO.builder()
                 .invoiceType(InvoiceType.INVOICE)
                 .currency(InvoiceCurrency.BGN)
@@ -79,7 +74,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .invoiceNumber(formatInvoiceNumber(nextInvoiceSequence))
                 .issueDate(issueDate)
                 .dueDate(issueDate.plusDays(DEFAULT_DUE_DAYS))
-                .lineItems(lineItems)
+                .lineItems(List.of(InvoiceLineItemCreateRequestDTO.builder().build()))
                 .build();
     }
 
@@ -117,17 +112,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .issueDate(invoiceCreateRequestDTO.getIssueDate())
                 .dueDate(invoiceCreateRequestDTO.getDueDate())
                 .client(client)
-                .clientDisplayName(client.getDisplayName())
-                .clientCompanyName(client.getCompanyName())
-                .clientLegalRepresentative(client.getLegalRepresentative())
-                .clientEmail(client.getEmail())
-                .clientPhoneNumber(client.getPhoneNumber())
-                .clientVatRegistered(client.isVatRegistered())
-                .clientVatNumber(client.getVatNumber())
-                .clientCountry(client.getCountry())
-                .clientAddress(client.getAddress())
                 .build();
 
+        updateClientSnapshot(invoice, client);
         invoiceCreateRequestDTO.getLineItems()
                 .stream()
                 .map(invoiceMapper::fromInvoiceLineItemCreateRequestDTOToInvoiceLineItem)
@@ -169,6 +156,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setIssueDate(invoiceEditRequestDTO.getIssueDate());
         invoice.setDueDate(invoiceEditRequestDTO.getDueDate());
         invoice.setClient(client);
+        updateClientSnapshot(invoice, client);
+
+        invoice.getLineItems().clear();
+        invoiceEditRequestDTO.getLineItems()
+                .stream()
+                .map(invoiceMapper::fromInvoiceLineItemCreateRequestDTOToInvoiceLineItem)
+                .forEach(invoice::addLineItem);
+    }
+
+    private void updateClientSnapshot(Invoice invoice, Client client) {
         invoice.setClientDisplayName(client.getDisplayName());
         invoice.setClientCompanyName(client.getCompanyName());
         invoice.setClientLegalRepresentative(client.getLegalRepresentative());
@@ -178,12 +175,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setClientVatNumber(client.getVatNumber());
         invoice.setClientCountry(client.getCountry());
         invoice.setClientAddress(client.getAddress());
-
-        invoice.getLineItems().clear();
-        invoiceEditRequestDTO.getLineItems()
-                .stream()
-                .map(invoiceMapper::fromInvoiceLineItemCreateRequestDTOToInvoiceLineItem)
-                .forEach(invoice::addLineItem);
     }
 
     @Override
