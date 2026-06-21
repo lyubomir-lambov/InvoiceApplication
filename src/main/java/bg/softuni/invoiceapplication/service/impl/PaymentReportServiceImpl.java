@@ -49,12 +49,6 @@ public class PaymentReportServiceImpl implements PaymentReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PaymentReportByCurrencyDTO> getReportsByCurrency() {
-        return getReportsByCurrency(null);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<PaymentReportByCurrencyDTO> getReportsByCurrency(UUID clientId) {
         Map<InvoiceCurrency, BigDecimal> invoiceTotalsByCurrency = emptyCurrencyTotals();
         Map<InvoiceCurrency, BigDecimal> paymentTotalsByCurrency = emptyCurrencyTotals();

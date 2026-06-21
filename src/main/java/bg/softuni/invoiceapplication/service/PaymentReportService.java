@@ -8,8 +8,6 @@ import java.util.UUID;
 
 public interface PaymentReportService {
 
-    List<PaymentReportByCurrencyDTO> getReportsByCurrency();
-
     List<PaymentReportByCurrencyDTO> getReportsByCurrency(UUID clientId);
 
     List<PaymentReportClientDTO> getClientReports(UUID clientId);
