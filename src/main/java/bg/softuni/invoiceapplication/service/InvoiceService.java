@@ -2,6 +2,7 @@ package bg.softuni.invoiceapplication.service;
 
 import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceDetailsDTO;
+import bg.softuni.invoiceapplication.model.dto.InvoiceEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 
@@ -13,5 +14,7 @@ public interface InvoiceService {
     InvoiceDetailsDTO findInvoiceById(UUID invoiceId);
     InvoiceCreateRequestDTO prepareCreateInvoiceForm();
     Invoice createInvoice(InvoiceCreateRequestDTO invoiceCreateRequestDTO);
+    InvoiceEditRequestDTO getInvoiceForEdit(UUID invoiceId);
+    void editInvoice(InvoiceEditRequestDTO invoiceEditRequestDTO);
     void cancelInvoice(UUID invoiceId);
 }

@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.web;
 
 import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.InvoiceEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.model.enums.MeasurementUnit;
@@ -80,6 +81,33 @@ public class InvoiceController {
         return "redirect:/invoices";
     }
 
+    @GetMapping("/edit/{invoiceId}")
+    public String showEditInvoiceForm(@PathVariable UUID invoiceId,
+                                      HttpSession httpSession,
+                                      Model model) {
+        InvoiceEditRequestDTO invoiceEditRequestDTO = invoiceService.getInvoiceForEdit(invoiceId);
+        addEditInvoiceFormAttributes(httpSession, model, invoiceEditRequestDTO.getClientId());
+        model.addAttribute("invoice", invoiceEditRequestDTO);
+
+        return "invoice-edit";
+    }
+
+    @PostMapping("/edit/{invoiceId}")
+    public String editInvoice(@PathVariable UUID invoiceId,
+                              @Valid @ModelAttribute("invoice") InvoiceEditRequestDTO invoiceEditRequestDTO,
+                              BindingResult bindingResult,
+                              HttpSession httpSession,
+                              Model model) {
+        if (bindingResult.hasErrors()) {
+            addEditInvoiceFormAttributes(httpSession, model, invoiceEditRequestDTO.getClientId());
+            return "invoice-edit";
+        }
+
+        invoiceEditRequestDTO.setId(invoiceId);
+        invoiceService.editInvoice(invoiceEditRequestDTO);
+        return "redirect:/invoices";
+    }
+
     private void addCreateInvoiceFormAttributes(HttpSession httpSession, Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
@@ -90,5 +118,17 @@ public class InvoiceController {
         model.addAttribute("measurementUnits", MeasurementUnit.values());
         model.addAttribute("vatRates", VatRate.values());
         model.addAttribute("clients", clientService.findAllActiveClientsForSelect());
+    }
+
+    private void addEditInvoiceFormAttributes(HttpSession httpSession, Model model, UUID selectedClientId) {
+        UUID userId = SessionUser.getUserId(httpSession);
+        String username = userService.getUsernameById(userId);
+
+        model.addAttribute("username", username);
+        model.addAttribute("invoiceTypes", InvoiceType.values());
+        model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
+        model.addAttribute("measurementUnits", MeasurementUnit.values());
+        model.addAttribute("vatRates", VatRate.values());
+        model.addAttribute("clients", clientService.findAllActiveClientsForSelect(selectedClientId));
     }
 }

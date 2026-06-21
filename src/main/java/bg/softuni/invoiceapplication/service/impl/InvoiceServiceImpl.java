@@ -3,6 +3,7 @@ package bg.softuni.invoiceapplication.service.impl;
 import bg.softuni.invoiceapplication.mapper.invoice.InvoiceMapper;
 import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceDetailsDTO;
+import bg.softuni.invoiceapplication.model.dto.InvoiceEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceLineItemCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
@@ -115,16 +116,60 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoiceCreateRequestDTO.getLineItems()
                 .stream()
-                .map(lineItemDTO -> InvoiceLineItem.builder()
-                        .description(lineItemDTO.getDescription())
-                        .quantity(lineItemDTO.getQuantity())
-                        .measurementUnit(lineItemDTO.getMeasurementUnit())
-                        .unitPrice(lineItemDTO.getUnitPrice())
-                        .vatRate(lineItemDTO.getVatRate())
-                        .build())
+                .map(invoiceMapper::fromInvoiceLineItemCreateRequestDTOToInvoiceLineItem)
                 .forEach(invoice::addLineItem);
 
         return invoiceRepository.save(invoice);
+    }
+
+    @Override
+    public InvoiceEditRequestDTO getInvoiceForEdit(UUID invoiceId) {
+        return invoiceRepository.findById(invoiceId)
+                .map(invoiceMapper::fromInvoiceToInvoiceEditRequestDTO)
+                .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceId + " does not exist"));
+    }
+
+    @Override
+    @Transactional
+    public void editInvoice(InvoiceEditRequestDTO invoiceEditRequestDTO) {
+        if (invoiceEditRequestDTO == null) {
+            throw new IllegalArgumentException("Invoice edit request must not be null");
+        }
+
+        Invoice invoice = invoiceRepository.findById(invoiceEditRequestDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceEditRequestDTO.getId() + " does not exist"));
+
+        Client client = clientRepository.findById(invoiceEditRequestDTO.getClientId())
+                .orElseThrow(() -> new RuntimeException("Client with id " + invoiceEditRequestDTO.getClientId() + " does not exist"));
+
+        if (!client.isActive() && !client.getId().equals(invoice.getClient().getId())) {
+            throw new RuntimeException("Cannot move invoice to inactive client");
+        }
+
+        if (invoiceEditRequestDTO.getDueDate().isBefore(invoiceEditRequestDTO.getIssueDate())) {
+            throw new RuntimeException("Due date cannot be before issue date");
+        }
+
+        invoice.setInvoiceType(invoiceEditRequestDTO.getInvoiceType());
+        invoice.setCurrency(invoiceEditRequestDTO.getCurrency());
+        invoice.setIssueDate(invoiceEditRequestDTO.getIssueDate());
+        invoice.setDueDate(invoiceEditRequestDTO.getDueDate());
+        invoice.setClient(client);
+        invoice.setClientDisplayName(client.getDisplayName());
+        invoice.setClientCompanyName(client.getCompanyName());
+        invoice.setClientLegalRepresentative(client.getLegalRepresentative());
+        invoice.setClientEmail(client.getEmail());
+        invoice.setClientPhoneNumber(client.getPhoneNumber());
+        invoice.setClientVatRegistered(client.isVatRegistered());
+        invoice.setClientVatNumber(client.getVatNumber());
+        invoice.setClientCountry(client.getCountry());
+        invoice.setClientAddress(client.getAddress());
+
+        invoice.getLineItems().clear();
+        invoiceEditRequestDTO.getLineItems()
+                .stream()
+                .map(invoiceMapper::fromInvoiceLineItemCreateRequestDTOToInvoiceLineItem)
+                .forEach(invoice::addLineItem);
     }
 
     @Override

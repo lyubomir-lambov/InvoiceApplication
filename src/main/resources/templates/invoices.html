@@ -37,11 +37,12 @@
                     <th>Client</th>
                     <th>Amount</th>
                     <th>Currency</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(invoices)}">
-                    <td colspan="6">No invoices found.</td>
+                    <td colspan="7">No invoices found.</td>
                 </tr>
                 <tr th:each="invoice : ${invoices}"
                     th:classappend="${invoice.status.name() == 'CANCELLED'} ? 'invoice-cancelled-row'">
@@ -63,6 +64,11 @@
                     <td th:text="${invoice.totalAmount}"
                         th:classappend="${invoice.invoiceType.name() == 'CREDIT_NOTE'} ? 'invoice-credit-amount'">0.00</td>
                     <td th:text="${invoice.currency.code}">BGN</td>
+                    <td>
+                        <a class="nav-button"
+                           th:href="@{/invoices/edit/{invoiceId}(invoiceId=${invoice.id})}"
+                           href="/invoices/edit/00000000-0000-0000-0000-000000000000">Edit</a>
+                    </td>
                 </tr>
                 </tbody>
             </table>

@@ -1,6 +1,8 @@
 package bg.softuni.invoiceapplication.mapper.invoice;
 
 import bg.softuni.invoiceapplication.model.dto.InvoiceDetailsDTO;
+import bg.softuni.invoiceapplication.model.dto.InvoiceEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.InvoiceLineItemCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceLineItemShowDTO;
 import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
@@ -73,6 +75,38 @@ public class InvoiceMapper {
                 .build();
     }
 
+    public InvoiceEditRequestDTO fromInvoiceToInvoiceEditRequestDTO(Invoice invoice) {
+        if (invoice == null) {
+            return null;
+        }
+
+        InvoiceEditRequestDTO invoiceEditRequestDTO = new InvoiceEditRequestDTO();
+        invoiceEditRequestDTO.setId(invoice.getId());
+        invoiceEditRequestDTO.setInvoiceType(invoice.getInvoiceType());
+        invoiceEditRequestDTO.setInvoiceNumber(invoice.getInvoiceNumber());
+        invoiceEditRequestDTO.setCurrency(invoice.getCurrency() == null ? InvoiceCurrency.BGN : invoice.getCurrency());
+        invoiceEditRequestDTO.setIssueDate(invoice.getIssueDate());
+        invoiceEditRequestDTO.setDueDate(invoice.getDueDate());
+        invoiceEditRequestDTO.setClientId(invoice.getClient().getId());
+        invoiceEditRequestDTO.setLineItems(fromAllInvoiceLineItemsToInvoiceLineItemCreateRequestDTOs(invoice.getLineItems()));
+
+        return invoiceEditRequestDTO;
+    }
+
+    public InvoiceLineItem fromInvoiceLineItemCreateRequestDTOToInvoiceLineItem(InvoiceLineItemCreateRequestDTO lineItemDTO) {
+        if (lineItemDTO == null) {
+            return null;
+        }
+
+        return InvoiceLineItem.builder()
+                .description(lineItemDTO.getDescription())
+                .quantity(lineItemDTO.getQuantity())
+                .measurementUnit(lineItemDTO.getMeasurementUnit())
+                .unitPrice(lineItemDTO.getUnitPrice())
+                .vatRate(lineItemDTO.getVatRate())
+                .build();
+    }
+
     private List<InvoiceLineItemShowDTO> fromAllInvoiceLineItemsToInvoiceLineItemShowDTOs(List<InvoiceLineItem> lineItems) {
         if (lineItems == null) {
             return null;
@@ -93,6 +127,25 @@ public class InvoiceMapper {
             invoiceLineItemShowDTOs.add(invoiceLineItemShowDTO);
         });
         return invoiceLineItemShowDTOs;
+    }
+
+    private List<InvoiceLineItemCreateRequestDTO> fromAllInvoiceLineItemsToInvoiceLineItemCreateRequestDTOs(List<InvoiceLineItem> lineItems) {
+        if (lineItems == null) {
+            return null;
+        }
+
+        List<InvoiceLineItemCreateRequestDTO> invoiceLineItemCreateRequestDTOs = new ArrayList<>();
+        lineItems.forEach(lineItem -> {
+            InvoiceLineItemCreateRequestDTO invoiceLineItemCreateRequestDTO = new InvoiceLineItemCreateRequestDTO();
+            invoiceLineItemCreateRequestDTO.setDescription(lineItem.getDescription());
+            invoiceLineItemCreateRequestDTO.setQuantity(lineItem.getQuantity());
+            invoiceLineItemCreateRequestDTO.setMeasurementUnit(lineItem.getMeasurementUnit());
+            invoiceLineItemCreateRequestDTO.setUnitPrice(lineItem.getUnitPrice());
+            invoiceLineItemCreateRequestDTO.setVatRate(lineItem.getVatRate());
+
+            invoiceLineItemCreateRequestDTOs.add(invoiceLineItemCreateRequestDTO);
+        });
+        return invoiceLineItemCreateRequestDTOs;
     }
 
     private BigDecimal calculateInvoiceTotalAmount(Invoice invoice) {

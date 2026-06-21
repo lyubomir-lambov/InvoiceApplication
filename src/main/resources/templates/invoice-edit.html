@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Invoice | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button nav-button-active" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
+    </nav>
+    <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
+        <span th:text="${username}" style="display: inline-flex; align-items: center; min-height: 40px; color: var(--primary); font-size: 15px; font-weight: 700;">username</span>
+        <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <section class="auth">
+        <div class="auth-panel invoice-panel">
+            <div class="auth-header">
+                <h1>Edit invoice</h1>
+                <p>Update invoice details and save the changes.</p>
+            </div>
+
+            <form class="auth-form" th:object="${invoice}" th:action="@{/invoices/edit/{id}(id=*{id})}" action="/invoices/edit/invoice-id" method="post">
+                <input th:field="*{id}" type="hidden">
+
+                <div class="invoice-header-grid">
+                    <div class="form-group">
+                        <label for="invoiceType">Document type</label>
+                        <select id="invoiceType" th:field="*{invoiceType}" required>
+                            <option th:each="invoiceType : ${invoiceTypes}"
+                                    th:value="${invoiceType}"
+                                    th:text="${invoiceType.displayName}">
+                            </option>
+                        </select>
+                        <p class="field-error" th:if="${#fields.hasErrors('invoiceType')}" th:errors="*{invoiceType}">Invoice type error</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invoiceNumber">Invoice number</label>
+                        <input id="invoiceNumber" th:field="*{invoiceNumber}" type="text" maxlength="10" readonly>
+                        <p class="field-error" th:if="${#fields.hasErrors('invoiceNumber')}" th:errors="*{invoiceNumber}">Invoice number error</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <select id="currency" th:field="*{currency}" required>
+                            <option th:each="invoiceCurrency : ${invoiceCurrencies}"
+                                    th:value="${invoiceCurrency}"
+                                    th:text="${invoiceCurrency.displayName + ' (' + invoiceCurrency.code + ')'}">
+                            </option>
+                        </select>
+                        <p class="field-error" th:if="${#fields.hasErrors('currency')}" th:errors="*{currency}">Currency error</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="issueDate">Issue date</label>
+                        <input id="issueDate" th:field="*{issueDate}" type="date" required>
+                        <p class="field-error" th:if="${#fields.hasErrors('issueDate')}" th:errors="*{issueDate}">Issue date error</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dueDate">Due date</label>
+                        <input id="dueDate" th:field="*{dueDate}" type="date" required>
+                        <p class="field-error" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}">Due date error</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clientId">Client</label>
+                        <select id="clientId" th:field="*{clientId}" required>
+                            <option value="">Select client</option>
+                            <option th:each="client : ${clients}"
+                                    th:value="${client.id}"
+                                    th:text="${client.displayName}">
+                            </option>
+                        </select>
+                        <p class="field-error" th:if="${#fields.hasErrors('clientId')}" th:errors="*{clientId}">Client error</p>
+                    </div>
+                </div>
+
+                <div class="invoice-lines table-card">
+                    <table class="invoice-lines-table">
+                        <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Unit price</th>
+                            <th>VAT</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="invoiceLines">
+                        <tr th:each="lineItem, itemStat : *{lineItems}">
+                            <td>
+                                <input th:id="${'lineItemDescription' + itemStat.index}"
+                                       th:field="*{lineItems[__${itemStat.index}__].description}"
+                                       type="text"
+                                       maxlength="255"
+                                       required>
+                                <p class="field-error"
+                                   th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].description')}"
+                                   th:errors="*{lineItems[__${itemStat.index}__].description}">Description error</p>
+                            </td>
+
+                            <td>
+                                <input th:id="${'lineItemQuantity' + itemStat.index}"
+                                       th:field="*{lineItems[__${itemStat.index}__].quantity}"
+                                       type="number"
+                                       min="0.01"
+                                       step="0.01"
+                                       required>
+                                <p class="field-error"
+                                   th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].quantity')}"
+                                   th:errors="*{lineItems[__${itemStat.index}__].quantity}">Quantity error</p>
+                            </td>
+
+                            <td>
+                                <select th:id="${'lineItemMeasurementUnit' + itemStat.index}"
+                                        th:field="*{lineItems[__${itemStat.index}__].measurementUnit}"
+                                        required>
+                                    <option value="">Select unit</option>
+                                    <option th:each="measurementUnit : ${measurementUnits}"
+                                            th:value="${measurementUnit}"
+                                            th:text="${measurementUnit.displayName}">
+                                    </option>
+                                </select>
+                                <p class="field-error"
+                                   th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].measurementUnit')}"
+                                   th:errors="*{lineItems[__${itemStat.index}__].measurementUnit}">Measurement unit error</p>
+                            </td>
+
+                            <td>
+                                <input th:id="${'lineItemUnitPrice' + itemStat.index}"
+                                       th:field="*{lineItems[__${itemStat.index}__].unitPrice}"
+                                       type="number"
+                                       min="0"
+                                       step="0.000001"
+                                       required>
+                                <p class="field-error"
+                                   th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].unitPrice')}"
+                                   th:errors="*{lineItems[__${itemStat.index}__].unitPrice}">Unit price error</p>
+                            </td>
+
+                            <td>
+                                <select th:id="${'lineItemVatRate' + itemStat.index}"
+                                        th:field="*{lineItems[__${itemStat.index}__].vatRate}"
+                                        required>
+                                    <option value="">Select VAT</option>
+                                    <option th:each="vatRate : ${vatRates}"
+                                            th:value="${vatRate}"
+                                            th:text="${vatRate.percentage + '%'}">
+                                    </option>
+                                </select>
+                                <p class="field-error"
+                                   th:if="${#fields.hasErrors('lineItems[' + itemStat.index + '].vatRate')}"
+                                   th:errors="*{lineItems[__${itemStat.index}__].vatRate}">VAT rate error</p>
+                            </td>
+
+                            <td class="invoice-line-actions">
+                                <button class="button invoice-remove-row-button"
+                                        type="button"
+                                        data-remove-line>
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button class="button button-secondary invoice-add-row-button" id="addInvoiceLineButton" type="button">Add row</button>
+
+                <button class="button button-primary form-submit" type="submit">Save changes</button>
+            </form>
+        </div>
+    </section>
+</main>
+<template id="invoiceLineTemplate">
+    <tr>
+        <td>
+            <input data-id-template="lineItemDescription"
+                   data-name-template="lineItems[__index__].description"
+                   type="text"
+                   maxlength="255"
+                   required>
+        </td>
+
+        <td>
+            <input data-id-template="lineItemQuantity"
+                   data-name-template="lineItems[__index__].quantity"
+                   type="number"
+                   min="0.01"
+                   step="0.01"
+                   required>
+        </td>
+
+        <td>
+            <select data-id-template="lineItemMeasurementUnit"
+                    data-name-template="lineItems[__index__].measurementUnit"
+                    required>
+                <option value="">Select unit</option>
+                <option th:each="measurementUnit : ${measurementUnits}"
+                        th:value="${measurementUnit}"
+                        th:text="${measurementUnit.displayName}">
+                </option>
+            </select>
+        </td>
+
+        <td>
+            <input data-id-template="lineItemUnitPrice"
+                   data-name-template="lineItems[__index__].unitPrice"
+                   type="number"
+                   min="0"
+                   step="0.000001"
+                   required>
+        </td>
+
+        <td>
+            <select data-id-template="lineItemVatRate"
+                    data-name-template="lineItems[__index__].vatRate"
+                    required>
+                <option value="">Select VAT</option>
+                <option th:each="vatRate : ${vatRates}"
+                        th:value="${vatRate}"
+                        th:text="${vatRate.percentage + '%'}">
+                </option>
+            </select>
+        </td>
+
+        <td class="invoice-line-actions">
+            <button class="button invoice-remove-row-button"
+                    type="button"
+                    data-remove-line>
+                Remove
+            </button>
+        </td>
+    </tr>
+</template>
+<script>
+    const invoiceLines = document.getElementById('invoiceLines');
+    const invoiceLineTemplate = document.getElementById('invoiceLineTemplate');
+    const addInvoiceLineButton = document.getElementById('addInvoiceLineButton');
+
+    addInvoiceLineButton.addEventListener('click', () => {
+        const nextIndex = invoiceLines.querySelectorAll('tr').length;
+        const newLine = invoiceLineTemplate.content.cloneNode(true);
+
+        newLine.querySelectorAll('[data-name-template]').forEach((field) => {
+            field.name = field.dataset.nameTemplate.replace('__index__', nextIndex);
+            field.id = `${field.dataset.idTemplate}${nextIndex}`;
+        });
+
+        invoiceLines.appendChild(newLine);
+        updateRemoveButtons();
+    });
+
+    invoiceLines.addEventListener('click', (event) => {
+        const removeButton = event.target.closest('[data-remove-line]');
+
+        if (!removeButton || removeButton.disabled) {
+            return;
+        }
+
+        removeButton.closest('tr').remove();
+        reindexInvoiceLines();
+        updateRemoveButtons();
+    });
+
+    function reindexInvoiceLines() {
+        invoiceLines.querySelectorAll('tr').forEach((line, index) => {
+            line.querySelectorAll('[name]').forEach((field) => {
+                field.name = field.name.replace(/lineItems\[\d+]/, `lineItems[${index}]`);
+            });
+
+            line.querySelectorAll('[id]').forEach((field) => {
+                field.id = field.id.replace(/\d+$/, index);
+            });
+        });
+    }
+
+    function updateRemoveButtons() {
+        const removeButtons = invoiceLines.querySelectorAll('[data-remove-line]');
+        const removeDisabled = removeButtons.length <= 1;
+
+        removeButtons.forEach((button) => {
+            button.disabled = removeDisabled;
+        });
+    }
+
+    updateRemoveButtons();
+</script>
+</body>
+</html>

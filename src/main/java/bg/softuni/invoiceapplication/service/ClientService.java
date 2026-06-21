@@ -14,6 +14,7 @@ public interface ClientService {
     Client createClient(ClientCreateRequestDTO clientCreateRequestDTO);
     List<ClientShowAllDTO> findAllClients();
     List<ClientSelectDTO> findAllActiveClientsForSelect();
+    List<ClientSelectDTO> findAllActiveClientsForSelect(UUID selectedClientId);
     List<ClientShowAllDTO> findClientsByName(String clientName);
     ClientEditRequestDTO getClientForEdit(UUID id);
     Optional<String> findDuplicateFieldForEdit(ClientEditRequestDTO clientEditRequestDTO);

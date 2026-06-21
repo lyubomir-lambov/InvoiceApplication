@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,6 +73,22 @@ public class ClientServiceImpl implements ClientService {
                 .stream()
                 .map(client -> new ClientSelectDTO(client.getId(), client.getDisplayName()))
                 .toList();
+    }
+
+    @Override
+    public List<ClientSelectDTO> findAllActiveClientsForSelect(UUID selectedClientId) {
+        List<ClientSelectDTO> activeClients = new ArrayList<>(findAllActiveClientsForSelect());
+
+        boolean selectedClientAlreadyIncluded = activeClients.stream()
+                .anyMatch(client -> client.getId().equals(selectedClientId));
+
+        if (selectedClientId != null && !selectedClientAlreadyIncluded) {
+            clientRepository.findById(selectedClientId)
+                    .map(client -> new ClientSelectDTO(client.getId(), client.getDisplayName()))
+                    .ifPresent(client -> activeClients.add(0, client));
+        }
+
+        return activeClients;
     }
 
     @Override
