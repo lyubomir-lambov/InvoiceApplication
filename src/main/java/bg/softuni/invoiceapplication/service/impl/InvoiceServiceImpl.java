@@ -175,10 +175,20 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     public void cancelInvoice(UUID invoiceId) {
+        updateInvoiceStatus(invoiceId, InvoiceStatus.CANCELLED);
+    }
+
+    @Override
+    @Transactional
+    public void restoreInvoice(UUID invoiceId) {
+        updateInvoiceStatus(invoiceId, InvoiceStatus.ISSUED);
+    }
+
+    private void updateInvoiceStatus(UUID invoiceId, InvoiceStatus status) {
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceId + " does not exist"));
 
-        invoice.setStatus(InvoiceStatus.CANCELLED);
+        invoice.setStatus(status);
     }
 
     private Long getNextInvoiceSequence() {

@@ -17,4 +17,5 @@ public interface InvoiceService {
     InvoiceEditRequestDTO getInvoiceForEdit(UUID invoiceId);
     void editInvoice(InvoiceEditRequestDTO invoiceEditRequestDTO);
     void cancelInvoice(UUID invoiceId);
+    void restoreInvoice(UUID invoiceId);
 }

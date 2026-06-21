@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.model.dto;
 
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
+import bg.softuni.invoiceapplication.model.enums.InvoiceStatus;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -33,6 +34,8 @@ public class InvoiceEditRequestDTO {
 
     @NotNull(message = "Invoice currency required")
     private InvoiceCurrency currency;
+
+    private InvoiceStatus status;
 
     @NotNull(message = "Issue date required")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

@@ -27,6 +27,9 @@
             <div class="auth-header">
                 <h1>Edit invoice</h1>
                 <p>Update invoice details and save the changes.</p>
+                <span class="status-badge"
+                      th:classappend="${invoice.status.name() == 'CANCELLED'} ? ' status-cancelled' : ' status-issued'"
+                      th:text="${invoice.status.displayName}">Issued</span>
             </div>
 
             <form class="auth-form" th:object="${invoice}" th:action="@{/invoices/edit/{id}(id=*{id})}" action="/invoices/edit/invoice-id" method="post">
@@ -181,6 +184,22 @@
 
                 <button class="button button-primary form-submit" type="submit">Save changes</button>
             </form>
+
+            <div class="invoice-status-actions">
+                <form th:if="${invoice.status.name() != 'CANCELLED'}"
+                      th:action="@{/invoices/edit/{id}/cancel(id=${invoice.id})}"
+                      action="/invoices/edit/invoice-id/cancel"
+                      method="post">
+                    <button class="button button-danger invoice-status-button" type="submit">Cancel invoice</button>
+                </form>
+
+                <form th:if="${invoice.status.name() == 'CANCELLED'}"
+                      th:action="@{/invoices/edit/{id}/restore(id=${invoice.id})}"
+                      action="/invoices/edit/invoice-id/restore"
+                      method="post">
+                    <button class="button button-secondary invoice-status-button" type="submit">Restore invoice</button>
+                </form>
+            </div>
         </div>
     </section>
 </main>

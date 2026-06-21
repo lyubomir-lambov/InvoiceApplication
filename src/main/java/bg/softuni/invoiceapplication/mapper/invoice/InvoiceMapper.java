@@ -85,6 +85,7 @@ public class InvoiceMapper {
         invoiceEditRequestDTO.setInvoiceType(invoice.getInvoiceType());
         invoiceEditRequestDTO.setInvoiceNumber(invoice.getInvoiceNumber());
         invoiceEditRequestDTO.setCurrency(invoice.getCurrency() == null ? InvoiceCurrency.BGN : invoice.getCurrency());
+        invoiceEditRequestDTO.setStatus(invoice.getStatus() == null ? InvoiceStatus.ISSUED : invoice.getStatus());
         invoiceEditRequestDTO.setIssueDate(invoice.getIssueDate());
         invoiceEditRequestDTO.setDueDate(invoice.getDueDate());
         invoiceEditRequestDTO.setClientId(invoice.getClient().getId());

@@ -108,6 +108,18 @@ public class InvoiceController {
         return "redirect:/invoices";
     }
 
+    @PostMapping("/edit/{invoiceId}/cancel")
+    public String cancelInvoice(@PathVariable UUID invoiceId) {
+        invoiceService.cancelInvoice(invoiceId);
+        return "redirect:/invoices";
+    }
+
+    @PostMapping("/edit/{invoiceId}/restore")
+    public String restoreInvoice(@PathVariable UUID invoiceId) {
+        invoiceService.restoreInvoice(invoiceId);
+        return "redirect:/invoices";
+    }
+
     private void addCreateInvoiceFormAttributes(HttpSession httpSession, Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);

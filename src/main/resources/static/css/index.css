@@ -141,6 +141,17 @@ main {
     border-color: var(--primary);
 }
 
+.button-danger {
+    color: #b42318;
+    background: #fff5f4;
+    border-color: #fecdca;
+}
+
+.button-danger:hover {
+    border-color: #f04438;
+    background: #fee4e2;
+}
+
 .hero-image {
     min-height: 360px;
     padding: 12px;
@@ -241,6 +252,16 @@ main {
 }
 
 .status-inactive {
+    color: #b42318;
+    background: #fee4e2;
+}
+
+.status-issued {
+    color: #067647;
+    background: #dcfae6;
+}
+
+.status-cancelled {
     color: #b42318;
     background: #fee4e2;
 }
@@ -679,6 +700,21 @@ main {
 
 .invoice-add-row-button {
     justify-self: start;
+    cursor: pointer;
+    font: inherit;
+}
+
+.invoice-status-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.invoice-status-actions form {
+    margin: 0;
+}
+
+.invoice-status-button {
     cursor: pointer;
     font: inherit;
 }
