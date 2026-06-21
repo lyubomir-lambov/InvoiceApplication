@@ -362,6 +362,11 @@ main {
     font-size: 15px;
 }
 
+.invoices-table td.invoice-credit-amount {
+    color: #ff2400;
+    font-weight: 700;
+}
+
 .clients-table tbody tr:last-child td,
 .invoices-table tbody tr:last-child td {
     border-bottom: 0;
