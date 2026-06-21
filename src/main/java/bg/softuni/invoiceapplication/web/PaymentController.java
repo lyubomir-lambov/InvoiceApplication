@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.web;
 
 import bg.softuni.invoiceapplication.model.dto.PaymentCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.PaymentEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import bg.softuni.invoiceapplication.security.SessionUser;
 import bg.softuni.invoiceapplication.service.ClientService;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -65,12 +67,48 @@ public class PaymentController {
         return "redirect:/payments";
     }
 
+    @GetMapping("/edit/{paymentId}")
+    public String showEditPaymentForm(@PathVariable UUID paymentId,
+                                      HttpSession httpSession,
+                                      Model model) {
+        PaymentEditRequestDTO paymentEditRequestDTO = paymentService.getPaymentForEdit(paymentId);
+        addEditPaymentFormAttributes(httpSession, model, paymentEditRequestDTO.getClientId());
+        model.addAttribute("payment", paymentEditRequestDTO);
+
+        return "payment-edit";
+    }
+
+    @PostMapping("/edit/{paymentId}")
+    public String editPayment(@PathVariable UUID paymentId,
+                              @Valid @ModelAttribute("payment") PaymentEditRequestDTO paymentEditRequestDTO,
+                              BindingResult bindingResult,
+                              HttpSession httpSession,
+                              Model model) {
+        if (bindingResult.hasErrors()) {
+            addEditPaymentFormAttributes(httpSession, model, paymentEditRequestDTO.getClientId());
+            return "payment-edit";
+        }
+
+        paymentEditRequestDTO.setId(paymentId);
+        paymentService.editPayment(paymentEditRequestDTO);
+        return "redirect:/payments";
+    }
+
     private void addCreatePaymentFormAttributes(HttpSession httpSession, Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
 
         model.addAttribute("username", username);
         model.addAttribute("clients", clientService.findAllActiveClientsForSelect());
+        model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
+    }
+
+    private void addEditPaymentFormAttributes(HttpSession httpSession, Model model, UUID selectedClientId) {
+        UUID userId = SessionUser.getUserId(httpSession);
+        String username = userService.getUsernameById(userId);
+
+        model.addAttribute("username", username);
+        model.addAttribute("clients", clientService.findAllActiveClientsForSelect(selectedClientId));
         model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
     }
 }

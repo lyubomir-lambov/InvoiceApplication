@@ -37,11 +37,12 @@
                     <th>Amount</th>
                     <th>Currency</th>
                     <th>Notes</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(payments)}">
-                    <td colspan="5">No payments found.</td>
+                    <td colspan="6">No payments found.</td>
                 </tr>
                 <tr th:each="payment : ${payments}">
                     <td th:text="${payment.paymentDate}">2026-06-21</td>
@@ -49,6 +50,11 @@
                     <td th:text="${payment.amount}">0.00</td>
                     <td th:text="${payment.currency.code}">BGN</td>
                     <td th:text="${payment.notes != null && !payment.notes.isBlank() ? payment.notes : '-'}">Payment note</td>
+                    <td>
+                        <a class="nav-button"
+                           th:href="@{/payments/edit/{paymentId}(paymentId=${payment.id})}"
+                           href="/payments/edit/00000000-0000-0000-0000-000000000000">Edit</a>
+                    </td>
                 </tr>
                 </tbody>
             </table>

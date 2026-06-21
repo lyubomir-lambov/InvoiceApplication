@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Payment | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
+        <a class="nav-button nav-button-active" th:href="@{/payments}" href="/payments">Payments</a>
+    </nav>
+    <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
+        <span th:text="${username}" style="display: inline-flex; align-items: center; min-height: 40px; color: var(--primary); font-size: 15px; font-weight: 700;">username</span>
+        <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <section class="auth">
+        <div class="auth-panel auth-panel-wide">
+            <div class="auth-header">
+                <h1>Edit payment</h1>
+                <p>Update payment details and save the changes.</p>
+            </div>
+
+            <form class="auth-form" th:object="${payment}" th:action="@{/payments/edit/{id}(id=*{id})}" action="/payments/edit/payment-id" method="post">
+                <input th:field="*{id}" type="hidden">
+
+                <div class="form-group">
+                    <label for="clientId">Client</label>
+                    <select id="clientId" th:field="*{clientId}" required>
+                        <option value="">Select client</option>
+                        <option th:each="client : ${clients}"
+                                th:value="${client.id}"
+                                th:text="${client.displayName}">
+                        </option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('clientId')}" th:errors="*{clientId}">Client error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input id="amount" th:field="*{amount}" type="number" min="0.01" step="0.01" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="currency">Currency</label>
+                    <select id="currency" th:field="*{currency}" required>
+                        <option value="">Select currency</option>
+                        <option th:each="invoiceCurrency : ${invoiceCurrencies}"
+                                th:value="${invoiceCurrency}"
+                                th:text="${invoiceCurrency.displayName + ' (' + invoiceCurrency.code + ')'}">
+                        </option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('currency')}" th:errors="*{currency}">Currency error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentDate">Payment date</label>
+                    <input id="paymentDate" th:field="*{paymentDate}" type="date" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('paymentDate')}" th:errors="*{paymentDate}">Payment date error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" th:field="*{notes}" rows="4"></textarea>
+                    <p class="field-error" th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}">Notes error</p>
+                </div>
+
+                <button class="button button-primary form-submit" type="submit">Save payment</button>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

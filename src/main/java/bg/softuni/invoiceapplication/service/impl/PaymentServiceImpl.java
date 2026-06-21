@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.model.dto.PaymentCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.PaymentEditRequestDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Payment;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
@@ -71,6 +72,43 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<Payment> findPaymentsByClientId(UUID clientId) {
         return paymentRepository.findAllByClientIdOrderByPaymentDateDesc(clientId);
+    }
+
+    @Override
+    public PaymentEditRequestDTO getPaymentForEdit(UUID paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new RuntimeException("Payment with id " + paymentId + " does not exist"));
+
+        PaymentEditRequestDTO paymentEditRequestDTO = new PaymentEditRequestDTO();
+        paymentEditRequestDTO.setId(payment.getId());
+        paymentEditRequestDTO.setClientId(payment.getClient().getId());
+        paymentEditRequestDTO.setAmount(payment.getAmount());
+        paymentEditRequestDTO.setCurrency(payment.getCurrency());
+        paymentEditRequestDTO.setPaymentDate(payment.getPaymentDate());
+        paymentEditRequestDTO.setNotes(payment.getNotes());
+
+        return paymentEditRequestDTO;
+    }
+
+    @Override
+    public void editPayment(PaymentEditRequestDTO paymentEditRequestDTO) {
+        if (paymentEditRequestDTO == null) {
+            throw new IllegalArgumentException("Payment edit request must not be null");
+        }
+
+        Payment payment = paymentRepository.findById(paymentEditRequestDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Payment with id " + paymentEditRequestDTO.getId() + " does not exist"));
+
+        Client client = clientRepository.findById(paymentEditRequestDTO.getClientId())
+                .orElseThrow(() -> new RuntimeException("Client with id " + paymentEditRequestDTO.getClientId() + " does not exist"));
+
+        payment.setClient(client);
+        payment.setAmount(paymentEditRequestDTO.getAmount());
+        payment.setCurrency(paymentEditRequestDTO.getCurrency());
+        payment.setPaymentDate(paymentEditRequestDTO.getPaymentDate());
+        payment.setNotes(paymentEditRequestDTO.getNotes());
+
+        paymentRepository.save(payment);
     }
 
     @Override
