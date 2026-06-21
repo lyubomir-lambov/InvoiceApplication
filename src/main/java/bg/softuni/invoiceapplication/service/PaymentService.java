@@ -17,6 +17,8 @@ public interface PaymentService {
 
     List<Payment> findAllPayments();
 
+    List<Payment> findPaymentsByCompanyName(String companyName);
+
     List<Payment> findPaymentsByClientId(UUID clientId);
 
     PaymentEditRequestDTO getPaymentForEdit(UUID paymentId);

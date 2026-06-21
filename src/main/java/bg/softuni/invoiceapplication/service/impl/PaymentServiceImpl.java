@@ -70,6 +70,15 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public List<Payment> findPaymentsByCompanyName(String companyName) {
+        if (companyName == null || companyName.isBlank()) {
+            return findAllPayments();
+        }
+
+        return paymentRepository.findPaymentsByCompanyName(companyName.trim());
+    }
+
+    @Override
     public List<Payment> findPaymentsByClientId(UUID clientId) {
         return paymentRepository.findAllByClientIdOrderByPaymentDateDesc(clientId);
     }

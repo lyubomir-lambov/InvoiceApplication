@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.UUID;
@@ -36,12 +37,15 @@ public class PaymentController {
     }
 
     @GetMapping("")
-    public String showAllPayments(HttpSession httpSession, Model model) {
+    public String showAllPayments(@RequestParam(required = false) String companyName,
+                                  HttpSession httpSession,
+                                  Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
 
         model.addAttribute("username", username);
-        model.addAttribute("payments", paymentService.findAllPayments());
+        model.addAttribute("payments", paymentService.findPaymentsByCompanyName(companyName));
+        model.addAttribute("companyName", companyName);
 
         return "payments";
     }

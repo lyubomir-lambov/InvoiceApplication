@@ -16,6 +16,14 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
 
     List<Payment> findAllByClientIdOrderByPaymentDateDesc(UUID clientId);
 
+    @Query("""
+            SELECT p
+            FROM Payment p
+            WHERE LOWER(p.client.companyName) LIKE LOWER(CONCAT('%', :companyName, '%'))
+            ORDER BY p.paymentDate DESC
+            """)
+    List<Payment> findPaymentsByCompanyName(@Param("companyName") String companyName);
+
     boolean existsByClientId(UUID clientId);
 
     @Query("""

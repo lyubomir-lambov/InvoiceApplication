@@ -26,6 +26,16 @@
     <section class="content-shell">
         <div class="section-actions">
             <a class="nav-button" th:href="@{/payments/create}" href="/payments/create">Add payment</a>
+            <form th:action="@{/payments}" action="/payments" method="get" style="display: inline-flex; align-items: center; gap: 10px; margin: 0 0 0 10px;">
+                <input type="search"
+                       name="companyName"
+                       th:value="${companyName}"
+                       placeholder="Search by company name"
+                       aria-label="Search by company name"
+                       onsearch="if (!this.value) this.form.submit();"
+                       style="min-height: 40px; padding: 0 16px; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 15px; font-weight: 700; background: var(--surface);">
+                <button class="nav-button" type="submit">Search</button>
+            </form>
         </div>
 
         <p class="field-error"
@@ -51,7 +61,7 @@
                 </tr>
                 <tr th:each="payment : ${payments}">
                     <td th:text="${payment.paymentDate}">2026-06-21</td>
-                    <td th:text="${payment.client.displayName}">Acme Sofia</td>
+                    <td th:text="${payment.client.companyName}">Acme Bulgaria Ltd.</td>
                     <td th:text="${payment.amount}">0.00</td>
                     <td th:text="${payment.currency.code}">BGN</td>
                     <td th:text="${payment.notes != null && !payment.notes.isBlank() ? payment.notes : '-'}">Payment note</td>
