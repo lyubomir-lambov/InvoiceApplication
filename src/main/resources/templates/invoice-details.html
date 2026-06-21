@@ -146,7 +146,7 @@
                     <td th:text="${lineItem.measurementUnit.displayName}">Service</td>
                     <td th:text="${lineItem.unitPrice + ' ' + invoice.currency.code}">100.00 BGN</td>
                     <td th:text="${lineItem.vatRate.percentage + '%'}">20%</td>
-                    <td th:text="${lineItem.lineTotalWithVat + ' ' + invoice.currency.code}">120.00 BGN</td>
+                    <td th:text="${lineItem.lineTotalWithoutVat + ' ' + invoice.currency.code}">100.00 BGN</td>
                 </tr>
                 </tbody>
             </table>
