@@ -6,12 +6,14 @@ import bg.softuni.invoiceapplication.model.dto.UserLoginRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserLoginResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationResponseDTO;
+import bg.softuni.invoiceapplication.model.dto.UserShowAllDTO;
 import bg.softuni.invoiceapplication.model.enums.UserRole;
 import bg.softuni.invoiceapplication.repository.UserRepository;
 import bg.softuni.invoiceapplication.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -68,6 +70,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return userMapper.fromUserToUserLoginResponseDTO(user);
+    }
+
+    @Override
+    public List<UserShowAllDTO> findAllUsers() {
+        return userMapper.fromAllUsersToUserShowAllDTOs(userRepository.findAllByOrderByUsernameAsc());
     }
 
     @Override

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
+        <a class="nav-button" th:href="@{/payments}" href="/payments">Payments</a>
+        <a class="nav-button" th:href="@{/payment-reports}" href="/payment-reports">Payment Reports</a>
+        <a class="nav-button nav-button-active" th:if="${isAdmin}" th:href="@{/users}" href="/users">Users</a>
+    </nav>
+    <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
+        <span th:text="${username}" style="display: inline-flex; align-items: center; min-height: 40px; color: var(--primary); font-size: 15px; font-weight: 700;">username</span>
+        <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main class="list-page">
+    <section class="content-shell">
+        <div class="section-actions">
+            <a class="nav-button" th:href="@{/users/register}" href="/users/register">Add user</a>
+        </div>
+
+        <div class="table-card">
+            <table class="invoices-table">
+                <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(users)}">
+                    <td colspan="5">No users found.</td>
+                </tr>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.username}">admin</td>
+                    <td th:text="${user.email}">admin@example.com</td>
+                    <td th:text="${user.role}">ADMIN</td>
+                    <td>
+                        <span class="status-badge"
+                              th:classappend="${user.active ? ' status-active' : ' status-inactive'}"
+                              th:text="${user.active ? 'Active' : 'Inactive'}">Active</span>
+                    </td>
+                    <td th:text="${#temporals.format(user.createdOn, 'dd-MM-yyyy HH:mm')}">21-06-2026 19:00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -2,7 +2,9 @@ package bg.softuni.invoiceapplication.web;
 
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationResponseDTO;
+import bg.softuni.invoiceapplication.security.SessionUser;
 import bg.softuni.invoiceapplication.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,20 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("")
+    public String users(HttpSession httpSession, Model model) {
+        var userId = SessionUser.getUserId(httpSession);
+
+        if (!userService.isAdmin(userId)) {
+            return "redirect:/invoices";
+        }
+
+        model.addAttribute("username", userService.getUsernameById(userId));
+        model.addAttribute("users", userService.findAllUsers());
+
+        return "users";
     }
 
     @GetMapping("/register")
