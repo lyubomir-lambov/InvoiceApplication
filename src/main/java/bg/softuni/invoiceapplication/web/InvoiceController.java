@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -111,13 +112,27 @@ public class InvoiceController {
     }
 
     @PostMapping("/edit/{invoiceId}/cancel")
-    public String cancelInvoice(@PathVariable UUID invoiceId) {
+    public String cancelInvoice(@PathVariable UUID invoiceId,
+                                HttpSession httpSession,
+                                RedirectAttributes redirectAttributes) {
+        if (!isCurrentUserAdmin(httpSession)) {
+            redirectAttributes.addFlashAttribute("message", "Only admins can cancel invoices");
+            return "redirect:/invoices/edit/" + invoiceId;
+        }
+
         invoiceService.cancelInvoice(invoiceId);
         return "redirect:/invoices";
     }
 
     @PostMapping("/edit/{invoiceId}/restore")
-    public String restoreInvoice(@PathVariable UUID invoiceId) {
+    public String restoreInvoice(@PathVariable UUID invoiceId,
+                                 HttpSession httpSession,
+                                 RedirectAttributes redirectAttributes) {
+        if (!isCurrentUserAdmin(httpSession)) {
+            redirectAttributes.addFlashAttribute("message", "Only admins can restore invoices");
+            return "redirect:/invoices/edit/" + invoiceId;
+        }
+
         invoiceService.restoreInvoice(invoiceId);
         return "redirect:/invoices";
     }
@@ -137,12 +152,19 @@ public class InvoiceController {
     private void addEditInvoiceFormAttributes(HttpSession httpSession, Model model, UUID selectedClientId) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
+        boolean isAdmin = userService.isAdmin(userId);
 
         model.addAttribute("username", username);
+        model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("invoiceTypes", InvoiceType.values());
         model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
         model.addAttribute("measurementUnits", MeasurementUnit.values());
         model.addAttribute("vatRates", VatRate.values());
         model.addAttribute("clients", clientService.findAllActiveClientsForSelect(selectedClientId));
+    }
+
+    private boolean isCurrentUserAdmin(HttpSession httpSession) {
+        UUID userId = SessionUser.getUserId(httpSession);
+        return userService.isAdmin(userId);
     }
 }
