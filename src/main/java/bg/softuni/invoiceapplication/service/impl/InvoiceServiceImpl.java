@@ -46,6 +46,17 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public List<InvoiceShowAllDTO> findInvoicesByCompanyName(String companyName) {
+        if (companyName == null || companyName.isBlank()) {
+            return findAllInvoices();
+        }
+
+        String searchedCompanyName = companyName.trim();
+        return invoiceMapper.fromAllInvoicesToInvoiceShowAllDTOs(
+                invoiceRepository.findByClientCompanyNameContainingIgnoreCaseOrderByInvoiceSequenceDesc(searchedCompanyName));
+    }
+
+    @Override
     public InvoiceDetailsDTO findInvoiceById(UUID invoiceId) {
         return invoiceRepository.findById(invoiceId)
                 .map(invoiceMapper::fromInvoiceToInvoiceDetailsDTO)

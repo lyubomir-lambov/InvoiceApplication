@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public interface InvoiceService {
     List<InvoiceShowAllDTO> findAllInvoices();
+    List<InvoiceShowAllDTO> findInvoicesByCompanyName(String companyName);
     InvoiceDetailsDTO findInvoiceById(UUID invoiceId);
     InvoiceCreateRequestDTO prepareCreateInvoiceForm();
     Invoice createInvoice(InvoiceCreateRequestDTO invoiceCreateRequestDTO);

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -38,11 +39,12 @@ public class InvoiceController {
     }
 
     @GetMapping("")
-    public String invoices(HttpSession httpSession, Model model) {
+    public String invoices(@RequestParam(required = false) String companyName, HttpSession httpSession, Model model) {
         UUID userId = SessionUser.getUserId(httpSession);
         String username = userService.getUsernameById(userId);
         model.addAttribute("username", username);
-        model.addAttribute("invoices", invoiceService.findAllInvoices());
+        model.addAttribute("invoices", invoiceService.findInvoicesByCompanyName(companyName));
+        model.addAttribute("companyName", companyName);
         return "invoices";
     }
 
