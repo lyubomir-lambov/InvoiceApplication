@@ -1,8 +1,6 @@
 package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.mapper.user.UserMapper;
-import bg.softuni.invoiceapplication.model.dto.UserLoginRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.UserLoginResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.UserShowAllDTO;
@@ -55,17 +53,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         User savedUser = userRepository.save(userToRegister);
         return userMapper.fromUserToUserRegistrationResponseDTO(savedUser);
-    }
-
-    @Override
-    public UserLoginResponseDTO login(UserLoginRequestDTO userLoginRequestDTO) {
-        User user = userRepository.findByUsername(userLoginRequestDTO.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("Username doesn't exist in database"));
-        if (!passwordEncoder.matches(userLoginRequestDTO.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
-        }
-
-        return userMapper.fromUserToUserLoginResponseDTO(user);
     }
 
     @Override
