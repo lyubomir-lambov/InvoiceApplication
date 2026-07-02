@@ -1,22 +1,23 @@
-package bg.softuni.invoiceapplication.model.dto;
+package bg.softuni.invoiceapplication.model.dto.clients;
 
 import bg.softuni.invoiceapplication.model.enums.Country;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class ClientCreateRequestDTO {
+public class ClientEditRequestDTO {
+
+    @NotNull(message = "Client id required")
+    private UUID id;
 
     @NotBlank(message = "Client name required")
     @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
@@ -45,5 +46,4 @@ public class ClientCreateRequestDTO {
 
     @Size(max = 32, message = "VAT number must be up to 32 characters")
     private String vatNumber;
-
 }

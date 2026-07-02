@@ -1,4 +1,4 @@
-package bg.softuni.invoiceapplication.model.dto;
+package bg.softuni.invoiceapplication.model.dto.payments;
 
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import jakarta.validation.constraints.DecimalMin;
@@ -20,7 +20,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentCreateRequestDTO {
+public class PaymentEditRequestDTO {
+
+    @NotNull(message = "Payment id required")
+    private UUID id;
 
     @NotNull(message = "Client required")
     private UUID clientId;
@@ -34,8 +37,7 @@ public class PaymentCreateRequestDTO {
 
     @NotNull(message = "Payment date required")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @Builder.Default
-    private LocalDate paymentDate = LocalDate.now();
+    private LocalDate paymentDate;
 
     @Size(max = 1000, message = "Notes must be up to 1000 characters")
     private String notes;

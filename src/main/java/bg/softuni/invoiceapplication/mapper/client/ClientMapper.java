@@ -1,8 +1,8 @@
 package bg.softuni.invoiceapplication.mapper.client;
 
-import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import org.springframework.stereotype.Component;
 

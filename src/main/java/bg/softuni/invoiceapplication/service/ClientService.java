@@ -1,10 +1,10 @@
 package bg.softuni.invoiceapplication.service;
 
 import bg.softuni.invoiceapplication.model.entity.Client;
-import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.ClientSelectDTO;
-import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientSelectDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientShowAllDTO;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,7 +1,7 @@
 package bg.softuni.invoiceapplication.web;
 
-import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.Country;
 import bg.softuni.invoiceapplication.model.enums.UserRole;
 import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;

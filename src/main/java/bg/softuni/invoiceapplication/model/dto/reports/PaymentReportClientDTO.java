@@ -1,4 +1,4 @@
-package bg.softuni.invoiceapplication.model.dto;
+package bg.softuni.invoiceapplication.model.dto.reports;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

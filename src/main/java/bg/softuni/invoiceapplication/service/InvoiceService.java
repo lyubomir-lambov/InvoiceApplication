@@ -1,9 +1,9 @@
 package bg.softuni.invoiceapplication.service;
 
-import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.InvoiceDetailsDTO;
-import bg.softuni.invoiceapplication.model.dto.InvoiceEditRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceDetailsDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 
 import java.util.List;

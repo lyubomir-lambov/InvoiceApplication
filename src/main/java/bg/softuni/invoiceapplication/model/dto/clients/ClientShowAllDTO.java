@@ -1,4 +1,4 @@
-package bg.softuni.invoiceapplication.model.dto;
+package bg.softuni.invoiceapplication.model.dto.clients;
 
 import bg.softuni.invoiceapplication.model.enums.Country;
 import lombok.Builder;

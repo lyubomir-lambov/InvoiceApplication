@@ -1,11 +1,11 @@
 package bg.softuni.invoiceapplication.service.impl;
 
-import bg.softuni.invoiceapplication.model.dto.PaymentReportByCurrencyDTO;
-import bg.softuni.invoiceapplication.model.dto.PaymentReportClientDTO;
-import bg.softuni.invoiceapplication.model.dto.PaymentReportInvoiceCurrencyGroupDTO;
-import bg.softuni.invoiceapplication.model.dto.PaymentReportInvoiceDTO;
-import bg.softuni.invoiceapplication.model.dto.PaymentReportPaymentCurrencyGroupDTO;
-import bg.softuni.invoiceapplication.model.dto.PaymentReportPaymentDTO;
+import bg.softuni.invoiceapplication.model.dto.reports.PaymentReportByCurrencyDTO;
+import bg.softuni.invoiceapplication.model.dto.reports.PaymentReportClientDTO;
+import bg.softuni.invoiceapplication.model.dto.reports.PaymentReportInvoiceCurrencyGroupDTO;
+import bg.softuni.invoiceapplication.model.dto.reports.PaymentReportInvoiceDTO;
+import bg.softuni.invoiceapplication.model.dto.reports.PaymentReportPaymentCurrencyGroupDTO;
+import bg.softuni.invoiceapplication.model.dto.reports.PaymentReportPaymentDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 import bg.softuni.invoiceapplication.model.entity.InvoiceLineItem;

@@ -1,7 +1,7 @@
 package bg.softuni.invoiceapplication.service;
 
-import bg.softuni.invoiceapplication.model.dto.PaymentCreateRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.PaymentEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.payments.PaymentCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.payments.PaymentEditRequestDTO;
 import bg.softuni.invoiceapplication.model.entity.Payment;
 
 import java.util.List;

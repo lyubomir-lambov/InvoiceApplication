@@ -1,7 +1,7 @@
 package bg.softuni.invoiceapplication.web;
 
-import bg.softuni.invoiceapplication.model.dto.InvoiceCreateRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.InvoiceEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.model.enums.MeasurementUnit;

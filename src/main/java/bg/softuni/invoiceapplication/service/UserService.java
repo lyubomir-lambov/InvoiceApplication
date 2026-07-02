@@ -1,8 +1,8 @@
 package bg.softuni.invoiceapplication.service;
 
-import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.UserRegistrationResponseDTO;
-import bg.softuni.invoiceapplication.model.dto.UserShowAllDTO;
+import bg.softuni.invoiceapplication.model.dto.users.UserRegistrationRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.users.UserRegistrationResponseDTO;
+import bg.softuni.invoiceapplication.model.dto.users.UserShowAllDTO;
 
 import java.util.List;
 import java.util.UUID;

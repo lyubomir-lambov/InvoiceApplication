@@ -1,10 +1,10 @@
 package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.mapper.client.ClientMapper;
-import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.ClientSelectDTO;
-import bg.softuni.invoiceapplication.model.dto.ClientShowAllDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientSelectDTO;
+import bg.softuni.invoiceapplication.model.dto.clients.ClientShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;

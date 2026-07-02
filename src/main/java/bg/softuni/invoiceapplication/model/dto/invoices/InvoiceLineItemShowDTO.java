@@ -1,4 +1,4 @@
-package bg.softuni.invoiceapplication.model.dto;
+package bg.softuni.invoiceapplication.model.dto.invoices;
 
 import bg.softuni.invoiceapplication.model.enums.MeasurementUnit;
 import bg.softuni.invoiceapplication.model.enums.VatRate;

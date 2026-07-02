@@ -1,7 +1,7 @@
 package bg.softuni.invoiceapplication.service.impl;
 
-import bg.softuni.invoiceapplication.model.dto.PaymentCreateRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.PaymentEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.payments.PaymentCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.payments.PaymentEditRequestDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
 import bg.softuni.invoiceapplication.model.entity.Payment;
 import bg.softuni.invoiceapplication.repository.ClientRepository;

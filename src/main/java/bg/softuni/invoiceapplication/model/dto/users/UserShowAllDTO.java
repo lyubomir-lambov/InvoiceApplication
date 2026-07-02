@@ -1,4 +1,4 @@
-package bg.softuni.invoiceapplication.model.dto;
+package bg.softuni.invoiceapplication.model.dto.users;
 
 import bg.softuni.invoiceapplication.model.enums.UserRole;
 import lombok.Builder;

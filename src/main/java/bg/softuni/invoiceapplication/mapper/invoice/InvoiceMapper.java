@@ -1,10 +1,10 @@
 package bg.softuni.invoiceapplication.mapper.invoice;
 
-import bg.softuni.invoiceapplication.model.dto.InvoiceDetailsDTO;
-import bg.softuni.invoiceapplication.model.dto.InvoiceEditRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.InvoiceLineItemCreateRequestDTO;
-import bg.softuni.invoiceapplication.model.dto.InvoiceLineItemShowDTO;
-import bg.softuni.invoiceapplication.model.dto.InvoiceShowAllDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceDetailsDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceEditRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceLineItemCreateRequestDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceLineItemShowDTO;
+import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceShowAllDTO;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 import bg.softuni.invoiceapplication.model.entity.InvoiceLineItem;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
