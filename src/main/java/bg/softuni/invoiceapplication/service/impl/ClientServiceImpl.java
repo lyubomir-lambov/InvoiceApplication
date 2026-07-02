@@ -10,6 +10,7 @@ import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.repository.PaymentRepository;
 import bg.softuni.invoiceapplication.service.ClientService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -175,6 +176,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteClient(UUID id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Client with id " + id + " does not exist"));

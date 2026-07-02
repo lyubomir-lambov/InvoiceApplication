@@ -3,11 +3,11 @@ package bg.softuni.invoiceapplication.web;
 import bg.softuni.invoiceapplication.model.dto.ClientCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.Country;
-import bg.softuni.invoiceapplication.security.SessionUser;
+import bg.softuni.invoiceapplication.model.enums.UserRole;
+import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.ClientService;
-import bg.softuni.invoiceapplication.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,21 +27,15 @@ import java.util.UUID;
 public class ClientController {
 
     private final ClientService clientService;
-    private final UserService userService;
 
-    public ClientController(ClientService clientService, UserService userService) {
+    public ClientController(ClientService clientService) {
         this.clientService = clientService;
-        this.userService = userService;
     }
 
     @GetMapping("")
-    public String clientsShowAll(@RequestParam(required = false) String clientName, HttpSession httpSession, Model model) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        boolean isAdmin = userService.isAdmin(userId);
-
+    public String clientsShowAll(@RequestParam(required = false) String clientName, Model model) {
         model.addAttribute("clients", clientService.findClientsByName(clientName));
         model.addAttribute("clientName", clientName);
-        model.addAttribute("isAdmin", isAdmin);
         return "clients";
     }
 
@@ -53,9 +47,7 @@ public class ClientController {
     }
 
     @PostMapping("/create")
-    public String createClient(@Valid @ModelAttribute("client") ClientCreateRequestDTO clientCreateRequestDTO,
-                               BindingResult bindingResult,
-                               Model model) {
+    public String createClient(@Valid @ModelAttribute("client") ClientCreateRequestDTO clientCreateRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("countries", Country.values());
             return "client-create";
@@ -75,10 +67,7 @@ public class ClientController {
     }
 
     @PostMapping("/edit/{id}")
-    public String editClient(@PathVariable UUID id,
-                             @Valid @ModelAttribute("client") ClientEditRequestDTO clientEditRequestDTO,
-                             BindingResult bindingResult,
-                             Model model) {
+    public String editClient(@PathVariable UUID id, @Valid @ModelAttribute("client") ClientEditRequestDTO clientEditRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("countries", Country.values());
             return "client-edit";
@@ -110,10 +99,10 @@ public class ClientController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteClient(@PathVariable UUID id, HttpSession httpSession, RedirectAttributes redirectAttributes) {
-        UUID userId = SessionUser.getUserId(httpSession);
-
-        if (!userService.isAdmin(userId)) {
+    public String deleteClient(@PathVariable UUID id,
+                               @AuthenticationPrincipal AuthenticatedUserDetails currentUser,
+                               RedirectAttributes redirectAttributes) {
+        if (currentUser == null || !UserRole.ADMIN.equals(currentUser.getRole())) {
             return redirectToClientsWithMessage(redirectAttributes, "Only admins can delete clients");
         }
 
