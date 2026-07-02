@@ -7,6 +7,7 @@ import bg.softuni.invoiceapplication.model.entity.Payment;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.PaymentRepository;
 import bg.softuni.invoiceapplication.service.PaymentService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -95,6 +96,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deletePayment(UUID paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment with id " + paymentId + " does not exist"));

@@ -3,12 +3,12 @@ package bg.softuni.invoiceapplication.web;
 import bg.softuni.invoiceapplication.model.dto.PaymentCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.PaymentEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
-import bg.softuni.invoiceapplication.security.SessionUser;
+import bg.softuni.invoiceapplication.model.enums.UserRole;
+import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.ClientService;
 import bg.softuni.invoiceapplication.service.PaymentService;
-import bg.softuni.invoiceapplication.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,25 +27,17 @@ import java.util.UUID;
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private final UserService userService;
     private final ClientService clientService;
 
-    public PaymentController(PaymentService paymentService, UserService userService, ClientService clientService) {
+    public PaymentController(PaymentService paymentService, ClientService clientService) {
         this.paymentService = paymentService;
-        this.userService = userService;
         this.clientService = clientService;
     }
 
     @GetMapping("")
-    public String showAllPayments(@RequestParam(required = false) String companyName,
-                                  HttpSession httpSession,
-                                  Model model) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        boolean isAdmin = userService.isAdmin(userId);
-
+    public String showAllPayments(@RequestParam(required = false) String companyName, Model model) {
         model.addAttribute("payments", paymentService.findPaymentsByCompanyName(companyName));
         model.addAttribute("companyName", companyName);
-        model.addAttribute("isAdmin", isAdmin);
 
         return "payments";
     }
@@ -59,9 +51,7 @@ public class PaymentController {
     }
 
     @PostMapping("/create")
-    public String createPayment(@Valid @ModelAttribute("payment") PaymentCreateRequestDTO paymentCreateRequestDTO,
-                                BindingResult bindingResult,
-                                Model model) {
+    public String createPayment(@Valid @ModelAttribute("payment") PaymentCreateRequestDTO paymentCreateRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             addCreatePaymentFormAttributes(model);
             return "payment-create";
@@ -72,8 +62,7 @@ public class PaymentController {
     }
 
     @GetMapping("/edit/{paymentId}")
-    public String showEditPaymentForm(@PathVariable UUID paymentId,
-                                      Model model) {
+    public String showEditPaymentForm(@PathVariable UUID paymentId, Model model) {
         PaymentEditRequestDTO paymentEditRequestDTO = paymentService.getPaymentForEdit(paymentId);
         addEditPaymentFormAttributes(model, paymentEditRequestDTO.getClientId());
         model.addAttribute("payment", paymentEditRequestDTO);
@@ -82,10 +71,7 @@ public class PaymentController {
     }
 
     @PostMapping("/edit/{paymentId}")
-    public String editPayment(@PathVariable UUID paymentId,
-                              @Valid @ModelAttribute("payment") PaymentEditRequestDTO paymentEditRequestDTO,
-                              BindingResult bindingResult,
-                              Model model) {
+    public String editPayment(@PathVariable UUID paymentId, @Valid @ModelAttribute("payment") PaymentEditRequestDTO paymentEditRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             addEditPaymentFormAttributes(model, paymentEditRequestDTO.getClientId());
             return "payment-edit";
@@ -98,11 +84,9 @@ public class PaymentController {
 
     @PostMapping("/{paymentId}/delete")
     public String deletePayment(@PathVariable UUID paymentId,
-                                HttpSession httpSession,
+                                @AuthenticationPrincipal AuthenticatedUserDetails currentUser,
                                 RedirectAttributes redirectAttributes) {
-        UUID userId = SessionUser.getUserId(httpSession);
-
-        if (!userService.isAdmin(userId)) {
+        if (currentUser == null || !UserRole.ADMIN.equals(currentUser.getRole())) {
             redirectAttributes.addFlashAttribute("message", "Only admins can delete payments");
             return "redirect:/payments";
         }
