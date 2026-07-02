@@ -9,6 +9,7 @@ import bg.softuni.invoiceapplication.model.enums.UserRole;
 import bg.softuni.invoiceapplication.repository.UserRepository;
 import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -72,6 +73,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void toggleUserStatus(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User with id " + userId + " does not exist"));
@@ -81,6 +83,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void toggleUserRole(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User with id " + userId + " does not exist"));
