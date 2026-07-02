@@ -5,13 +5,13 @@ import bg.softuni.invoiceapplication.model.dto.InvoiceEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.InvoiceCurrency;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.model.enums.MeasurementUnit;
+import bg.softuni.invoiceapplication.model.enums.UserRole;
 import bg.softuni.invoiceapplication.model.enums.VatRate;
-import bg.softuni.invoiceapplication.security.SessionUser;
+import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.ClientService;
 import bg.softuni.invoiceapplication.service.InvoiceService;
-import bg.softuni.invoiceapplication.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,12 +29,10 @@ import java.util.UUID;
 @RequestMapping("/invoices")
 public class InvoiceController {
 
-    private final UserService userService;
     private final InvoiceService invoiceService;
     private final ClientService clientService;
 
-    public InvoiceController(UserService userService, InvoiceService invoiceService, ClientService clientService) {
-        this.userService = userService;
+    public InvoiceController(InvoiceService invoiceService, ClientService clientService) {
         this.invoiceService = invoiceService;
         this.clientService = clientService;
     }
@@ -76,10 +74,9 @@ public class InvoiceController {
 
     @GetMapping("/edit/{invoiceId}")
     public String showEditInvoiceForm(@PathVariable UUID invoiceId,
-                                      HttpSession httpSession,
                                       Model model) {
         InvoiceEditRequestDTO invoiceEditRequestDTO = invoiceService.getInvoiceForEdit(invoiceId);
-        addEditInvoiceFormAttributes(httpSession, model, invoiceEditRequestDTO.getClientId());
+        addEditInvoiceFormAttributes(model, invoiceEditRequestDTO.getClientId());
         model.addAttribute("invoice", invoiceEditRequestDTO);
 
         return "invoice-edit";
@@ -89,10 +86,9 @@ public class InvoiceController {
     public String editInvoice(@PathVariable UUID invoiceId,
                               @Valid @ModelAttribute("invoice") InvoiceEditRequestDTO invoiceEditRequestDTO,
                               BindingResult bindingResult,
-                              HttpSession httpSession,
                               Model model) {
         if (bindingResult.hasErrors()) {
-            addEditInvoiceFormAttributes(httpSession, model, invoiceEditRequestDTO.getClientId());
+            addEditInvoiceFormAttributes(model, invoiceEditRequestDTO.getClientId());
             return "invoice-edit";
         }
 
@@ -103,9 +99,9 @@ public class InvoiceController {
 
     @PostMapping("/edit/{invoiceId}/cancel")
     public String cancelInvoice(@PathVariable UUID invoiceId,
-                                HttpSession httpSession,
+                                @AuthenticationPrincipal AuthenticatedUserDetails currentUser,
                                 RedirectAttributes redirectAttributes) {
-        if (!isCurrentUserAdmin(httpSession)) {
+        if (!isCurrentUserAdmin(currentUser)) {
             redirectAttributes.addFlashAttribute("message", "Only admins can cancel invoices");
             return "redirect:/invoices/edit/" + invoiceId;
         }
@@ -116,9 +112,9 @@ public class InvoiceController {
 
     @PostMapping("/edit/{invoiceId}/restore")
     public String restoreInvoice(@PathVariable UUID invoiceId,
-                                 HttpSession httpSession,
+                                 @AuthenticationPrincipal AuthenticatedUserDetails currentUser,
                                  RedirectAttributes redirectAttributes) {
-        if (!isCurrentUserAdmin(httpSession)) {
+        if (!isCurrentUserAdmin(currentUser)) {
             redirectAttributes.addFlashAttribute("message", "Only admins can restore invoices");
             return "redirect:/invoices/edit/" + invoiceId;
         }
@@ -135,11 +131,7 @@ public class InvoiceController {
         model.addAttribute("clients", clientService.findAllActiveClientsForSelect());
     }
 
-    private void addEditInvoiceFormAttributes(HttpSession httpSession, Model model, UUID selectedClientId) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        boolean isAdmin = userService.isAdmin(userId);
-
-        model.addAttribute("isAdmin", isAdmin);
+    private void addEditInvoiceFormAttributes(Model model, UUID selectedClientId) {
         model.addAttribute("invoiceTypes", InvoiceType.values());
         model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
         model.addAttribute("measurementUnits", MeasurementUnit.values());
@@ -147,8 +139,7 @@ public class InvoiceController {
         model.addAttribute("clients", clientService.findAllActiveClientsForSelect(selectedClientId));
     }
 
-    private boolean isCurrentUserAdmin(HttpSession httpSession) {
-        UUID userId = SessionUser.getUserId(httpSession);
-        return userService.isAdmin(userId);
+    private boolean isCurrentUserAdmin(AuthenticatedUserDetails currentUser) {
+        return currentUser != null && UserRole.ADMIN.equals(currentUser.getRole());
     }
 }

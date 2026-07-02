@@ -14,6 +14,7 @@ import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.service.InvoiceService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -179,12 +180,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void cancelInvoice(UUID invoiceId) {
         updateInvoiceStatus(invoiceId, InvoiceStatus.CANCELLED);
     }
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void restoreInvoice(UUID invoiceId) {
         updateInvoiceStatus(invoiceId, InvoiceStatus.ISSUED);
     }
