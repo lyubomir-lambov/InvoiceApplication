@@ -15,7 +15,7 @@ public interface UserService {
 
     List<UserShowAllDTO> findUsersByUsername(String username);
 
-    void toggleUserActive(UUID userId);
+    void toggleUserStatus(UUID userId);
 
     void toggleUserRole(UUID userId);
 

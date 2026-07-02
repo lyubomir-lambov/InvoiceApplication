@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void toggleUserActive(UUID userId) {
+    public void toggleUserStatus(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User with id " + userId + " does not exist"));
 

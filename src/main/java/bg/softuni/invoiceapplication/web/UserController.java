@@ -2,10 +2,11 @@ package bg.softuni.invoiceapplication.web;
 
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.UserRegistrationResponseDTO;
-import bg.softuni.invoiceapplication.security.SessionUser;
+import bg.softuni.invoiceapplication.model.enums.UserRole;
+import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,12 +31,8 @@ public class UserController {
     }
 
     @GetMapping("")
-    public String users(@RequestParam(required = false) String username,
-                        HttpSession httpSession,
-                        Model model) {
-        var userId = SessionUser.getUserId(httpSession);
-
-        if (!userService.isAdmin(userId)) {
+    public String users(@RequestParam(required = false) String username, @AuthenticationPrincipal AuthenticatedUserDetails currentUser, Model model) {
+        if (currentUser == null || !UserRole.ADMIN.equals(currentUser.getRole())) {
             return "redirect:/invoices";
         }
 
@@ -52,9 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("user") UserRegistrationRequestDTO userRegistrationRequestDTO,
-                               BindingResult bindingResult,
-                               RedirectAttributes redirectAttributes) {
+    public String registerUser(@Valid @ModelAttribute("user") UserRegistrationRequestDTO userRegistrationRequestDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user-register";
         }
@@ -65,36 +60,32 @@ public class UserController {
 
     @PostMapping("/{id}/toggle-status")
     public String toggleUserStatus(@PathVariable UUID id,
-                                   HttpSession httpSession,
+                                   @AuthenticationPrincipal AuthenticatedUserDetails currentUser,
                                    RedirectAttributes redirectAttributes) {
-        UUID currentUserId = SessionUser.getUserId(httpSession);
-
-        if (!userService.isAdmin(currentUserId)) {
+        if (currentUser == null || !UserRole.ADMIN.equals(currentUser.getRole())) {
             redirectAttributes.addFlashAttribute("message", "Only admins can change user status");
             return "redirect:/invoices";
         }
 
-        if (id.equals(currentUserId)) {
+        if (id.equals(currentUser.getId())) {
             redirectAttributes.addFlashAttribute("message", "You cannot change your own status");
             return "redirect:/users";
         }
 
-        userService.toggleUserActive(id);
+        userService.toggleUserStatus(id);
         return "redirect:/users";
     }
 
     @PostMapping("/{id}/toggle-role")
     public String toggleUserRole(@PathVariable UUID id,
-                                 HttpSession httpSession,
+                                 @AuthenticationPrincipal AuthenticatedUserDetails currentUser,
                                  RedirectAttributes redirectAttributes) {
-        UUID currentUserId = SessionUser.getUserId(httpSession);
-
-        if (!userService.isAdmin(currentUserId)) {
+        if (currentUser == null || !UserRole.ADMIN.equals(currentUser.getRole())) {
             redirectAttributes.addFlashAttribute("message", "Only admins can change user roles");
             return "redirect:/invoices";
         }
 
-        if (id.equals(currentUserId)) {
+        if (id.equals(currentUser.getId())) {
             redirectAttributes.addFlashAttribute("message", "You cannot change your own role");
             return "redirect:/users";
         }
