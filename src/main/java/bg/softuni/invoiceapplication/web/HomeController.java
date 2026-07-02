@@ -1,7 +1,7 @@
 package bg.softuni.invoiceapplication.web;
 
-import bg.softuni.invoiceapplication.security.SessionUser;
-import jakarta.servlet.http.HttpSession;
+import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
     @GetMapping("/")
-    public String index(HttpSession httpSession) {
-        if (SessionUser.getUserId(httpSession) != null) {
+    public String index(@AuthenticationPrincipal AuthenticatedUserDetails currentUser) {
+        if (currentUser != null) {
             return "redirect:/invoices";
         }
 
