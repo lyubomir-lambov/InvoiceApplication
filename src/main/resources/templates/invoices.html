@@ -14,10 +14,10 @@
         <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
         <a class="nav-button" th:href="@{/payments}" href="/payments">Payments</a>
         <a class="nav-button" th:href="@{/payment-reports}" href="/payment-reports">Payment Reports</a>
-        <a class="nav-button" th:if="${isAdmin}" th:href="@{/users}" href="/users">Users</a>
+        <a class="nav-button" sec:authorize="hasRole('ADMIN')" th:href="@{/users}" href="/users">Users</a>
     </nav>
     <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
-        <span th:text="${username}" style="display: inline-flex; align-items: center; min-height: 40px; color: var(--primary); font-size: 15px; font-weight: 700;">username</span>
+        <span sec:authentication="name" style="display: inline-flex; align-items: center; min-height: 40px; color: var(--primary); font-size: 15px; font-weight: 700;">username</span>
         <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
             <button class="nav-button" type="submit">Logout</button>
         </form>

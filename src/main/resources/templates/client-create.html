@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,7 @@
         <a class="nav-button nav-button-active" th:href="@{/clients}" href="/clients">Clients</a>
         <a class="nav-button" th:href="@{/payments}" href="/payments">Payments</a>
         <a class="nav-button" th:href="@{/payment-reports}" href="/payment-reports">Payment Reports</a>
-        <a class="nav-button" th:if="${isAdmin}" th:href="@{/users}" href="/users">Users</a>
+        <a class="nav-button" sec:authorize="hasRole('ADMIN')" th:href="@{/users}" href="/users">Users</a>
     </nav>
 </header>
 
