@@ -93,25 +93,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public boolean isUserActive(UUID userId) {
-        return userRepository.findById(userId)
-                .map(User::isActive)
-                .orElse(false);
-    }
-
-    @Override
-    public String getUsernameById(UUID userId) {
-        return userRepository.findById(userId).map(User::getUsername).orElse(null);
-    }
-
-    @Override
-    public boolean isAdmin(UUID userId) {
-        return userRepository.findById(userId)
-                .map(user -> UserRole.ADMIN.equals(user.getRole()))
-                .orElse(false);
-    }
-
-    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));

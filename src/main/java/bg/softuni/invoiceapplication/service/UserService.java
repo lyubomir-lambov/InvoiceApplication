@@ -18,10 +18,4 @@ public interface UserService {
     void toggleUserStatus(UUID userId);
 
     void toggleUserRole(UUID userId);
-
-    boolean isUserActive(UUID userId);
-
-    String getUsernameById(UUID userId);
-
-    boolean isAdmin(UUID userId);
 }
