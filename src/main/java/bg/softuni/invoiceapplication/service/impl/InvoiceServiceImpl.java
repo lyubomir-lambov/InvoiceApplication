@@ -93,7 +93,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional
-    public Invoice createInvoice(InvoiceCreateRequestDTO invoiceCreateRequestDTO) {
+    public Invoice createInvoice(InvoiceCreateRequestDTO invoiceCreateRequestDTO, String performedByUsername) {
         if (invoiceCreateRequestDTO == null) {
             throw new IllegalArgumentException("Invoice create request must not be null");
         }
@@ -135,7 +135,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Invoice savedInvoice = invoiceRepository.save(invoice);
         invoiceHistoryIntegrationService.createHistoryRecord(
-                invoiceHistoryMapper.fromInvoiceToHistoryCreateRequestDTO(savedInvoice, CREATED_ACTION, SYSTEM_USERNAME));
+                invoiceHistoryMapper.fromInvoiceToHistoryCreateRequestDTO(
+                        savedInvoice,
+                        CREATED_ACTION,
+                        getPerformedByUsername(performedByUsername)));
 
         return savedInvoice;
     }
@@ -213,6 +216,12 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceId + " does not exist"));
 
         invoice.setStatus(status);
+    }
+
+    private String getPerformedByUsername(String performedByUsername) {
+        return performedByUsername == null || performedByUsername.isBlank()
+                ? SYSTEM_USERNAME
+                : performedByUsername;
     }
 
     private Long getNextInvoiceSequence() {

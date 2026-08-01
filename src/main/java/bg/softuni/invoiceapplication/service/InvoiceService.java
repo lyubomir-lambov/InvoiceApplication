@@ -14,7 +14,7 @@ public interface InvoiceService {
     List<InvoiceShowAllDTO> findInvoicesByCompanyName(String companyName);
     InvoiceDetailsDTO findInvoiceById(UUID invoiceId);
     InvoiceCreateRequestDTO prepareCreateInvoiceForm();
-    Invoice createInvoice(InvoiceCreateRequestDTO invoiceCreateRequestDTO);
+    Invoice createInvoice(InvoiceCreateRequestDTO invoiceCreateRequestDTO, String performedByUsername);
     InvoiceEditRequestDTO getInvoiceForEdit(UUID invoiceId);
     void editInvoice(InvoiceEditRequestDTO invoiceEditRequestDTO);
     void cancelInvoice(UUID invoiceId);

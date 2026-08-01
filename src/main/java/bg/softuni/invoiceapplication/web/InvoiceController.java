@@ -62,13 +62,14 @@ public class InvoiceController {
     @PostMapping("/create")
     public String createInvoice(@Valid @ModelAttribute("invoice") InvoiceCreateRequestDTO invoiceCreateRequestDTO,
                                 BindingResult bindingResult,
-                                Model model) {
+                                Model model,
+                                @AuthenticationPrincipal AuthenticatedUserDetails currentUser) {
         if (bindingResult.hasErrors()) {
             addCreateInvoiceFormAttributes(model);
             return "invoice-create";
         }
 
-        invoiceService.createInvoice(invoiceCreateRequestDTO);
+        invoiceService.createInvoice(invoiceCreateRequestDTO, getCurrentUsername(currentUser));
         return "redirect:/invoices";
     }
 
@@ -141,5 +142,9 @@ public class InvoiceController {
 
     private boolean isCurrentUserAdmin(AuthenticatedUserDetails currentUser) {
         return currentUser != null && UserRole.ADMIN.equals(currentUser.getRole());
+    }
+
+    private String getCurrentUsername(AuthenticatedUserDetails currentUser) {
+        return currentUser == null ? null : currentUser.getUsername();
     }
 }
