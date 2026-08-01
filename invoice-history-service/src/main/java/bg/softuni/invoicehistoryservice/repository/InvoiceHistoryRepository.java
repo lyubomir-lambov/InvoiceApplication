@@ -14,4 +14,6 @@ public interface InvoiceHistoryRepository extends JpaRepository<InvoiceHistoryRe
     List<InvoiceHistoryRecord> findByInvoiceIdOrderByRevisionNumberDesc(UUID invoiceId);
 
     Optional<InvoiceHistoryRecord> findTopByInvoiceIdOrderByRevisionNumberDesc(UUID invoiceId);
+
+    void deleteByInvoiceId(UUID invoiceId);
 }
