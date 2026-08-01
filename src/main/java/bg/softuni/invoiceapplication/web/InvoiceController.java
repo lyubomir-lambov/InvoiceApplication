@@ -108,7 +108,7 @@ public class InvoiceController {
             return "redirect:/invoices/edit/" + invoiceId;
         }
 
-        invoiceService.cancelInvoice(invoiceId);
+        invoiceService.cancelInvoice(invoiceId, getCurrentUsername(currentUser));
         return "redirect:/invoices";
     }
 
@@ -121,7 +121,7 @@ public class InvoiceController {
             return "redirect:/invoices/edit/" + invoiceId;
         }
 
-        invoiceService.restoreInvoice(invoiceId);
+        invoiceService.restoreInvoice(invoiceId, getCurrentUsername(currentUser));
         return "redirect:/invoices";
     }
 

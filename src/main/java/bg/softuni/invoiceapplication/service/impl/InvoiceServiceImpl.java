@@ -32,6 +32,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     private static final int INVOICE_NUMBER_LENGTH = 10;
     private static final String CREATED_ACTION = "CREATED";
     private static final String UPDATED_ACTION = "UPDATED";
+    private static final String CANCELLED_ACTION = "CANCELLED";
+    private static final String RESTORED_ACTION = "RESTORED";
     private static final String SYSTEM_USERNAME = "system";
 
     private final InvoiceRepository invoiceRepository;
@@ -207,22 +209,27 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public void cancelInvoice(UUID invoiceId) {
-        updateInvoiceStatus(invoiceId, InvoiceStatus.CANCELLED);
+    public void cancelInvoice(UUID invoiceId, String performedByUsername) {
+        updateInvoiceStatus(invoiceId, InvoiceStatus.CANCELLED, CANCELLED_ACTION, performedByUsername);
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public void restoreInvoice(UUID invoiceId) {
-        updateInvoiceStatus(invoiceId, InvoiceStatus.ISSUED);
+    public void restoreInvoice(UUID invoiceId, String performedByUsername) {
+        updateInvoiceStatus(invoiceId, InvoiceStatus.ISSUED, RESTORED_ACTION, performedByUsername);
     }
 
-    private void updateInvoiceStatus(UUID invoiceId, InvoiceStatus status) {
+    private void updateInvoiceStatus(UUID invoiceId, InvoiceStatus status, String action, String performedByUsername) {
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceId + " does not exist"));
 
         invoice.setStatus(status);
+        invoiceHistoryIntegrationService.createHistoryRecord(
+                invoiceHistoryMapper.fromInvoiceToHistoryCreateRequestDTO(
+                        invoice,
+                        action,
+                        getPerformedByUsername(performedByUsername)));
     }
 
     private String getPerformedByUsername(String performedByUsername) {
