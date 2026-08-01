@@ -5,13 +5,13 @@ import bg.softuni.invoiceapplication.model.entity.Invoice;
 import bg.softuni.invoiceapplication.model.entity.InvoiceLineItem;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class InvoiceHistoryMapper {
@@ -58,48 +58,48 @@ public class InvoiceHistoryMapper {
         }
     }
 
-    private Map<String, Object> createInvoiceSnapshot(Invoice invoice) {
-        Map<String, Object> snapshot = new LinkedHashMap<>();
-        snapshot.put("id", invoice.getId());
-        snapshot.put("invoiceType", invoice.getInvoiceType());
-        snapshot.put("invoiceNumber", invoice.getInvoiceNumber());
-        snapshot.put("currency", invoice.getCurrency());
-        snapshot.put("status", invoice.getStatus());
-        snapshot.put("issueDate", invoice.getIssueDate());
-        snapshot.put("dueDate", invoice.getDueDate());
-        snapshot.put("clientDisplayName", invoice.getClientDisplayName());
-        snapshot.put("clientCompanyName", invoice.getClientCompanyName());
-        snapshot.put("clientLegalRepresentative", invoice.getClientLegalRepresentative());
-        snapshot.put("clientEmail", invoice.getClientEmail());
-        snapshot.put("clientPhoneNumber", invoice.getClientPhoneNumber());
-        snapshot.put("clientVatRegistered", invoice.isClientVatRegistered());
-        snapshot.put("clientVatNumber", invoice.getClientVatNumber());
-        snapshot.put("clientCountry", invoice.getClientCountry());
-        snapshot.put("clientAddress", invoice.getClientAddress());
-        snapshot.put("lineItems", createLineItemSnapshots(invoice.getLineItems()));
-        snapshot.put("totalWithoutVat", calculateInvoiceSubtotalAmount(invoice));
-        snapshot.put("totalVat", calculateInvoiceVatAmount(invoice));
-        snapshot.put("totalWithVat", calculateInvoiceTotalAmount(invoice));
-        return snapshot;
+    private InvoiceSnapshot createInvoiceSnapshot(Invoice invoice) {
+        return InvoiceSnapshot.builder()
+                .id(invoice.getId())
+                .invoiceType(invoice.getInvoiceType().name())
+                .invoiceNumber(invoice.getInvoiceNumber())
+                .currency(invoice.getCurrency().name())
+                .status(invoice.getStatus().name())
+                .issueDate(invoice.getIssueDate())
+                .dueDate(invoice.getDueDate())
+                .clientDisplayName(invoice.getClientDisplayName())
+                .clientCompanyName(invoice.getClientCompanyName())
+                .clientLegalRepresentative(invoice.getClientLegalRepresentative())
+                .clientEmail(invoice.getClientEmail())
+                .clientPhoneNumber(invoice.getClientPhoneNumber())
+                .clientVatRegistered(invoice.isClientVatRegistered())
+                .clientVatNumber(invoice.getClientVatNumber())
+                .clientCountry(invoice.getClientCountry().name())
+                .clientAddress(invoice.getClientAddress())
+                .lineItems(createLineItemSnapshots(invoice.getLineItems()))
+                .totalWithoutVat(calculateInvoiceSubtotalAmount(invoice))
+                .totalVat(calculateInvoiceVatAmount(invoice))
+                .totalWithVat(calculateInvoiceTotalAmount(invoice))
+                .build();
     }
 
-    private List<Map<String, Object>> createLineItemSnapshots(List<InvoiceLineItem> lineItems) {
+    private List<InvoiceLineItemSnapshot> createLineItemSnapshots(List<InvoiceLineItem> lineItems) {
         return lineItems.stream()
                 .map(this::createLineItemSnapshot)
                 .toList();
     }
 
-    private Map<String, Object> createLineItemSnapshot(InvoiceLineItem lineItem) {
-        Map<String, Object> snapshot = new LinkedHashMap<>();
-        snapshot.put("description", lineItem.getDescription());
-        snapshot.put("quantity", lineItem.getQuantity());
-        snapshot.put("measurementUnit", lineItem.getMeasurementUnit());
-        snapshot.put("unitPrice", lineItem.getUnitPrice());
-        snapshot.put("vatRate", lineItem.getVatRate());
-        snapshot.put("lineTotalWithoutVat", lineItem.getLineTotalWithoutVat());
-        snapshot.put("vatAmount", lineItem.getVatAmount());
-        snapshot.put("lineTotalWithVat", lineItem.getLineTotalWithVat());
-        return snapshot;
+    private InvoiceLineItemSnapshot createLineItemSnapshot(InvoiceLineItem lineItem) {
+        return InvoiceLineItemSnapshot.builder()
+                .description(lineItem.getDescription())
+                .quantity(lineItem.getQuantity())
+                .measurementUnit(lineItem.getMeasurementUnit().name())
+                .unitPrice(lineItem.getUnitPrice())
+                .vatRate(lineItem.getVatRate().name())
+                .lineTotalWithoutVat(lineItem.getLineTotalWithoutVat())
+                .vatAmount(lineItem.getVatAmount())
+                .lineTotalWithVat(lineItem.getLineTotalWithVat())
+                .build();
     }
 
     private BigDecimal calculateInvoiceTotalAmount(Invoice invoice) {
@@ -124,5 +124,43 @@ public class InvoiceHistoryMapper {
                 .map(InvoiceLineItem::getVatAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(MONEY_SCALE, RoundingMode.HALF_UP);
+    }
+
+    @Getter
+    @Builder
+    private static class InvoiceSnapshot {
+        private Object id;
+        private String invoiceType;
+        private String invoiceNumber;
+        private String currency;
+        private String status;
+        private Object issueDate;
+        private Object dueDate;
+        private String clientDisplayName;
+        private String clientCompanyName;
+        private String clientLegalRepresentative;
+        private String clientEmail;
+        private String clientPhoneNumber;
+        private boolean clientVatRegistered;
+        private String clientVatNumber;
+        private String clientCountry;
+        private String clientAddress;
+        private List<InvoiceLineItemSnapshot> lineItems;
+        private BigDecimal totalWithoutVat;
+        private BigDecimal totalVat;
+        private BigDecimal totalWithVat;
+    }
+
+    @Getter
+    @Builder
+    private static class InvoiceLineItemSnapshot {
+        private String description;
+        private BigDecimal quantity;
+        private String measurementUnit;
+        private BigDecimal unitPrice;
+        private String vatRate;
+        private BigDecimal lineTotalWithoutVat;
+        private BigDecimal vatAmount;
+        private BigDecimal lineTotalWithVat;
     }
 }
