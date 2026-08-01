@@ -11,4 +11,6 @@ public interface InvoiceHistoryIntegrationService {
     InvoiceHistoryResponseDTO createHistoryRecord(InvoiceHistoryCreateRequestDTO invoiceHistoryCreateRequestDTO);
 
     List<InvoiceHistoryResponseDTO> findHistoryByInvoiceId(UUID invoiceId);
+
+    void clearHistoryByInvoiceId(UUID invoiceId);
 }

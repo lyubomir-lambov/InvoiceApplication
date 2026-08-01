@@ -41,6 +41,11 @@ public class InvoiceHistoryIntegrationServiceImpl implements InvoiceHistoryInteg
                 .toList();
     }
 
+    @Override
+    public void clearHistoryByInvoiceId(UUID invoiceId) {
+        invoiceHistoryClient.clearHistoryByInvoiceId(invoiceHistoryApiKey, invoiceId);
+    }
+
     private InvoiceHistoryResponseDTO attachSnapshot(InvoiceHistoryResponseDTO invoiceHistoryResponseDTO) {
         if (invoiceHistoryResponseDTO == null
                 || invoiceHistoryResponseDTO.getSnapshotJson() == null
