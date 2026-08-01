@@ -11,6 +11,7 @@ import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.ClientService;
 import bg.softuni.invoiceapplication.service.InvoiceService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,15 +28,11 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/invoices")
+@RequiredArgsConstructor
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
     private final ClientService clientService;
-
-    public InvoiceController(InvoiceService invoiceService, ClientService clientService) {
-        this.invoiceService = invoiceService;
-        this.clientService = clientService;
-    }
 
     @GetMapping("")
     public String invoices(@RequestParam(required = false) String companyName, Model model) {

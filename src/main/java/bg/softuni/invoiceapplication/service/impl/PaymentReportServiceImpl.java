@@ -17,6 +17,7 @@ import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.repository.PaymentRepository;
 import bg.softuni.invoiceapplication.service.PaymentReportService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentReportServiceImpl implements PaymentReportService {
 
     private static final int MONEY_SCALE = 2;
@@ -38,14 +40,6 @@ public class PaymentReportServiceImpl implements PaymentReportService {
     private final ClientRepository clientRepository;
     private final InvoiceRepository invoiceRepository;
     private final PaymentRepository paymentRepository;
-
-    public PaymentReportServiceImpl(ClientRepository clientRepository,
-                                    InvoiceRepository invoiceRepository,
-                                    PaymentRepository paymentRepository) {
-        this.clientRepository = clientRepository;
-        this.invoiceRepository = invoiceRepository;
-        this.paymentRepository = paymentRepository;
-    }
 
     @Override
     @Transactional(readOnly = true)

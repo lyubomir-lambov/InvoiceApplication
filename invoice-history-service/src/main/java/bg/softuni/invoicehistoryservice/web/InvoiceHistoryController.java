@@ -4,6 +4,7 @@ import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryCreateRequestDTO
 import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryResponseDTO;
 import bg.softuni.invoicehistoryservice.service.InvoiceHistoryService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +19,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/invoice-history")
+@RequiredArgsConstructor
 public class InvoiceHistoryController {
 
     private final InvoiceHistoryService invoiceHistoryService;
-
-    public InvoiceHistoryController(InvoiceHistoryService invoiceHistoryService) {
-        this.invoiceHistoryService = invoiceHistoryService;
-    }
 
     @PostMapping
     public ResponseEntity<InvoiceHistoryResponseDTO> createHistoryRecord(

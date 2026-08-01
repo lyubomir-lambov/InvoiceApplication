@@ -10,6 +10,7 @@ import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.repository.PaymentRepository;
 import bg.softuni.invoiceapplication.service.ClientService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -20,22 +21,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final InvoiceRepository invoiceRepository;
     private final PaymentRepository paymentRepository;
     private final ClientMapper clientMapper;
-
-    public ClientServiceImpl(ClientRepository clientRepository,
-                             InvoiceRepository invoiceRepository,
-                             PaymentRepository paymentRepository,
-                             ClientMapper clientMapper) {
-        this.clientRepository = clientRepository;
-        this.invoiceRepository = invoiceRepository;
-        this.paymentRepository = paymentRepository;
-        this.clientMapper = clientMapper;
-    }
 
     @Override
     public Client createClient(ClientCreateRequestDTO clientCreateRequestDTO) {

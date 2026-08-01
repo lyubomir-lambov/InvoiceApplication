@@ -7,6 +7,7 @@ import bg.softuni.invoiceapplication.model.entity.Payment;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.PaymentRepository;
 import bg.softuni.invoiceapplication.service.PaymentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final ClientRepository clientRepository;
-
-    public PaymentServiceImpl(PaymentRepository paymentRepository, ClientRepository clientRepository) {
-        this.paymentRepository = paymentRepository;
-        this.clientRepository = clientRepository;
-    }
 
     @Override
     public Payment createPayment(PaymentCreateRequestDTO paymentCreateRequestDTO) {

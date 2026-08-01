@@ -8,6 +8,7 @@ import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.ClientService;
 import bg.softuni.invoiceapplication.service.PaymentService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,15 +25,11 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/payments")
+@RequiredArgsConstructor
 public class PaymentController {
 
     private final PaymentService paymentService;
     private final ClientService clientService;
-
-    public PaymentController(PaymentService paymentService, ClientService clientService) {
-        this.paymentService = paymentService;
-        this.clientService = clientService;
-    }
 
     @GetMapping("")
     public String showAllPayments(@RequestParam(required = false) String companyName, Model model) {

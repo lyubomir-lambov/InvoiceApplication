@@ -6,6 +6,7 @@ import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryResponseDTO;
 import bg.softuni.invoicehistoryservice.model.entity.InvoiceHistoryRecord;
 import bg.softuni.invoicehistoryservice.repository.InvoiceHistoryRepository;
 import bg.softuni.invoicehistoryservice.service.InvoiceHistoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,15 +14,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
 
     private final InvoiceHistoryRepository invoiceHistoryRepository;
     private final InvoiceHistoryMapper invoiceHistoryMapper;
-
-    public InvoiceHistoryServiceImpl(InvoiceHistoryRepository invoiceHistoryRepository, InvoiceHistoryMapper invoiceHistoryMapper) {
-        this.invoiceHistoryRepository = invoiceHistoryRepository;
-        this.invoiceHistoryMapper = invoiceHistoryMapper;
-    }
 
     @Override
     @Transactional

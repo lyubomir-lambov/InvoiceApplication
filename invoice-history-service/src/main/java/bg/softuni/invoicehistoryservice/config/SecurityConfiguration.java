@@ -1,5 +1,6 @@
 package bg.softuni.invoicehistoryservice.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,13 +11,10 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfiguration {
 
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
-
-    public SecurityConfiguration(ApiKeyAuthenticationFilter apiKeyAuthenticationFilter) {
-        this.apiKeyAuthenticationFilter = apiKeyAuthenticationFilter;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

@@ -7,6 +7,7 @@ import bg.softuni.invoiceapplication.model.enums.UserRole;
 import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.ClientService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,13 +25,10 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/clients")
+@RequiredArgsConstructor
 public class ClientController {
 
     private final ClientService clientService;
-
-    public ClientController(ClientService clientService) {
-        this.clientService = clientService;
-    }
 
     @GetMapping("")
     public String clientsShowAll(@RequestParam(required = false) String clientName, Model model) {

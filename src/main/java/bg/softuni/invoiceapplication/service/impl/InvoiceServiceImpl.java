@@ -16,6 +16,7 @@ import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.service.InvoiceHistoryIntegrationService;
 import bg.softuni.invoiceapplication.service.InvoiceService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class InvoiceServiceImpl implements InvoiceService {
 
     private static final int DEFAULT_DUE_DAYS = 14;
@@ -41,18 +43,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceMapper invoiceMapper;
     private final InvoiceHistoryMapper invoiceHistoryMapper;
     private final InvoiceHistoryIntegrationService invoiceHistoryIntegrationService;
-
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository,
-                              ClientRepository clientRepository,
-                              InvoiceMapper invoiceMapper,
-                              InvoiceHistoryMapper invoiceHistoryMapper,
-                              InvoiceHistoryIntegrationService invoiceHistoryIntegrationService) {
-        this.invoiceRepository = invoiceRepository;
-        this.clientRepository = clientRepository;
-        this.invoiceMapper = invoiceMapper;
-        this.invoiceHistoryMapper = invoiceHistoryMapper;
-        this.invoiceHistoryIntegrationService = invoiceHistoryIntegrationService;
-    }
 
     @Override
     public List<InvoiceShowAllDTO> findAllInvoices() {

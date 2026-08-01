@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -14,16 +15,13 @@ import java.math.RoundingMode;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class InvoiceHistoryMapper {
 
     private static final int MONEY_SCALE = 2;
     private static final int QUANTITY_SCALE = 2;
 
     private final ObjectMapper objectMapper;
-
-    public InvoiceHistoryMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     public InvoiceHistoryCreateRequestDTO fromInvoiceToHistoryCreateRequestDTO(Invoice invoice,
                                                                                String action,

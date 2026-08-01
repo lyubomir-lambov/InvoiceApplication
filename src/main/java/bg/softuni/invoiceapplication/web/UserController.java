@@ -6,6 +6,7 @@ import bg.softuni.invoiceapplication.model.enums.UserRole;
 import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,13 +23,10 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("")
     public String users(@RequestParam(required = false) String username, @AuthenticationPrincipal AuthenticatedUserDetails currentUser, Model model) {
