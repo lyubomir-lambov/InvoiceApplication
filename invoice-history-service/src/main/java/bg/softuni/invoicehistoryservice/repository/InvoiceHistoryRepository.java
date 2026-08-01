@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface InvoiceHistoryRecordRepository extends JpaRepository<InvoiceHistoryRecord, UUID> {
+public interface InvoiceHistoryRepository extends JpaRepository<InvoiceHistoryRecord, UUID> {
 
     List<InvoiceHistoryRecord> findByInvoiceIdOrderByRevisionNumberDesc(UUID invoiceId);
 
