@@ -125,6 +125,25 @@ public class InvoiceController {
         return "redirect:/invoices";
     }
 
+    @PostMapping("/{invoiceId}/history/clear")
+    public String clearInvoiceHistory(@PathVariable UUID invoiceId,
+                                      @AuthenticationPrincipal AuthenticatedUserDetails currentUser,
+                                      RedirectAttributes redirectAttributes) {
+        if (!isCurrentUserAdmin(currentUser)) {
+            redirectAttributes.addFlashAttribute("message", "Only admins can clear invoice history");
+            return "redirect:/invoices/" + invoiceId;
+        }
+
+        try {
+            invoiceHistoryIntegrationService.clearHistoryByInvoiceId(invoiceId);
+            redirectAttributes.addFlashAttribute("message", "Invoice history cleared successfully");
+        } catch (RuntimeException ex) {
+            redirectAttributes.addFlashAttribute("message", "Could not clear invoice history");
+        }
+
+        return "redirect:/invoices/" + invoiceId;
+    }
+
     private void addCreateInvoiceFormAttributes(Model model) {
         model.addAttribute("invoiceTypes", InvoiceType.values());
         model.addAttribute("invoiceCurrencies", InvoiceCurrency.values());
