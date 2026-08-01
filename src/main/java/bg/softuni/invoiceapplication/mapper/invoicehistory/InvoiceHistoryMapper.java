@@ -17,6 +17,7 @@ import java.util.List;
 public class InvoiceHistoryMapper {
 
     private static final int MONEY_SCALE = 2;
+    private static final int QUANTITY_SCALE = 2;
 
     private final ObjectMapper objectMapper;
 
@@ -92,9 +93,9 @@ public class InvoiceHistoryMapper {
     private InvoiceLineItemSnapshot createLineItemSnapshot(InvoiceLineItem lineItem) {
         return InvoiceLineItemSnapshot.builder()
                 .description(lineItem.getDescription())
-                .quantity(lineItem.getQuantity())
+                .quantity(formatQuantity(lineItem.getQuantity()))
                 .measurementUnit(lineItem.getMeasurementUnit().name())
-                .unitPrice(lineItem.getUnitPrice())
+                .unitPrice(formatMoney(lineItem.getUnitPrice()))
                 .vatRate(lineItem.getVatRate().name())
                 .lineTotalWithoutVat(lineItem.getLineTotalWithoutVat())
                 .vatAmount(lineItem.getVatAmount())
@@ -124,6 +125,14 @@ public class InvoiceHistoryMapper {
                 .map(InvoiceLineItem::getVatAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .setScale(MONEY_SCALE, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal formatMoney(BigDecimal amount) {
+        return amount.setScale(MONEY_SCALE, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal formatQuantity(BigDecimal quantity) {
+        return quantity.setScale(QUANTITY_SCALE, RoundingMode.HALF_UP);
     }
 
     @Getter
