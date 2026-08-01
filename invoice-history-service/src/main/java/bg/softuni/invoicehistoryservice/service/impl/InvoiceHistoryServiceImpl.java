@@ -1,5 +1,6 @@
 package bg.softuni.invoicehistoryservice.service.impl;
 
+import bg.softuni.invoicehistoryservice.mapper.InvoiceHistoryMapper;
 import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryCreateRequestDTO;
 import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryResponseDTO;
 import bg.softuni.invoicehistoryservice.model.entity.InvoiceHistoryRecord;
@@ -15,9 +16,11 @@ import java.util.UUID;
 public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
 
     private final InvoiceHistoryRepository invoiceHistoryRepository;
+    private final InvoiceHistoryMapper invoiceHistoryMapper;
 
-    public InvoiceHistoryServiceImpl(InvoiceHistoryRepository invoiceHistoryRepository) {
+    public InvoiceHistoryServiceImpl(InvoiceHistoryRepository invoiceHistoryRepository, InvoiceHistoryMapper invoiceHistoryMapper) {
         this.invoiceHistoryRepository = invoiceHistoryRepository;
+        this.invoiceHistoryMapper = invoiceHistoryMapper;
     }
 
     @Override
@@ -27,10 +30,10 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
             throw new IllegalArgumentException("Invoice history create request must not be null");
         }
 
-        InvoiceHistoryRecord invoiceHistoryRecord = fromCreateRequestDTOToInvoiceHistoryRecord(invoiceHistoryCreateRequestDTO);
+        InvoiceHistoryRecord invoiceHistoryRecord = invoiceHistoryMapper.fromCreateRequestDTOToInvoiceHistoryRecord(invoiceHistoryCreateRequestDTO);
         invoiceHistoryRecord.setRevisionNumber(getNextRevisionNumber(invoiceHistoryCreateRequestDTO.getInvoiceId()));
 
-        return fromInvoiceHistoryRecordToResponseDTO(invoiceHistoryRepository.save(invoiceHistoryRecord));
+        return invoiceHistoryMapper.fromInvoiceHistoryRecordToResponseDTO(invoiceHistoryRepository.save(invoiceHistoryRecord));
     }
 
     @Override
@@ -42,7 +45,7 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
 
         return invoiceHistoryRepository.findByInvoiceIdOrderByRevisionNumberDesc(invoiceId)
                 .stream()
-                .map(this::fromInvoiceHistoryRecordToResponseDTO)
+                .map(invoiceHistoryMapper::fromInvoiceHistoryRecordToResponseDTO)
                 .toList();
     }
 
@@ -52,46 +55,4 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
                 .orElse(1);
     }
 
-    private InvoiceHistoryRecord fromCreateRequestDTOToInvoiceHistoryRecord(InvoiceHistoryCreateRequestDTO invoiceHistoryCreateRequestDTO) {
-        return InvoiceHistoryRecord.builder()
-                .invoiceId(invoiceHistoryCreateRequestDTO.getInvoiceId())
-                .invoiceNumber(invoiceHistoryCreateRequestDTO.getInvoiceNumber())
-                .invoiceType(invoiceHistoryCreateRequestDTO.getInvoiceType())
-                .invoiceStatus(invoiceHistoryCreateRequestDTO.getInvoiceStatus())
-                .action(invoiceHistoryCreateRequestDTO.getAction())
-                .currency(invoiceHistoryCreateRequestDTO.getCurrency())
-                .clientDisplayName(invoiceHistoryCreateRequestDTO.getClientDisplayName())
-                .clientCompanyName(invoiceHistoryCreateRequestDTO.getClientCompanyName())
-                .issueDate(invoiceHistoryCreateRequestDTO.getIssueDate())
-                .dueDate(invoiceHistoryCreateRequestDTO.getDueDate())
-                .totalWithoutVat(invoiceHistoryCreateRequestDTO.getTotalWithoutVat())
-                .totalVat(invoiceHistoryCreateRequestDTO.getTotalVat())
-                .totalWithVat(invoiceHistoryCreateRequestDTO.getTotalWithVat())
-                .snapshotJson(invoiceHistoryCreateRequestDTO.getSnapshotJson())
-                .performedByUsername(invoiceHistoryCreateRequestDTO.getPerformedByUsername())
-                .build();
-    }
-
-    private InvoiceHistoryResponseDTO fromInvoiceHistoryRecordToResponseDTO(InvoiceHistoryRecord invoiceHistoryRecord) {
-        return InvoiceHistoryResponseDTO.builder()
-                .id(invoiceHistoryRecord.getId())
-                .invoiceId(invoiceHistoryRecord.getInvoiceId())
-                .invoiceNumber(invoiceHistoryRecord.getInvoiceNumber())
-                .invoiceType(invoiceHistoryRecord.getInvoiceType())
-                .invoiceStatus(invoiceHistoryRecord.getInvoiceStatus())
-                .revisionNumber(invoiceHistoryRecord.getRevisionNumber())
-                .action(invoiceHistoryRecord.getAction())
-                .currency(invoiceHistoryRecord.getCurrency())
-                .clientDisplayName(invoiceHistoryRecord.getClientDisplayName())
-                .clientCompanyName(invoiceHistoryRecord.getClientCompanyName())
-                .issueDate(invoiceHistoryRecord.getIssueDate())
-                .dueDate(invoiceHistoryRecord.getDueDate())
-                .totalWithoutVat(invoiceHistoryRecord.getTotalWithoutVat())
-                .totalVat(invoiceHistoryRecord.getTotalVat())
-                .totalWithVat(invoiceHistoryRecord.getTotalWithVat())
-                .snapshotJson(invoiceHistoryRecord.getSnapshotJson())
-                .performedByUsername(invoiceHistoryRecord.getPerformedByUsername())
-                .createdOn(invoiceHistoryRecord.getCreatedOn())
-                .build();
-    }
 }
