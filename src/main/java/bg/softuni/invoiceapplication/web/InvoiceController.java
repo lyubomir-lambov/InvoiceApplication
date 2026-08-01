@@ -87,14 +87,15 @@ public class InvoiceController {
     public String editInvoice(@PathVariable UUID invoiceId,
                               @Valid @ModelAttribute("invoice") InvoiceEditRequestDTO invoiceEditRequestDTO,
                               BindingResult bindingResult,
-                              Model model) {
+                              Model model,
+                              @AuthenticationPrincipal AuthenticatedUserDetails currentUser) {
         if (bindingResult.hasErrors()) {
             addEditInvoiceFormAttributes(model, invoiceEditRequestDTO.getClientId());
             return "invoice-edit";
         }
 
         invoiceEditRequestDTO.setId(invoiceId);
-        invoiceService.editInvoice(invoiceEditRequestDTO);
+        invoiceService.editInvoice(invoiceEditRequestDTO, getCurrentUsername(currentUser));
         return "redirect:/invoices";
     }
 

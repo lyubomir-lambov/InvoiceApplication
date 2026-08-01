@@ -31,6 +31,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private static final int DEFAULT_DUE_DAYS = 14;
     private static final int INVOICE_NUMBER_LENGTH = 10;
     private static final String CREATED_ACTION = "CREATED";
+    private static final String UPDATED_ACTION = "UPDATED";
     private static final String SYSTEM_USERNAME = "system";
 
     private final InvoiceRepository invoiceRepository;
@@ -152,7 +153,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional
-    public void editInvoice(InvoiceEditRequestDTO invoiceEditRequestDTO) {
+    public void editInvoice(InvoiceEditRequestDTO invoiceEditRequestDTO, String performedByUsername) {
         if (invoiceEditRequestDTO == null) {
             throw new IllegalArgumentException("Invoice edit request must not be null");
         }
@@ -183,6 +184,12 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .stream()
                 .map(invoiceMapper::fromInvoiceLineItemCreateRequestDTOToInvoiceLineItem)
                 .forEach(invoice::addLineItem);
+
+        invoiceHistoryIntegrationService.createHistoryRecord(
+                invoiceHistoryMapper.fromInvoiceToHistoryCreateRequestDTO(
+                        invoice,
+                        UPDATED_ACTION,
+                        getPerformedByUsername(performedByUsername)));
     }
 
     private void updateClientSnapshot(Invoice invoice, Client client) {
