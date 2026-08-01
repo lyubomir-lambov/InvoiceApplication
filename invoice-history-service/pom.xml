@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>bg.softuni</groupId>
-    <artifactId>document-service</artifactId>
+    <artifactId>invoice-history-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>document-service</name>
-    <description>document-service</description>
+    <name>invoice-history-service</name>
+    <description>Invoice history REST microservice</description>
     <url/>
     <licenses>
         <license/>
