@@ -1,6 +1,7 @@
 package bg.softuni.invoiceapplication.service.impl;
 
 import bg.softuni.invoiceapplication.mapper.invoice.InvoiceMapper;
+import bg.softuni.invoiceapplication.mapper.invoicehistory.InvoiceHistoryMapper;
 import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceDetailsDTO;
 import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceEditRequestDTO;
@@ -13,6 +14,7 @@ import bg.softuni.invoiceapplication.model.enums.InvoiceStatus;
 import bg.softuni.invoiceapplication.model.enums.InvoiceType;
 import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.InvoiceRepository;
+import bg.softuni.invoiceapplication.service.InvoiceHistoryIntegrationService;
 import bg.softuni.invoiceapplication.service.InvoiceService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
@@ -28,15 +30,25 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private static final int DEFAULT_DUE_DAYS = 14;
     private static final int INVOICE_NUMBER_LENGTH = 10;
+    private static final String CREATED_ACTION = "CREATED";
+    private static final String SYSTEM_USERNAME = "system";
 
     private final InvoiceRepository invoiceRepository;
     private final ClientRepository clientRepository;
     private final InvoiceMapper invoiceMapper;
+    private final InvoiceHistoryMapper invoiceHistoryMapper;
+    private final InvoiceHistoryIntegrationService invoiceHistoryIntegrationService;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, ClientRepository clientRepository, InvoiceMapper invoiceMapper) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository,
+                              ClientRepository clientRepository,
+                              InvoiceMapper invoiceMapper,
+                              InvoiceHistoryMapper invoiceHistoryMapper,
+                              InvoiceHistoryIntegrationService invoiceHistoryIntegrationService) {
         this.invoiceRepository = invoiceRepository;
         this.clientRepository = clientRepository;
         this.invoiceMapper = invoiceMapper;
+        this.invoiceHistoryMapper = invoiceHistoryMapper;
+        this.invoiceHistoryIntegrationService = invoiceHistoryIntegrationService;
     }
 
     @Override
@@ -121,7 +133,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(invoiceMapper::fromInvoiceLineItemCreateRequestDTOToInvoiceLineItem)
                 .forEach(invoice::addLineItem);
 
-        return invoiceRepository.save(invoice);
+        Invoice savedInvoice = invoiceRepository.save(invoice);
+        invoiceHistoryIntegrationService.createHistoryRecord(
+                invoiceHistoryMapper.fromInvoiceToHistoryCreateRequestDTO(savedInvoice, CREATED_ACTION, SYSTEM_USERNAME));
+
+        return savedInvoice;
     }
 
     @Override
