@@ -190,15 +190,24 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="historyRecord : ${invoiceHistory}">
-                    <td th:text="${historyRecord.revisionNumber}">1</td>
-                    <td th:text="${historyRecord.action}">CREATED</td>
-                    <td th:text="${historyRecord.invoiceStatus}">ISSUED</td>
-                    <td th:text="${historyRecord.clientCompanyName}">Client Ltd</td>
-                    <td th:text="${historyRecord.totalWithVat + ' ' + historyRecord.currency}">120.00 BGN</td>
-                    <td th:text="${historyRecord.performedByUsername}">admin</td>
-                    <td th:text="${#temporals.format(historyRecord.createdOn, 'yyyy-MM-dd HH:mm')}">2026-08-01 20:30</td>
-                </tr>
+                <th:block th:each="historyRecord : ${invoiceHistory}">
+                    <tr class="invoice-history-row">
+                        <td colspan="7">
+                            <details class="invoice-history-snapshot">
+                                <summary>
+                                    <span th:text="${historyRecord.revisionNumber}">1</span>
+                                    <span th:text="${historyRecord.action}">CREATED</span>
+                                    <span th:text="${historyRecord.invoiceStatus}">ISSUED</span>
+                                    <span th:text="${historyRecord.clientCompanyName}">Client Ltd</span>
+                                    <span th:text="${historyRecord.totalWithVat + ' ' + historyRecord.currency}">120.00 BGN</span>
+                                    <span th:text="${historyRecord.performedByUsername}">admin</span>
+                                    <span th:text="${#temporals.format(historyRecord.createdOn, 'yyyy-MM-dd HH:mm')}">2026-08-01 20:30</span>
+                                </summary>
+                                <pre th:text="${historyRecord.snapshotJson}">{}</pre>
+                            </details>
+                        </td>
+                    </tr>
+                </th:block>
                 </tbody>
             </table>
         </div>

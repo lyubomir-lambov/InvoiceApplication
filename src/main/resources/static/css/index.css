@@ -722,6 +722,42 @@ main {
     font-size: 22px;
 }
 
+.invoice-history-row td {
+    padding: 0;
+    background: #fbfdff;
+}
+
+.invoice-history-snapshot summary {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 14px;
+    cursor: pointer;
+    padding: 16px 18px;
+    color: var(--text);
+    list-style-position: inside;
+}
+
+.invoice-history-snapshot summary span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.invoice-history-snapshot summary span:nth-child(2) {
+    font-weight: 700;
+}
+
+.invoice-history-snapshot pre {
+    overflow-x: auto;
+    margin: 0;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: #111827;
+    background: #f8fafc;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
 .auth-form {
     display: grid;
     gap: 18px;
