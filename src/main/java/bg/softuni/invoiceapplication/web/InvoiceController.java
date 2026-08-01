@@ -9,6 +9,7 @@ import bg.softuni.invoiceapplication.model.enums.UserRole;
 import bg.softuni.invoiceapplication.model.enums.VatRate;
 import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.ClientService;
+import bg.softuni.invoiceapplication.service.InvoiceHistoryIntegrationService;
 import bg.softuni.invoiceapplication.service.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class InvoiceController {
 
     private final InvoiceService invoiceService;
     private final ClientService clientService;
+    private final InvoiceHistoryIntegrationService invoiceHistoryIntegrationService;
 
     @GetMapping("")
     public String invoices(@RequestParam(required = false) String companyName, Model model) {
@@ -52,6 +54,7 @@ public class InvoiceController {
     @GetMapping("/{invoiceId}")
     public String showInvoice(@PathVariable UUID invoiceId, Model model) {
         model.addAttribute("invoice", invoiceService.findInvoiceById(invoiceId));
+        model.addAttribute("invoiceHistory", invoiceHistoryIntegrationService.findHistoryByInvoiceId(invoiceId));
 
         return "invoice-details";
     }
