@@ -172,6 +172,41 @@
             </dl>
         </section>
     </article>
+
+    <section class="invoice-history-section" aria-label="Invoice history">
+        <h2>Invoice history</h2>
+
+        <div class="table-card" th:if="${invoiceHistory != null && !invoiceHistory.isEmpty()}">
+            <table class="invoices-table">
+                <thead>
+                <tr>
+                    <th>Revision</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                    <th>Client</th>
+                    <th>Total</th>
+                    <th>User</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="historyRecord : ${invoiceHistory}">
+                    <td th:text="${historyRecord.revisionNumber}">1</td>
+                    <td th:text="${historyRecord.action}">CREATED</td>
+                    <td th:text="${historyRecord.invoiceStatus}">ISSUED</td>
+                    <td th:text="${historyRecord.clientCompanyName}">Client Ltd</td>
+                    <td th:text="${historyRecord.totalWithVat + ' ' + historyRecord.currency}">120.00 BGN</td>
+                    <td th:text="${historyRecord.performedByUsername}">admin</td>
+                    <td th:text="${#temporals.format(historyRecord.createdOn, 'yyyy-MM-dd HH:mm')}">2026-08-01 20:30</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="invoice-document-muted" th:if="${invoiceHistory == null || invoiceHistory.isEmpty()}">
+            No history records available.
+        </p>
+    </section>
 </main>
 </body>
 </html>
