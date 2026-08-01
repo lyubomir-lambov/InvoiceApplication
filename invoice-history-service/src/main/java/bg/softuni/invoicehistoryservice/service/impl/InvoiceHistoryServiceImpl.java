@@ -46,6 +46,16 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public void clearHistoryByInvoiceId(UUID invoiceId) {
+        if (invoiceId == null) {
+            throw new IllegalArgumentException("Invoice id must not be null");
+        }
+
+        invoiceHistoryRepository.deleteByInvoiceId(invoiceId);
+    }
+
     private Integer getNextRevisionNumber(UUID invoiceId) {
         return invoiceHistoryRepository.findTopByInvoiceIdOrderByRevisionNumberDesc(invoiceId)
                 .map(invoiceHistoryRecord -> invoiceHistoryRecord.getRevisionNumber() + 1)
