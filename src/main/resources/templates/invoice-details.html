@@ -25,9 +25,13 @@
 </header>
 
 <main class="invoice-document-page">
+    <div class="form-message" th:if="${message}" th:text="${message}">Invoice history cleared successfully</div>
+
     <section class="invoice-document-actions">
         <a class="nav-button" th:href="@{/invoices}" href="/invoices">Back to invoices</a>
-        <button class="nav-button" type="button" onclick="window.print()">Print</button>
+        <div class="invoice-document-action-group">
+            <button class="nav-button" type="button" onclick="window.print()">Print</button>
+        </div>
     </section>
 
     <article class="invoice-document" th:classappend="${invoice.status.name() == 'CANCELLED'} ? ' invoice-document-cancelled'">
@@ -174,7 +178,16 @@
     </article>
 
     <section class="invoice-history-section" aria-label="Invoice history">
-        <h2>Invoice history</h2>
+        <div class="invoice-history-header">
+            <h2>Invoice history</h2>
+            <form sec:authorize="hasRole('ADMIN')"
+                  th:action="@{/invoices/{invoiceId}/history/clear(invoiceId=${invoice.id})}"
+                  method="post"
+                  onsubmit="return confirm('Clear invoice history for this invoice?');">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="nav-button button-danger" type="submit">Clear history</button>
+            </form>
+        </div>
 
         <div class="table-card" th:if="${invoiceHistory != null && !invoiceHistory.isEmpty()}">
             <table class="invoices-table">

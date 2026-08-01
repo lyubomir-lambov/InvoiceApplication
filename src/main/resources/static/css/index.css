@@ -76,6 +76,17 @@ main {
     padding: 56px clamp(20px, 6vw, 72px);
 }
 
+.form-message {
+    width: min(100%, 960px);
+    margin: 0 auto 16px;
+    padding: 12px 14px;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    color: #1e3a8a;
+    background: #eff6ff;
+    font-weight: 700;
+}
+
 .list-page {
     padding-top: 32px;
 }
@@ -522,9 +533,20 @@ main {
 .invoice-document-actions {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 12px;
     width: min(100%, 960px);
     margin: 0 auto 20px;
+}
+
+.invoice-document-action-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.invoice-document-action-group form {
+    margin: 0;
 }
 
 .invoice-document-actions button {
@@ -717,9 +739,21 @@ main {
     margin: 28px auto 0;
 }
 
+.invoice-history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
 .invoice-history-section h2 {
-    margin: 0 0 14px;
+    margin: 0;
     font-size: 22px;
+}
+
+.invoice-history-header form {
+    margin: 0;
 }
 
 .invoice-history-row td {
