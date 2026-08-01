@@ -8,6 +8,7 @@ import bg.softuni.invoiceapplication.service.InvoiceHistoryIntegrationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class InvoiceHistoryIntegrationServiceImpl implements InvoiceHistoryInteg
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void clearHistoryByInvoiceId(UUID invoiceId) {
         invoiceHistoryClient.clearHistoryByInvoiceId(invoiceHistoryApiKey, invoiceId);
     }

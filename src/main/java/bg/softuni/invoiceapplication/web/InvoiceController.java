@@ -13,6 +13,7 @@ import bg.softuni.invoiceapplication.service.InvoiceHistoryIntegrationService;
 import bg.softuni.invoiceapplication.service.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -126,6 +127,7 @@ public class InvoiceController {
     }
 
     @PostMapping("/{invoiceId}/history/clear")
+    @PreAuthorize("hasRole('ADMIN')")
     public String clearInvoiceHistory(@PathVariable UUID invoiceId,
                                       @AuthenticationPrincipal AuthenticatedUserDetails currentUser,
                                       RedirectAttributes redirectAttributes) {
