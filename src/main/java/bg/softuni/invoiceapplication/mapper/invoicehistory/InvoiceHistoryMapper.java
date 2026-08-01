@@ -94,7 +94,7 @@ public class InvoiceHistoryMapper {
                 .quantity(formatQuantity(lineItem.getQuantity()))
                 .measurementUnit(lineItem.getMeasurementUnit().name())
                 .unitPrice(formatMoney(lineItem.getUnitPrice()))
-                .vatRate(lineItem.getVatRate().name())
+                .vatRate(lineItem.getVatRate().getPercentage() + "%")
                 .lineTotalWithoutVat(lineItem.getLineTotalWithoutVat())
                 .vatAmount(lineItem.getVatAmount())
                 .lineTotalWithVat(lineItem.getLineTotalWithVat())

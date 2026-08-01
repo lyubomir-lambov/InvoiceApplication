@@ -203,7 +203,82 @@
                                     <span th:text="${historyRecord.performedByUsername}">admin</span>
                                     <span th:text="${#temporals.format(historyRecord.createdOn, 'yyyy-MM-dd HH:mm')}">2026-08-01 20:30</span>
                                 </summary>
-                                <pre th:text="${historyRecord.snapshotJson}">{}</pre>
+                                <div class="invoice-history-snapshot-document" th:if="${historyRecord.snapshot != null}">
+                                    <div class="invoice-history-snapshot-header">
+                                        <div>
+                                            <strong th:text="${historyRecord.snapshot.invoiceType + ' #' + historyRecord.snapshot.invoiceNumber}">INVOICE #0000000001</strong>
+                                            <span th:text="${historyRecord.snapshot.status}">ISSUED</span>
+                                        </div>
+                                        <div>
+                                            <span th:text="${historyRecord.snapshot.issueDate}">2026-08-01</span>
+                                            <span th:text="${historyRecord.snapshot.dueDate != null ? historyRecord.snapshot.dueDate : '-'}">2026-08-15</span>
+                                        </div>
+                                    </div>
+
+                                    <dl class="invoice-history-snapshot-client">
+                                        <div>
+                                            <dt>Client</dt>
+                                            <dd th:text="${historyRecord.snapshot.clientCompanyName}">Client Ltd</dd>
+                                        </div>
+                                        <div>
+                                            <dt>Display name</dt>
+                                            <dd th:text="${historyRecord.snapshot.clientDisplayName}">Client</dd>
+                                        </div>
+                                        <div>
+                                            <dt>VAT number</dt>
+                                            <dd th:text="${historyRecord.snapshot.clientVatNumber != null && !#strings.isEmpty(historyRecord.snapshot.clientVatNumber) ? historyRecord.snapshot.clientVatNumber : '-'}">BG123</dd>
+                                        </div>
+                                        <div>
+                                            <dt>Country</dt>
+                                            <dd th:text="${historyRecord.snapshot.clientCountry}">BULGARIA</dd>
+                                        </div>
+                                        <div>
+                                            <dt>Address</dt>
+                                            <dd th:text="${historyRecord.snapshot.clientAddress != null && !#strings.isEmpty(historyRecord.snapshot.clientAddress) ? historyRecord.snapshot.clientAddress : '-'}">Sofia</dd>
+                                        </div>
+                                    </dl>
+
+                                    <div class="invoice-history-snapshot-lines">
+                                        <table>
+                                            <thead>
+                                            <tr>
+                                                <th>Description</th>
+                                                <th>Quantity</th>
+                                                <th>Unit</th>
+                                                <th>Unit price</th>
+                                                <th>VAT</th>
+                                                <th>Total</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="lineItem : ${historyRecord.snapshot.lineItems}">
+                                                <td th:text="${lineItem.description}">Service</td>
+                                                <td th:text="${lineItem.quantity}">1.00</td>
+                                                <td th:text="${lineItem.measurementUnit}">SERVICE</td>
+                                                <td th:text="${lineItem.unitPrice + ' ' + historyRecord.snapshot.currency}">100.00 BGN</td>
+                                                <td th:text="${lineItem.vatRate == 'ZERO' ? '0%' : (lineItem.vatRate == 'NINE' ? '9%' : (lineItem.vatRate == 'TWENTY' ? '20%' : lineItem.vatRate))}">20%</td>
+                                                <td th:text="${lineItem.lineTotalWithVat + ' ' + historyRecord.snapshot.currency}">120.00 BGN</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <dl class="invoice-history-snapshot-summary">
+                                        <div>
+                                            <dt>Subtotal</dt>
+                                            <dd th:text="${historyRecord.snapshot.totalWithoutVat + ' ' + historyRecord.snapshot.currency}">100.00 BGN</dd>
+                                        </div>
+                                        <div>
+                                            <dt>VAT</dt>
+                                            <dd th:text="${historyRecord.snapshot.totalVat + ' ' + historyRecord.snapshot.currency}">20.00 BGN</dd>
+                                        </div>
+                                        <div>
+                                            <dt>Total</dt>
+                                            <dd th:text="${historyRecord.snapshot.totalWithVat + ' ' + historyRecord.snapshot.currency}">120.00 BGN</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                                <pre th:if="${historyRecord.snapshot == null}" th:text="${historyRecord.snapshotJson}">{}</pre>
                             </details>
                         </td>
                     </tr>

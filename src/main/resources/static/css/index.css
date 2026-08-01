@@ -758,6 +758,101 @@ main {
     overflow-wrap: anywhere;
 }
 
+.invoice-history-snapshot-document {
+    display: grid;
+    gap: 18px;
+    padding: 18px;
+    border-top: 1px solid var(--border);
+    background: #ffffff;
+}
+
+.invoice-history-snapshot-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.invoice-history-snapshot-header div {
+    display: grid;
+    gap: 4px;
+}
+
+.invoice-history-snapshot-header div:last-child {
+    text-align: right;
+}
+
+.invoice-history-snapshot-header span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.invoice-history-snapshot-client,
+.invoice-history-snapshot-summary {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.invoice-history-snapshot-client div,
+.invoice-history-snapshot-summary div {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr);
+    gap: 10px;
+}
+
+.invoice-history-snapshot-client dt,
+.invoice-history-snapshot-summary dt {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.invoice-history-snapshot-client dd,
+.invoice-history-snapshot-summary dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.invoice-history-snapshot-lines {
+    overflow-x: auto;
+}
+
+.invoice-history-snapshot-lines table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+}
+
+.invoice-history-snapshot-lines th,
+.invoice-history-snapshot-lines td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.invoice-history-snapshot-lines th {
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    background: #f8fafc;
+}
+
+.invoice-history-snapshot-lines th:nth-child(n+2),
+.invoice-history-snapshot-lines td:nth-child(n+2) {
+    text-align: right;
+}
+
+.invoice-history-snapshot-summary {
+    justify-self: end;
+    width: min(100%, 360px);
+}
+
+.invoice-history-snapshot-summary div:last-child {
+    font-size: 18px;
+    font-weight: 700;
+}
+
 .auth-form {
     display: grid;
     gap: 18px;

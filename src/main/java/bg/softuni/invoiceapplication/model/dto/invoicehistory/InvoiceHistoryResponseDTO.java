@@ -1,5 +1,6 @@
 package bg.softuni.invoiceapplication.model.dto.invoicehistory;
 
+import bg.softuni.invoiceapplication.model.dto.invoicehistory.snapshot.InvoiceHistorySnapshotDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,6 +50,8 @@ public class InvoiceHistoryResponseDTO {
     private BigDecimal totalWithVat;
 
     private String snapshotJson;
+
+    private InvoiceHistorySnapshotDTO snapshot;
 
     private String performedByUsername;
 
