@@ -2,6 +2,7 @@ package bg.softuni.invoiceapplication.model.enums;
 
 public enum InvoiceStatus {
     ISSUED("Issued"),
+    OVERDUE("Overdue"),
     CANCELLED("Cancelled");
 
     private final String displayName;
