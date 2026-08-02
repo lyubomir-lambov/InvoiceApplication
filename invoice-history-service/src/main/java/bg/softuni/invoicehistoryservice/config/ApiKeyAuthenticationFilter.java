@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String API_KEY_HEADER = "X-API-Key";
@@ -36,6 +38,9 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         String apiKey = request.getHeader(API_KEY_HEADER);
 
         if (apiKey == null || apiKey.isBlank()) {
+            log.warn("Rejected invoice history request with missing API key: method={}, path={}",
+                    request.getMethod(),
+                    request.getRequestURI());
             handlerExceptionResolver.resolveException(
                     request,
                     response,
@@ -49,6 +54,9 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (!apiKey.trim().equals(validApiKey.trim())) {
+            log.warn("Rejected invoice history request with invalid API key: method={}, path={}",
+                    request.getMethod(),
+                    request.getRequestURI());
             handlerExceptionResolver.resolveException(
                     request,
                     response,

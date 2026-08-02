@@ -1,6 +1,7 @@
 package bg.softuni.invoicehistoryservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -11,11 +12,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidApiKeyException.class)
     public ResponseEntity<ErrorResponseDTO> handleInvalidApiKeyException(InvalidApiKeyException exception,
                                                                          HttpServletRequest request) {
+        log.warn("Invalid API key request handled: code={}, path={}", exception.getErrorCode(), request.getRequestURI());
         ErrorResponseDTO errorResponseDTO = buildErrorResponse(
                 exception.getHttpStatus(),
                 exception.getErrorCode(),
@@ -29,6 +32,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ErrorResponseDTO> handleApplicationException(ApplicationException exception,
                                                                       HttpServletRequest request) {
+        log.warn("Application exception handled: code={}, path={}, message={}",
+                exception.getErrorCode(),
+                request.getRequestURI(),
+                exception.getMessage());
         ErrorResponseDTO errorResponseDTO = buildErrorResponse(
                 exception.getHttpStatus(),
                 exception.getErrorCode(),
@@ -43,6 +50,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException exception,
             HttpServletRequest request) {
+        log.warn("Validation exception handled: path={}", request.getRequestURI());
         String message = exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -64,6 +72,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException exception,
             HttpServletRequest request) {
+        log.warn("Invalid JSON request handled: path={}", request.getRequestURI());
         ErrorResponseDTO errorResponseDTO = buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 "invalid_json_request",
@@ -77,6 +86,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleException(Exception exception,
                                                            HttpServletRequest request) {
+        log.error("Unexpected exception handled: path={}", request.getRequestURI(), exception);
         ErrorResponseDTO errorResponseDTO = buildErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "internal_server_error",

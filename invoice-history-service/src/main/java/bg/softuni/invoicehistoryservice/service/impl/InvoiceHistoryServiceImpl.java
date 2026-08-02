@@ -8,6 +8,7 @@ import bg.softuni.invoicehistoryservice.model.entity.InvoiceHistoryRecord;
 import bg.softuni.invoicehistoryservice.repository.InvoiceHistoryRepository;
 import bg.softuni.invoicehistoryservice.service.InvoiceHistoryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
 
@@ -31,7 +33,13 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
         InvoiceHistoryRecord invoiceHistoryRecord = invoiceHistoryMapper.fromCreateRequestDTOToInvoiceHistoryRecord(invoiceHistoryCreateRequestDTO);
         invoiceHistoryRecord.setRevisionNumber(getNextRevisionNumber(invoiceHistoryCreateRequestDTO.getInvoiceId()));
 
-        return invoiceHistoryMapper.fromInvoiceHistoryRecordToResponseDTO(invoiceHistoryRepository.save(invoiceHistoryRecord));
+        InvoiceHistoryRecord savedInvoiceHistoryRecord = invoiceHistoryRepository.save(invoiceHistoryRecord);
+        log.info("Invoice history record created for invoiceId={}, action={}, revision={}",
+                savedInvoiceHistoryRecord.getInvoiceId(),
+                savedInvoiceHistoryRecord.getAction(),
+                savedInvoiceHistoryRecord.getRevisionNumber());
+
+        return invoiceHistoryMapper.fromInvoiceHistoryRecordToResponseDTO(savedInvoiceHistoryRecord);
     }
 
     @Override
@@ -41,10 +49,13 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
             throw new InvalidInvoiceHistoryRequestException("Invoice id must not be null");
         }
 
-        return invoiceHistoryRepository.findByInvoiceIdOrderByRevisionNumberDesc(invoiceId)
+        List<InvoiceHistoryResponseDTO> invoiceHistory = invoiceHistoryRepository.findByInvoiceIdOrderByRevisionNumberDesc(invoiceId)
                 .stream()
                 .map(invoiceHistoryMapper::fromInvoiceHistoryRecordToResponseDTO)
                 .toList();
+
+        log.info("Invoice history requested for invoiceId={}, records={}", invoiceId, invoiceHistory.size());
+        return invoiceHistory;
     }
 
     @Override
@@ -55,6 +66,7 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
         }
 
         invoiceHistoryRepository.deleteByInvoiceId(invoiceId);
+        log.info("Invoice history cleared for invoiceId={}", invoiceId);
     }
 
     private Integer getNextRevisionNumber(UUID invoiceId) {
