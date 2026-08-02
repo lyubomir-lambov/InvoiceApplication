@@ -1,5 +1,6 @@
 package bg.softuni.invoiceapplication.mapper.invoicehistory;
 
+import bg.softuni.invoiceapplication.exception.ApplicationException;
 import bg.softuni.invoiceapplication.model.dto.invoicehistory.InvoiceHistoryCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.entity.Invoice;
 import bg.softuni.invoiceapplication.model.entity.InvoiceLineItem;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -53,7 +55,12 @@ public class InvoiceHistoryMapper {
         try {
             return objectMapper.writeValueAsString(createInvoiceSnapshot(invoice));
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Could not create invoice history snapshot", e);
+            throw new ApplicationException(
+                    "Could not create invoice history snapshot",
+                    "invoice_history_snapshot_create_error",
+                    "Invoice History Snapshot Error",
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e);
         }
     }
 

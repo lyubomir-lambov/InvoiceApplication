@@ -9,6 +9,7 @@ import bg.softuni.invoiceapplication.repository.ClientRepository;
 import bg.softuni.invoiceapplication.repository.PaymentRepository;
 import bg.softuni.invoiceapplication.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
@@ -40,7 +42,13 @@ public class PaymentServiceImpl implements PaymentService {
                 .notes(paymentCreateRequestDTO.getNotes())
                 .build();
 
-        return paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
+        log.info("Payment created: paymentId={}, clientId={}, amount={}, currency={}",
+                savedPayment.getId(),
+                client.getId(),
+                savedPayment.getAmount(),
+                savedPayment.getCurrency());
+        return savedPayment;
     }
 
     @Override
@@ -91,6 +99,11 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setNotes(paymentEditRequestDTO.getNotes());
 
         paymentRepository.save(payment);
+        log.info("Payment edited: paymentId={}, clientId={}, amount={}, currency={}",
+                payment.getId(),
+                client.getId(),
+                payment.getAmount(),
+                payment.getCurrency());
     }
 
     @Override
@@ -100,5 +113,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Payment with id " + paymentId + " does not exist"));
 
         paymentRepository.delete(payment);
+        log.info("Payment deleted: paymentId={}", payment.getId());
     }
 }

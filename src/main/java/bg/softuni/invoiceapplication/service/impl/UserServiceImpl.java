@@ -14,6 +14,7 @@ import bg.softuni.invoiceapplication.repository.UserRepository;
 import bg.softuni.invoiceapplication.security.AuthenticatedUserDetails;
 import bg.softuni.invoiceapplication.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
 
@@ -53,6 +55,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         User savedUser = userRepository.save(userToRegister);
+        log.info("User registered: userId={}, username={}, role={}",
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getRole());
         return userMapper.fromUserToUserRegistrationResponseDTO(savedUser);
     }
 
@@ -103,6 +109,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         userMapper.updateUserFromProfileEditRequestDTO(user, userProfileEditRequestDTO);
         userRepository.save(user);
+        log.info("User profile edited: userId={}, username={}", user.getId(), user.getUsername());
     }
 
     @Override
@@ -113,6 +120,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         user.setActive(!user.isActive());
         userRepository.save(user);
+        log.info("User active status toggled: userId={}, username={}, active={}",
+                user.getId(),
+                user.getUsername(),
+                user.isActive());
     }
 
     @Override
@@ -123,6 +134,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         user.setRole(UserRole.ADMIN.equals(user.getRole()) ? UserRole.USER : UserRole.ADMIN);
         userRepository.save(user);
+        log.info("User role toggled: userId={}, username={}, role={}",
+                user.getId(),
+                user.getUsername(),
+                user.getRole());
     }
 
     @Override

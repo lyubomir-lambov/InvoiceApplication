@@ -13,6 +13,7 @@ import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.repository.PaymentRepository;
 import bg.softuni.invoiceapplication.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,8 +26,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
+
+    private static final String ACTIVE_CLIENTS_FOR_SELECT_CACHE = "activeClientsForSelect";
 
     private final ClientRepository clientRepository;
     private final InvoiceRepository invoiceRepository;
@@ -34,7 +38,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientMapper clientMapper;
 
     @Override
-    @CacheEvict(value = "activeClientsForSelect", allEntries = true)
+    @CacheEvict(value = ACTIVE_CLIENTS_FOR_SELECT_CACHE, allEntries = true)
     public Client createClient(ClientCreateRequestDTO clientCreateRequestDTO) {
         if (clientCreateRequestDTO == null) {
             throw new IllegalArgumentException("Client create request must not be null");
@@ -52,7 +56,12 @@ public class ClientServiceImpl implements ClientService {
         }
 
         Client clientToSave = clientMapper.fromClientCreateRequestDTOToClient(clientCreateRequestDTO);
-        return clientRepository.save(clientToSave);
+        Client savedClient = clientRepository.save(clientToSave);
+        log.info("Client created: clientId={}, displayName={}, companyName={}",
+                savedClient.getId(),
+                savedClient.getDisplayName(),
+                savedClient.getCompanyName());
+        return savedClient;
     }
 
     @Override
@@ -65,30 +74,28 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    @Cacheable("activeClientsForSelect")
+    @Cacheable(value = ACTIVE_CLIENTS_FOR_SELECT_CACHE, key = "'all'")
     public List<ClientSelectDTO> findAllActiveClientsForSelect() {
         return clientRepository.findAllByActiveTrueOrderByDisplayNameAsc()
                 .stream()
-                .map(client -> ClientSelectDTO.builder()
-                        .id(client.getId())
-                        .displayName(client.getDisplayName())
-                        .build())
+                .map(this::mapToClientSelectDTO)
                 .toList();
     }
 
     @Override
+    @Cacheable(value = ACTIVE_CLIENTS_FOR_SELECT_CACHE, key = "#selectedClientId")
     public List<ClientSelectDTO> findAllActiveClientsForSelect(UUID selectedClientId) {
-        List<ClientSelectDTO> activeClients = new ArrayList<>(findAllActiveClientsForSelect());
+        List<ClientSelectDTO> activeClients = clientRepository.findAllByActiveTrueOrderByDisplayNameAsc()
+                .stream()
+                .map(this::mapToClientSelectDTO)
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
         boolean selectedClientAlreadyIncluded = activeClients.stream()
                 .anyMatch(client -> client.getId().equals(selectedClientId));
 
         if (selectedClientId != null && !selectedClientAlreadyIncluded) {
             clientRepository.findById(selectedClientId)
-                    .map(client -> ClientSelectDTO.builder()
-                            .id(client.getId())
-                            .displayName(client.getDisplayName())
-                            .build())
+                    .map(this::mapToClientSelectDTO)
                     .ifPresent(client -> activeClients.add(0, client));
         }
 
@@ -141,7 +148,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    @CacheEvict(value = "activeClientsForSelect", allEntries = true)
+    @CacheEvict(value = ACTIVE_CLIENTS_FOR_SELECT_CACHE, allEntries = true)
     public void editClient(ClientEditRequestDTO clientEditRequestDTO) {
         Client clientToEdit = clientRepository.findById(clientEditRequestDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client with id " + clientEditRequestDTO.getId() + " does not exist"));
@@ -163,21 +170,26 @@ public class ClientServiceImpl implements ClientService {
 
         clientMapper.updateClientFromEditRequestDTO(clientToEdit, clientEditRequestDTO);
         clientRepository.save(clientToEdit);
+        log.info("Client edited: clientId={}, displayName={}, companyName={}",
+                clientToEdit.getId(),
+                clientToEdit.getDisplayName(),
+                clientToEdit.getCompanyName());
     }
 
     @Override
-    @CacheEvict(value = "activeClientsForSelect", allEntries = true)
+    @CacheEvict(value = ACTIVE_CLIENTS_FOR_SELECT_CACHE, allEntries = true)
     public void toggleClientActive(UUID id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client with id " + id + " does not exist"));
 
         client.setActive(!client.isActive());
         clientRepository.save(client);
+        log.info("Client active status toggled: clientId={}, active={}", client.getId(), client.isActive());
     }
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
-    @CacheEvict(value = "activeClientsForSelect", allEntries = true)
+    @CacheEvict(value = ACTIVE_CLIENTS_FOR_SELECT_CACHE, allEntries = true)
     public void deleteClient(UUID id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client with id " + id + " does not exist"));
@@ -191,6 +203,14 @@ public class ClientServiceImpl implements ClientService {
         }
 
         clientRepository.delete(client);
+        log.info("Client deleted: clientId={}, displayName={}", client.getId(), client.getDisplayName());
+    }
+
+    private ClientSelectDTO mapToClientSelectDTO(Client client) {
+        return ClientSelectDTO.builder()
+                .id(client.getId())
+                .displayName(client.getDisplayName())
+                .build();
     }
 
     private void normalizeVatNumber(ClientCreateRequestDTO clientCreateRequestDTO) {

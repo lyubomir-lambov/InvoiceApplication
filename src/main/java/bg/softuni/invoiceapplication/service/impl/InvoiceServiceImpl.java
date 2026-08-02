@@ -19,6 +19,7 @@ import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.service.InvoiceHistoryIntegrationService;
 import bg.softuni.invoiceapplication.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class InvoiceServiceImpl implements InvoiceService {
 
@@ -137,6 +139,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                         CREATED_ACTION,
                         getPerformedByUsername(performedByUsername)));
 
+        log.info("Invoice created: invoiceId={}, invoiceNumber={}, performedBy={}",
+                savedInvoice.getId(),
+                savedInvoice.getInvoiceNumber(),
+                getPerformedByUsername(performedByUsername));
+
         return savedInvoice;
     }
 
@@ -189,6 +196,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                         invoice,
                         UPDATED_ACTION,
                         getPerformedByUsername(performedByUsername)));
+
+        log.info("Invoice edited: invoiceId={}, invoiceNumber={}, performedBy={}",
+                invoice.getId(),
+                invoice.getInvoiceNumber(),
+                getPerformedByUsername(performedByUsername));
     }
 
     private void updateClientSnapshot(Invoice invoice, Client client) {
@@ -232,6 +244,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                             invoice,
                             MARKED_OVERDUE_ACTION,
                             SYSTEM_USERNAME));
+            log.info("Invoice marked overdue: invoiceId={}, invoiceNumber={}",
+                    invoice.getId(),
+                    invoice.getInvoiceNumber());
         });
 
         return overdueInvoices.size();
@@ -252,6 +267,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                             invoice,
                             MARKED_ISSUED_ACTION,
                             SYSTEM_USERNAME));
+            log.info("Invoice marked issued: invoiceId={}, invoiceNumber={}",
+                    invoice.getId(),
+                    invoice.getInvoiceNumber());
         });
 
         return noLongerOverdueInvoices.size();
@@ -267,6 +285,13 @@ public class InvoiceServiceImpl implements InvoiceService {
                         invoice,
                         action,
                         getPerformedByUsername(performedByUsername)));
+
+        log.info("Invoice status updated: invoiceId={}, invoiceNumber={}, status={}, action={}, performedBy={}",
+                invoice.getId(),
+                invoice.getInvoiceNumber(),
+                status,
+                action,
+                getPerformedByUsername(performedByUsername));
     }
 
     private String getPerformedByUsername(String performedByUsername) {
