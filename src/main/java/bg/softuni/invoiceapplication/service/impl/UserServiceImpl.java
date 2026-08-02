@@ -1,5 +1,6 @@
 package bg.softuni.invoiceapplication.service.impl;
 
+import bg.softuni.invoiceapplication.exception.ResourceNotFoundException;
 import bg.softuni.invoiceapplication.mapper.user.UserMapper;
 import bg.softuni.invoiceapplication.model.dto.users.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.users.UserRegistrationResponseDTO;
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @PreAuthorize("hasRole('ADMIN')")
     public void toggleUserStatus(UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User with id " + userId + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " does not exist"));
 
         user.setActive(!user.isActive());
         userRepository.save(user);
@@ -82,7 +83,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @PreAuthorize("hasRole('ADMIN')")
     public void toggleUserRole(UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User with id " + userId + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " does not exist"));
 
         user.setRole(UserRole.ADMIN.equals(user.getRole()) ? UserRole.USER : UserRole.ADMIN);
         userRepository.save(user);
