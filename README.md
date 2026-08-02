@@ -1,8 +1,13 @@
 # Invoice Application
 
-Invoice Application е уеб приложение за управление на клиенти, фактури, плащания и справки за задължения. Проектът е реализиран със Spring Boot MVC, Thymeleaf и MySQL и е структуриран като класическо server-side rendered бизнес приложение.
+Invoice Application е Spring Boot MVC приложение за управление на клиенти, фактури, плащания, справки и история на промените по фактури.
 
-Приложението позволява създаване на фактури с редове, валути, ДДС ставки и автоматична номерация, проследяване на плащания по клиенти и генериране на обобщени справки по валута.
+Проектът е разработен за Spring Advanced Individual Project и се състои от две независими Spring Boot приложения:
+
+- `InvoiceApplication` - основното MVC приложение.
+- `invoice-history-service` - REST microservice за immutable история на фактурите.
+
+Основното приложение използва Thymeleaf UI, MySQL база, Spring Security, Feign Client, Scheduling, Caching, централизирано exception handling и logging.
 
 ## Съдържание
 
@@ -10,11 +15,14 @@ Invoice Application е уеб приложение за управление н�
 - [Технологии](#технологии)
 - [Архитектура](#архитектура)
 - [Домейн модел](#домейн-модел)
+- [REST microservice](#rest-microservice)
+- [Security](#security)
+- [Scheduling и caching](#scheduling-и-caching)
+- [Exception handling и logging](#exception-handling-и-logging)
 - [Изисквания](#изисквания)
-- [Инсталация и стартиране](#инсталация-и-стартиране)
 - [Конфигурация](#конфигурация)
+- [Стартиране](#стартиране)
 - [Основни URL адреси](#основни-url-адреси)
-- [Потребители и достъп](#потребители-и-достъп)
 - [Тестове](#тестове)
 - [Структура на проекта](#структура-на-проекта)
 
@@ -22,37 +30,39 @@ Invoice Application е уеб приложение за управление н�
 
 ### Клиенти
 
-- Създаване, редактиране и търсене на клиенти.
-- Поддръжка на данни за фирма, лице за контакт, имейл, телефон, адрес, държава и ДДС номер.
+- Създаване, редактиране, търсене и преглед на клиенти.
+- Данни за фирма, лице за контакт, имейл, телефон, адрес, държава и ДДС номер.
 - Активиране и деактивиране на клиенти.
-- Изтриване на клиент само когато към него няма издадени фактури или плащания.
-- Проверка за дублиране на име за показване и ДДС номер.
+- Изтриване на клиент само когато няма свързани фактури или плащания.
+- Проверка за дублирано име за показване и ДДС номер.
+- Кеширан списък с активни клиенти за формите за фактури.
 
 ### Фактури
 
 - Създаване, редактиране, преглед и печат на фактури.
-- Автоматична последователна номерация във формат от 10 цифри, например `0000000001`.
-- Поддръжка на типове документи:
-  - фактура;
-  - дебитно известие;
-  - кредитно известие.
-- Поддръжка на валути: `BGN`, `EUR`, `USD`, `GBP`.
-- Поддръжка на редове във фактурата с описание, количество, мерна единица, единична цена и ДДС ставка.
+- Автоматична последователна номерация във формат `0000000001`.
+- Поддръжка на `INVOICE`, `DEBIT_NOTE`, `CREDIT_NOTE`.
+- Поддръжка на валути `BGN`, `EUR`, `USD`, `GBP`.
+- Редове във фактурата с описание, количество, мерна единица, единична цена и ДДС ставка.
 - Автоматично изчисляване на суми без ДДС, ДДС и обща сума.
-- Запазване на snapshot на клиентските данни във фактурата, така че последваща промяна на клиента да не променя историческите данни в документа.
-- Анулиране и възстановяване на фактури от администратор.
+- Snapshot на клиентските данни във фактурата.
+- Анулиране и възстановяване на фактури.
+- Автоматично маркиране на просрочени фактури като `OVERDUE`.
+- История на всяка важна промяна, записвана в отделен microservice.
 
-### Плащания
+### Invoice history
+
+- Запис на immutable history record при създаване, редакция, анулиране, възстановяване и scheduler промени.
+- Всяка версия пази revision number, потребител, действие, статус, суми, клиент и JSON snapshot на фактурата.
+- В детайлния екран на фактурата историята се визуализира като разгъваеми редове.
+- Администратор може да изчисти историята на конкретна фактура.
+
+### Плащания и справки
 
 - Добавяне, редактиране, търсене и изтриване на плащания.
 - Плащанията са свързани с клиент, сума, валута, дата и бележки.
-- Изтриване на плащания е позволено само за администратор.
-
-### Справки
-
-- Обобщение на фактурирани суми, платени суми и остатък по валута.
+- Справка за фактурирани суми, платени суми и остатък по валута.
 - Филтриране на справките за всички клиенти или за конкретен клиент.
-- Детайлен изглед по клиент с групирани фактури и плащания.
 - Анулираните фактури не участват в справките.
 - Кредитните известия участват със знак минус.
 
@@ -61,64 +71,131 @@ Invoice Application е уеб приложение за управление н�
 - Регистрация и вход в системата.
 - BCrypt хеширане на пароли.
 - Първият регистриран потребител автоматично получава роля `ADMIN`.
-- Администраторите могат да:
-  - преглеждат потребителите;
-  - търсят потребители по username;
-  - активират и деактивират потребители;
-  - сменят роли между `USER` и `ADMIN`.
-- Потребител не може да промени собствената си роля или собствената си активност.
+- Администраторите могат да управляват потребители, роли и активност.
+- Всеки логнат потребител има profile page и може да редактира профилните си данни.
 
 ## Технологии
 
 - Java 17
 - Spring Boot 3.4.0
-- Spring MVC
+- Spring MVC + Thymeleaf
 - Spring Data JPA
-- Thymeleaf
+- Spring Security
+- Spring Cloud OpenFeign
+- Spring Cache
+- Spring Scheduling
 - Jakarta Bean Validation
 - MySQL
 - Hibernate
 - Lombok
-- BCrypt password encoding
 - Maven Wrapper
 - JUnit 5 / Spring Boot Test
 
 ## Архитектура
 
-Проектът следва layered architecture:
+Проектът използва layered architecture:
 
-- `web` - Spring MVC controllers и обработка на HTTP заявки.
+- `web` - MVC и REST controllers.
 - `service` - бизнес логика и транзакционни операции.
-- `repository` - достъп до базата чрез Spring Data JPA.
+- `repository` - Spring Data JPA repositories.
 - `model.entity` - JPA entities.
-- `model.dto` - request/response/view DTO модели.
+- `model.dto` - request, response и view DTO модели.
 - `mapper` - преобразуване между entities и DTO обекти.
-- `security` - session-based authentication helper и interceptor.
-- `config` - Spring конфигурация.
-- `templates` - Thymeleaf изгледи.
-- `static` - CSS и изображения.
+- `client` - Feign client към microservice.
+- `scheduler` - scheduled jobs.
+- `exception` - custom exceptions и global exception handling.
+- `config` / `security` - security, cache и application configuration.
 
-Приложението използва ръчно session-базирано удостоверяване чрез `SessionInterceptor`. Публични са началната страница, login страницата и регистрацията. Всички останали страници изискват активна потребителска сесия.
+Основното приложение работи на порт `8080`.
+Microservice приложението работи на порт `8081`.
 
 ## Домейн модел
 
-Основните entity класове са:
+Основни entity класове в main app:
 
 - `User` - потребител с username, email, парола, активност и роля.
 - `Client` - клиент/фирма с контактни, адресни и ДДС данни.
 - `Invoice` - фактура с номер, тип, статус, валута, дати, клиент и редове.
 - `InvoiceLineItem` - ред във фактура с количество, цена, мерна единица и ДДС ставка.
-- `Payment` - плащане към клиент с валута, сума, дата и бележки.
+- `Payment` - плащане към клиент.
+
+Entity в microservice:
+
+- `InvoiceHistoryRecord` - immutable запис за история на фактура.
 
 Ключови enum типове:
 
 - `UserRole` - `ADMIN`, `USER`
 - `InvoiceType` - `INVOICE`, `DEBIT_NOTE`, `CREDIT_NOTE`
-- `InvoiceStatus` - `ISSUED`, `CANCELLED`
+- `InvoiceStatus` - `ISSUED`, `OVERDUE`, `CANCELLED`
 - `InvoiceCurrency` - `BGN`, `EUR`, `USD`, `GBP`
 - `VatRate` - `0%`, `9%`, `20%`
-- `MeasurementUnit` - брой, килограм, грам, литър, метър, квадратен метър, кубичен метър, час, ден, услуга
-- `Country` - България, Румъния, Гърция, Турция, Сърбия, Франция, Англия, Нидерландия
+- `InvoiceHistoryAction` - `CREATED`, `UPDATED`, `CANCELLED`, `RESTORED`, `MARKED_OVERDUE`, `MARKED_ISSUED`
+
+## REST microservice
+
+`invoice-history-service` exposes REST API, protected with API key header:
+
+```text
+X-API-Key: lambi-invoice-history-api-key
+```
+
+Endpoints:
+
+| Method | URL | Описание |
+| --- | --- | --- |
+| `POST` | `/api/invoice-history` | Създава history record |
+| `GET` | `/api/invoice-history/invoices/{invoiceId}` | Връща историята на фактура |
+| `DELETE` | `/api/invoice-history/invoices/{invoiceId}` | Изтрива историята на фактура |
+
+Основното приложение извиква microservice-а чрез Feign Client.
+
+## Security
+
+Main app:
+
+- Spring Security form login.
+- BCrypt password encoding.
+- Role-based достъп с `ADMIN` и `USER`.
+- Admin-only операции за потребители, изтриване на плащания, анулиране/възстановяване и clear invoice history.
+- `@PreAuthorize` се използва за чувствителни операции.
+
+Microservice:
+
+- Stateless Spring Security configuration.
+- Custom API key filter.
+- Всички REST endpoints изискват валиден `X-API-Key`.
+
+## Scheduling и caching
+
+Scheduling:
+
+- Cron job маркира просрочени `ISSUED` фактури като `OVERDUE`.
+- Fixed delay job връща `OVERDUE` фактури към `ISSUED`, ако due date вече не е в миналото.
+- Scheduler промените също се записват в invoice history microservice.
+
+Caching:
+
+- Кешира се списъкът с активни клиенти за invoice формите.
+- Cache-ът се изчиства при create/edit/toggle/delete на клиент.
+
+## Exception handling и logging
+
+И двете приложения имат централизирано exception handling.
+
+Main app:
+
+- Показва обща `error.html` страница при application errors.
+- Използва custom exceptions като `ApplicationException`, `BusinessRuleException`, `ResourceNotFoundException`.
+
+Microservice:
+
+- Връща еднакъв JSON error response при validation, invalid API key, broken JSON body и unexpected errors.
+
+Logging:
+
+- Логват се важни бизнес операции: фактури, клиенти, плащания, потребители, scheduler jobs и Feign комуникация.
+- SQL dump логовете са изключени за по-четима конзола.
 
 ## Изисквания
 
@@ -126,56 +203,73 @@ Invoice Application е уеб приложение за управление н�
 
 - Java 17+
 - MySQL Server
-- Maven не е задължителен, защото проектът включва Maven Wrapper
-
-## Инсталация и стартиране
-
-1. Клонирайте или отворете проекта локално.
-
-2. Уверете се, че MySQL Server работи.
-
-3. Проверете настройките за връзка към базата в `src/main/resources/application.properties`.
-
-4. Стартирайте приложението:
-
-```bash
-./mvnw spring-boot:run
-```
-
-За Windows:
-
-```bash
-mvnw.cmd spring-boot:run
-```
-
-5. Отворете приложението в браузър:
-
-```text
-http://localhost:8080
-```
-
-При първо стартиране Hibernate ще създаде нужните таблици автоматично, защото `spring.jpa.hibernate.ddl-auto=update`.
+- Maven Wrapper се използва от проекта, отделна Maven инсталация не е задължителна
 
 ## Конфигурация
 
-Текущата локална конфигурация използва MySQL база:
+Main app използва база:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/invoice_application?createDatabaseIfNotExist=true
 spring.datasource.username=root
 spring.datasource.password=1010
-spring.jpa.hibernate.ddl-auto=update
+invoice.history.service.url=http://localhost:8081
+invoice.history.api-key=${INVOICE_HISTORY_API_KEY}
 ```
 
-Важно: стойностите за `username` и `password` са локални настройки. За реална среда не съхранявайте пароли директно в repository. По-добра практика е да се използват environment variables или отделен profile, който не се commit-ва.
-
-Примерна конфигурация с environment variables:
+Microservice използва отделна база:
 
 ```properties
-spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/invoice_application?createDatabaseIfNotExist=true}
-spring.datasource.username=${DB_USERNAME:root}
-spring.datasource.password=${DB_PASSWORD:}
+spring.datasource.url=jdbc:mysql://localhost:3306/invoice_history_service?createDatabaseIfNotExist=true
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+invoice.history.api-key=${INVOICE_HISTORY_API_KEY}
 ```
+
+Нужни environment variables:
+
+```text
+DB_USERNAME=root
+DB_PASSWORD=1010
+INVOICE_HISTORY_API_KEY=lambi-invoice-history-api-key
+```
+
+За main app е задължителна поне:
+
+```text
+INVOICE_HISTORY_API_KEY=lambi-invoice-history-api-key
+```
+
+## Стартиране
+
+1. Стартирайте MySQL.
+
+2. Стартирайте microservice-а:
+
+```bash
+cd invoice-history-service
+DB_USERNAME=root DB_PASSWORD=1010 INVOICE_HISTORY_API_KEY=lambi-invoice-history-api-key ./mvnw spring-boot:run
+```
+
+Microservice URL:
+
+```text
+http://localhost:8081
+```
+
+3. Стартирайте main app в отделен terminal:
+
+```bash
+INVOICE_HISTORY_API_KEY=lambi-invoice-history-api-key ./mvnw spring-boot:run
+```
+
+Main app URL:
+
+```text
+http://localhost:8080
+```
+
+При първо стартиране Hibernate създава нужните таблици автоматично чрез `spring.jpa.hibernate.ddl-auto=update`.
 
 ## Основни URL адреси
 
@@ -184,9 +278,11 @@ spring.datasource.password=${DB_PASSWORD:}
 | `/` | Начална страница | публичен |
 | `/login` | Вход | публичен |
 | `/users/register` | Регистрация | публичен |
+| `/profile` | Потребителски профил | логнат потребител |
+| `/profile/edit` | Редакция на профил | логнат потребител |
 | `/invoices` | Списък с фактури | логнат потребител |
 | `/invoices/create` | Създаване на фактура | логнат потребител |
-| `/invoices/{invoiceId}` | Детайли за фактура | логнат потребител |
+| `/invoices/{invoiceId}` | Детайли и история на фактура | логнат потребител |
 | `/clients` | Списък с клиенти | логнат потребител |
 | `/clients/create` | Създаване на клиент | логнат потребител |
 | `/payments` | Списък с плащания | логнат потребител |
@@ -194,68 +290,63 @@ spring.datasource.password=${DB_PASSWORD:}
 | `/payment-reports` | Справки за плащания и задължения | логнат потребител |
 | `/users` | Управление на потребители | администратор |
 
-## Потребители и достъп
-
-След първата регистрация потребителят автоматично става `ADMIN`. Това позволява първоначално управление на системата без seed script.
-
-За нормална работа:
-
-1. Отворете `/users/register`.
-2. Регистрирайте първия потребител.
-3. Влезте през `/login`.
-4. Създайте клиенти.
-5. Създайте фактури и плащания.
-6. Прегледайте справките в `/payment-reports`.
-
-Ако потребител бъде деактивиран, текущата му сесия става невалидна при следваща защитена заявка и той се пренасочва към login страницата.
-
 ## Тестове
 
-Стартиране на тестовете:
+Стартиране на тестовете за main app:
 
 ```bash
 ./mvnw test
 ```
 
-За Windows:
+Стартиране на тестовете за microservice:
 
 ```bash
-mvnw.cmd test
+cd invoice-history-service
+./mvnw test
 ```
 
-В момента проектът съдържа smoke test (`contextLoads`), който проверява дали Spring context се зарежда успешно.
+Към момента има smoke tests, които проверяват дали Spring context се зарежда успешно. По-пълните service/controller тестове са следваща планирана стъпка.
 
 ## Структура на проекта
 
 ```text
 .
 ├── pom.xml
-├── mvnw
-├── mvnw.cmd
-└── src
-    ├── main
-    │   ├── java/bg/softuni/invoiceapplication
-    │   │   ├── config
-    │   │   ├── mapper
-    │   │   ├── model
-    │   │   │   ├── dto
-    │   │   │   ├── entity
-    │   │   │   └── enums
-    │   │   ├── repository
-    │   │   ├── security
-    │   │   ├── service
-    │   │   └── web
-    │   └── resources
-    │       ├── application.properties
-    │       ├── static
-    │       └── templates
-    └── test
-        └── java/bg/softuni/invoiceapplication
+├── README.md
+├── src
+│   ├── main
+│   │   ├── java/bg/softuni/invoiceapplication
+│   │   │   ├── client
+│   │   │   ├── config
+│   │   │   ├── exception
+│   │   │   ├── mapper
+│   │   │   ├── model
+│   │   │   ├── repository
+│   │   │   ├── scheduler
+│   │   │   ├── security
+│   │   │   ├── service
+│   │   │   └── web
+│   │   └── resources
+│   │       ├── application.properties
+│   │       ├── static
+│   │       └── templates
+│   └── test
+└── invoice-history-service
+    ├── pom.xml
+    ├── src/main/java/bg/softuni/invoicehistoryservice
+    │   ├── config
+    │   ├── exception
+    │   ├── mapper
+    │   ├── model
+    │   ├── repository
+    │   ├── service
+    │   └── web
+    └── src/main/resources/application.properties
 ```
 
 ## Бележки за разработчици
 
-- При промяна на entity моделите проверете ефекта върху съществуващата MySQL схема, защото `ddl-auto=update` не е заместител на миграции за production среда.
-- При добавяне на нови защитени страници не е нужна отделна настройка, защото interceptor-ът защитава всички пътища извън публичните endpoint-и.
-- Ако добавите нови публични страници, те трябва да бъдат включени в `PUBLIC_ENDPOINTS` в `SessionInterceptor`.
-- При добавяне на нови валути, ДДС ставки или мерни единици актуализирайте съответния enum и проверете формите, справките и изгледите.
+- При промяна на enum стойности проверете MySQL колоните, ако вече има съществуваща схема.
+- При промяна на invoice действията актуализирайте и main app mapper-а, и microservice enum-а.
+- При добавяне на нови admin операции добавете защита както в UI, така и със server-side security.
+- За production среда пароли и API key трябва да се подават само през environment variables или secret management.
