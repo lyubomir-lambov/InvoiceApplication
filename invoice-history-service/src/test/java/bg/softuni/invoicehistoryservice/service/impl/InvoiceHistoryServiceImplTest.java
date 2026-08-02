@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -70,6 +71,26 @@ class InvoiceHistoryServiceImplTest {
         assertThat(result.getPerformedByUsername()).isEqualTo("admin");
     }
 
+    @Test
+    void findHistoryByInvoiceId_shouldReturnResponseDTOs_whenHistoryExists() {
+        FakeInvoiceHistoryRepository fakeRepository = new FakeInvoiceHistoryRepository(
+                Optional.empty(),
+                List.of(
+                        createRecord(2, InvoiceHistoryAction.UPDATED),
+                        createRecord(1, InvoiceHistoryAction.CREATED)
+                ));
+        InvoiceHistoryServiceImpl invoiceHistoryService = new InvoiceHistoryServiceImpl(fakeRepository.repository(), invoiceHistoryMapper);
+
+        List<InvoiceHistoryResponseDTO> result = invoiceHistoryService.findHistoryByInvoiceId(INVOICE_ID);
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getInvoiceId()).isEqualTo(INVOICE_ID);
+        assertThat(result.get(0).getRevisionNumber()).isEqualTo(2);
+        assertThat(result.get(0).getAction()).isEqualTo(InvoiceHistoryAction.UPDATED);
+        assertThat(result.get(1).getRevisionNumber()).isEqualTo(1);
+        assertThat(result.get(1).getAction()).isEqualTo(InvoiceHistoryAction.CREATED);
+    }
+
     private InvoiceHistoryCreateRequestDTO createRequestDTO() {
         return InvoiceHistoryCreateRequestDTO.builder()
                 .invoiceId(INVOICE_ID)
@@ -90,13 +111,40 @@ class InvoiceHistoryServiceImplTest {
                 .build();
     }
 
+    private InvoiceHistoryRecord createRecord(Integer revisionNumber, InvoiceHistoryAction action) {
+        return InvoiceHistoryRecord.builder()
+                .invoiceId(INVOICE_ID)
+                .invoiceNumber("0000000001")
+                .invoiceType("INVOICE")
+                .invoiceStatus("ISSUED")
+                .revisionNumber(revisionNumber)
+                .action(action)
+                .currency("BGN")
+                .clientDisplayName("Test Client")
+                .clientCompanyName("Test Company Ltd.")
+                .issueDate(LocalDate.of(2026, 8, 2))
+                .dueDate(LocalDate.of(2026, 8, 15))
+                .totalWithoutVat(new BigDecimal("100.00"))
+                .totalVat(new BigDecimal("20.00"))
+                .totalWithVat(new BigDecimal("120.00"))
+                .snapshotJson("{\"invoiceNumber\":\"0000000001\"}")
+                .performedByUsername("admin")
+                .build();
+    }
+
     private static class FakeInvoiceHistoryRepository {
 
         private final Optional<InvoiceHistoryRecord> topRecord;
+        private final List<InvoiceHistoryRecord> records;
         private InvoiceHistoryRecord savedRecord;
 
         private FakeInvoiceHistoryRepository(Optional<InvoiceHistoryRecord> topRecord) {
+            this(topRecord, List.of());
+        }
+
+        private FakeInvoiceHistoryRepository(Optional<InvoiceHistoryRecord> topRecord, List<InvoiceHistoryRecord> records) {
             this.topRecord = topRecord;
+            this.records = records;
         }
 
         private InvoiceHistoryRepository repository() {
@@ -105,6 +153,7 @@ class InvoiceHistoryServiceImplTest {
                     new Class[]{InvoiceHistoryRepository.class},
                     (proxy, method, args) -> switch (method.getName()) {
                         case "findTopByInvoiceIdOrderByRevisionNumberDesc" -> topRecord;
+                        case "findByInvoiceIdOrderByRevisionNumberDesc" -> records;
                         case "save" -> {
                             savedRecord = (InvoiceHistoryRecord) args[0];
                             yield savedRecord;
