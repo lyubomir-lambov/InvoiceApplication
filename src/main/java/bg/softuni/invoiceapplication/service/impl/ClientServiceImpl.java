@@ -1,5 +1,7 @@
 package bg.softuni.invoiceapplication.service.impl;
 
+import bg.softuni.invoiceapplication.exception.BusinessRuleException;
+import bg.softuni.invoiceapplication.exception.ResourceNotFoundException;
 import bg.softuni.invoiceapplication.mapper.client.ClientMapper;
 import bg.softuni.invoiceapplication.model.dto.clients.ClientCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.clients.ClientEditRequestDTO;
@@ -36,14 +38,14 @@ public class ClientServiceImpl implements ClientService {
         }
 
         if (clientRepository.existsByDisplayName(clientCreateRequestDTO.getDisplayName())) {
-            throw new RuntimeException("Client with display name " + clientCreateRequestDTO.getDisplayName() + " already exists");
+            throw new BusinessRuleException("Client with display name " + clientCreateRequestDTO.getDisplayName() + " already exists");
         }
 
         normalizeVatNumber(clientCreateRequestDTO);
 
         if (clientCreateRequestDTO.getVatNumber() != null
                 && clientRepository.existsByVatNumber(clientCreateRequestDTO.getVatNumber())) {
-            throw new RuntimeException("Client with VAT number " + clientCreateRequestDTO.getVatNumber() + " already exists");
+            throw new BusinessRuleException("Client with VAT number " + clientCreateRequestDTO.getVatNumber() + " already exists");
         }
 
         Client clientToSave = clientMapper.fromClientCreateRequestDTOToClient(clientCreateRequestDTO);
@@ -107,7 +109,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientEditRequestDTO getClientForEdit(UUID id) {
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client with id " + id + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client with id " + id + " does not exist"));
 
         return clientMapper.fromClientToClientEditRequestDTO(client);
     }
@@ -137,12 +139,12 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void editClient(ClientEditRequestDTO clientEditRequestDTO) {
         Client clientToEdit = clientRepository.findById(clientEditRequestDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Client with id " + clientEditRequestDTO.getId() + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client with id " + clientEditRequestDTO.getId() + " does not exist"));
 
         if (clientRepository.existsByDisplayNameAndIdNot(
                 clientEditRequestDTO.getDisplayName(),
                 clientEditRequestDTO.getId())) {
-            throw new RuntimeException("Client with display name " + clientEditRequestDTO.getDisplayName() + " already exists");
+            throw new BusinessRuleException("Client with display name " + clientEditRequestDTO.getDisplayName() + " already exists");
         }
 
         normalizeVatNumber(clientEditRequestDTO);
@@ -151,7 +153,7 @@ public class ClientServiceImpl implements ClientService {
                 && clientRepository.existsByVatNumberAndIdNot(
                 clientEditRequestDTO.getVatNumber(),
                 clientEditRequestDTO.getId())) {
-            throw new RuntimeException("Client with VAT number " + clientEditRequestDTO.getVatNumber() + " already exists");
+            throw new BusinessRuleException("Client with VAT number " + clientEditRequestDTO.getVatNumber() + " already exists");
         }
 
         clientMapper.updateClientFromEditRequestDTO(clientToEdit, clientEditRequestDTO);
@@ -161,7 +163,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void toggleClientActive(UUID id) {
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client with id " + id + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client with id " + id + " does not exist"));
 
         client.setActive(!client.isActive());
         clientRepository.save(client);
@@ -171,14 +173,14 @@ public class ClientServiceImpl implements ClientService {
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteClient(UUID id) {
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client with id " + id + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client with id " + id + " does not exist"));
 
         if (invoiceRepository.existsByClientId(id)) {
-            throw new IllegalStateException("Client cannot be deleted because issued invoices already exist");
+            throw new BusinessRuleException("Client cannot be deleted because issued invoices already exist");
         }
 
         if (paymentRepository.existsByClientId(id)) {
-            throw new IllegalStateException("Client cannot be deleted because payments already exist");
+            throw new BusinessRuleException("Client cannot be deleted because payments already exist");
         }
 
         clientRepository.delete(client);
