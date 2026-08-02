@@ -20,4 +20,5 @@ public interface InvoiceService {
     void cancelInvoice(UUID invoiceId, String performedByUsername);
     void restoreInvoice(UUID invoiceId, String performedByUsername);
     int markOverdueInvoices();
+    int markNoLongerOverdueInvoices();
 }

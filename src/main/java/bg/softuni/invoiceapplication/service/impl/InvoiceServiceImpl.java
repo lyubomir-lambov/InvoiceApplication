@@ -39,6 +39,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private static final String CANCELLED_ACTION = "CANCELLED";
     private static final String RESTORED_ACTION = "RESTORED";
     private static final String MARKED_OVERDUE_ACTION = "MARKED_OVERDUE";
+    private static final String MARKED_ISSUED_ACTION = "MARKED_ISSUED";
     private static final String SYSTEM_USERNAME = "system";
 
     private final InvoiceRepository invoiceRepository;
@@ -234,6 +235,26 @@ public class InvoiceServiceImpl implements InvoiceService {
         });
 
         return overdueInvoices.size();
+    }
+
+    @Override
+    @Transactional
+    public int markNoLongerOverdueInvoices() {
+        List<Invoice> noLongerOverdueInvoices = invoiceRepository.findAllByStatusAndDueDateGreaterThanEqual(
+                InvoiceStatus.OVERDUE,
+                LocalDate.now());
+
+        noLongerOverdueInvoices.forEach(invoice -> {
+            invoice.setStatus(InvoiceStatus.ISSUED);
+            invoiceRepository.flush();
+            invoiceHistoryIntegrationService.createHistoryRecord(
+                    invoiceHistoryMapper.fromInvoiceToHistoryCreateRequestDTO(
+                            invoice,
+                            MARKED_ISSUED_ACTION,
+                            SYSTEM_USERNAME));
+        });
+
+        return noLongerOverdueInvoices.size();
     }
 
     private void updateInvoiceStatus(UUID invoiceId, InvoiceStatus status, String action, String performedByUsername) {
