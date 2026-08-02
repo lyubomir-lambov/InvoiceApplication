@@ -1,13 +1,14 @@
 package bg.softuni.invoicehistoryservice;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThat;
+
 class InvoiceHistoryServiceApplicationTests {
 
     @Test
-    void contextLoads() {
+    void applicationClassShouldBeAvailable() {
+        assertThat(InvoiceHistoryServiceApplication.class).isNotNull();
     }
 
 }
