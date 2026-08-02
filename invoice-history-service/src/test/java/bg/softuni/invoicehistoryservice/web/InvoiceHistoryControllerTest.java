@@ -1,6 +1,7 @@
 package bg.softuni.invoicehistoryservice.web;
 
 import bg.softuni.invoicehistoryservice.exception.GlobalExceptionHandler;
+import bg.softuni.invoicehistoryservice.exception.InvalidInvoiceHistoryRequestException;
 import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryCreateRequestDTO;
 import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryResponseDTO;
 import bg.softuni.invoicehistoryservice.model.enums.InvoiceHistoryAction;
@@ -83,6 +84,17 @@ class InvoiceHistoryControllerTest {
     }
 
     @Test
+    void createHistoryRecord_shouldReturnBadRequest_whenJsonBodyIsInvalid() throws Exception {
+        mockMvc.perform(post("/api/invoice-history")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{invalid-json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorCode").value("invalid_json_request"))
+                .andExpect(jsonPath("$.errorTitle").value("Invalid JSON Request"));
+    }
+
+    @Test
     void findHistoryByInvoiceId_shouldReturnHistoryRecords_whenInvoiceIdIsValid() throws Exception {
         mockMvc.perform(get("/api/invoice-history/invoices/{invoiceId}", INVOICE_ID))
                 .andExpect(status().isOk())
@@ -95,6 +107,18 @@ class InvoiceHistoryControllerTest {
                 .andExpect(jsonPath("$[1].action").value("CREATED"));
 
         assertThat(fakeInvoiceHistoryService.requestedInvoiceId()).isEqualTo(INVOICE_ID);
+    }
+
+    @Test
+    void findHistoryByInvoiceId_shouldReturnApplicationErrorResponse_whenServiceThrowsException() throws Exception {
+        fakeInvoiceHistoryService.throwExceptionOnFind();
+
+        mockMvc.perform(get("/api/invoice-history/invoices/{invoiceId}", INVOICE_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errorCode").value("invalid_invoice_history_request"))
+                .andExpect(jsonPath("$.errorTitle").value("Invalid Invoice History Request"))
+                .andExpect(jsonPath("$.message").value("Invoice id must not be null"));
     }
 
     @Test
@@ -130,6 +154,7 @@ class InvoiceHistoryControllerTest {
         private InvoiceHistoryCreateRequestDTO createdRequest;
         private UUID requestedInvoiceId;
         private UUID deletedInvoiceId;
+        private boolean throwExceptionOnFind;
 
         @Override
         public InvoiceHistoryResponseDTO createHistoryRecord(InvoiceHistoryCreateRequestDTO invoiceHistoryCreateRequestDTO) {
@@ -139,6 +164,10 @@ class InvoiceHistoryControllerTest {
 
         @Override
         public List<InvoiceHistoryResponseDTO> findHistoryByInvoiceId(UUID invoiceId) {
+            if (throwExceptionOnFind) {
+                throw new InvalidInvoiceHistoryRequestException("Invoice id must not be null");
+            }
+
             this.requestedInvoiceId = invoiceId;
             return List.of(
                     createResponseDTO(2, InvoiceHistoryAction.UPDATED),
@@ -161,6 +190,10 @@ class InvoiceHistoryControllerTest {
 
         private UUID deletedInvoiceId() {
             return deletedInvoiceId;
+        }
+
+        private void throwExceptionOnFind() {
+            this.throwExceptionOnFind = true;
         }
 
         private static InvoiceHistoryResponseDTO createResponseDTO(Integer revisionNumber, InvoiceHistoryAction action) {
