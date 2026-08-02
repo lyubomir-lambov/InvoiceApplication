@@ -1,5 +1,6 @@
 package bg.softuni.invoicehistoryservice.config;
 
+import bg.softuni.invoicehistoryservice.exception.InvalidApiKeyException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
@@ -18,9 +20,12 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     private static final String API_KEY_HEADER = "X-API-Key";
 
     private final String validApiKey;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public ApiKeyAuthenticationFilter(@Value("${invoice.history.api-key}") String validApiKey) {
+    public ApiKeyAuthenticationFilter(@Value("${invoice.history.api-key}") String validApiKey,
+                                      HandlerExceptionResolver handlerExceptionResolver) {
         this.validApiKey = validApiKey;
+        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
     @Override
@@ -31,12 +36,28 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         String apiKey = request.getHeader(API_KEY_HEADER);
 
         if (apiKey == null || apiKey.isBlank()) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing API key");
+            handlerExceptionResolver.resolveException(
+                    request,
+                    response,
+                    null,
+                    new InvalidApiKeyException(
+                            "Missing API key",
+                            "missing_api_key",
+                            "Missing API Key",
+                            HttpStatus.UNAUTHORIZED));
             return;
         }
 
         if (!apiKey.trim().equals(validApiKey.trim())) {
-            response.sendError(HttpStatus.FORBIDDEN.value(), "Invalid API key");
+            handlerExceptionResolver.resolveException(
+                    request,
+                    response,
+                    null,
+                    new InvalidApiKeyException(
+                            "Invalid API key",
+                            "invalid_api_key",
+                            "Invalid API Key",
+                            HttpStatus.FORBIDDEN));
             return;
         }
 
