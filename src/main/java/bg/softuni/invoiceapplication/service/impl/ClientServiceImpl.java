@@ -13,6 +13,8 @@ import bg.softuni.invoiceapplication.repository.InvoiceRepository;
 import bg.softuni.invoiceapplication.repository.PaymentRepository;
 import bg.softuni.invoiceapplication.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientMapper clientMapper;
 
     @Override
+    @CacheEvict(value = "activeClientsForSelect", allEntries = true)
     public Client createClient(ClientCreateRequestDTO clientCreateRequestDTO) {
         if (clientCreateRequestDTO == null) {
             throw new IllegalArgumentException("Client create request must not be null");
@@ -62,6 +65,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @Cacheable("activeClientsForSelect")
     public List<ClientSelectDTO> findAllActiveClientsForSelect() {
         return clientRepository.findAllByActiveTrueOrderByDisplayNameAsc()
                 .stream()
@@ -137,6 +141,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @CacheEvict(value = "activeClientsForSelect", allEntries = true)
     public void editClient(ClientEditRequestDTO clientEditRequestDTO) {
         Client clientToEdit = clientRepository.findById(clientEditRequestDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client with id " + clientEditRequestDTO.getId() + " does not exist"));
@@ -161,6 +166,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @CacheEvict(value = "activeClientsForSelect", allEntries = true)
     public void toggleClientActive(UUID id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client with id " + id + " does not exist"));
@@ -171,6 +177,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = "activeClientsForSelect", allEntries = true)
     public void deleteClient(UUID id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client with id " + id + " does not exist"));
