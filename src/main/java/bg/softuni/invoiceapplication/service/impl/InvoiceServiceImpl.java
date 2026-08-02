@@ -1,5 +1,7 @@
 package bg.softuni.invoiceapplication.service.impl;
 
+import bg.softuni.invoiceapplication.exception.BusinessRuleException;
+import bg.softuni.invoiceapplication.exception.ResourceNotFoundException;
 import bg.softuni.invoiceapplication.mapper.invoice.InvoiceMapper;
 import bg.softuni.invoiceapplication.mapper.invoicehistory.InvoiceHistoryMapper;
 import bg.softuni.invoiceapplication.model.dto.invoices.InvoiceCreateRequestDTO;
@@ -65,7 +67,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceDetailsDTO findInvoiceById(UUID invoiceId) {
         return invoiceRepository.findById(invoiceId)
                 .map(invoiceMapper::fromInvoiceToInvoiceDetailsDTO)
-                .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceId + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice with id " + invoiceId + " does not exist"));
     }
 
     @Override
@@ -92,19 +94,19 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         Client client = clientRepository.findById(invoiceCreateRequestDTO.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client with id " + invoiceCreateRequestDTO.getClientId() + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client with id " + invoiceCreateRequestDTO.getClientId() + " does not exist"));
 
         if (!client.isActive()) {
-            throw new RuntimeException("Cannot create invoice for inactive client");
+            throw new BusinessRuleException("Cannot create invoice for inactive client");
         }
 
         if (invoiceCreateRequestDTO.getDueDate().isBefore(invoiceCreateRequestDTO.getIssueDate())) {
-            throw new RuntimeException("Due date cannot be before issue date");
+            throw new BusinessRuleException("Due date cannot be before issue date");
         }
 
         Invoice lastInvoice = getLastInvoice();
         if (lastInvoice != null && invoiceCreateRequestDTO.getIssueDate().isBefore(lastInvoice.getIssueDate())) {
-            throw new RuntimeException("Issue date cannot be before last invoice issue date");
+            throw new BusinessRuleException("Issue date cannot be before last invoice issue date");
         }
 
         Long nextInvoiceSequence = getNextInvoiceSequence(lastInvoice);
@@ -140,7 +142,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceEditRequestDTO getInvoiceForEdit(UUID invoiceId) {
         return invoiceRepository.findById(invoiceId)
                 .map(invoiceMapper::fromInvoiceToInvoiceEditRequestDTO)
-                .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceId + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice with id " + invoiceId + " does not exist"));
     }
 
     @Override
@@ -151,17 +153,17 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         Invoice invoice = invoiceRepository.findById(invoiceEditRequestDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceEditRequestDTO.getId() + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice with id " + invoiceEditRequestDTO.getId() + " does not exist"));
 
         Client client = clientRepository.findById(invoiceEditRequestDTO.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client with id " + invoiceEditRequestDTO.getClientId() + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client with id " + invoiceEditRequestDTO.getClientId() + " does not exist"));
 
         if (!client.isActive() && !client.getId().equals(invoice.getClient().getId())) {
-            throw new RuntimeException("Cannot move invoice to inactive client");
+            throw new BusinessRuleException("Cannot move invoice to inactive client");
         }
 
         if (invoiceEditRequestDTO.getDueDate().isBefore(invoiceEditRequestDTO.getIssueDate())) {
-            throw new RuntimeException("Due date cannot be before issue date");
+            throw new BusinessRuleException("Due date cannot be before issue date");
         }
 
         invoice.setInvoiceType(invoiceEditRequestDTO.getInvoiceType());
@@ -212,7 +214,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private void updateInvoiceStatus(UUID invoiceId, InvoiceStatus status, String action, String performedByUsername) {
         Invoice invoice = invoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new RuntimeException("Invoice with id " + invoiceId + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice with id " + invoiceId + " does not exist"));
 
         invoice.setStatus(status);
         invoiceHistoryIntegrationService.createHistoryRecord(
