@@ -38,6 +38,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private static final String UPDATED_ACTION = "UPDATED";
     private static final String CANCELLED_ACTION = "CANCELLED";
     private static final String RESTORED_ACTION = "RESTORED";
+    private static final String MARKED_OVERDUE_ACTION = "MARKED_OVERDUE";
     private static final String SYSTEM_USERNAME = "system";
 
     private final InvoiceRepository invoiceRepository;
@@ -170,6 +171,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setCurrency(invoiceEditRequestDTO.getCurrency());
         invoice.setIssueDate(invoiceEditRequestDTO.getIssueDate());
         invoice.setDueDate(invoiceEditRequestDTO.getDueDate());
+        if (InvoiceStatus.OVERDUE.equals(invoice.getStatus()) && !invoiceEditRequestDTO.getDueDate().isBefore(LocalDate.now())) {
+            invoice.setStatus(InvoiceStatus.ISSUED);
+        }
         invoice.setClient(client);
         updateClientSnapshot(invoice, client);
 
@@ -210,6 +214,25 @@ public class InvoiceServiceImpl implements InvoiceService {
     @PreAuthorize("hasRole('ADMIN')")
     public void restoreInvoice(UUID invoiceId, String performedByUsername) {
         updateInvoiceStatus(invoiceId, InvoiceStatus.ISSUED, RESTORED_ACTION, performedByUsername);
+    }
+
+    @Override
+    @Transactional
+    public int markOverdueInvoices() {
+        List<Invoice> overdueInvoices = invoiceRepository.findAllByStatusAndDueDateBefore(
+                InvoiceStatus.ISSUED,
+                LocalDate.now());
+
+        overdueInvoices.forEach(invoice -> {
+            invoice.setStatus(InvoiceStatus.OVERDUE);
+            invoiceHistoryIntegrationService.createHistoryRecord(
+                    invoiceHistoryMapper.fromInvoiceToHistoryCreateRequestDTO(
+                            invoice,
+                            MARKED_OVERDUE_ACTION,
+                            SYSTEM_USERNAME));
+        });
+
+        return overdueInvoices.size();
     }
 
     private void updateInvoiceStatus(UUID invoiceId, InvoiceStatus status, String action, String performedByUsername) {

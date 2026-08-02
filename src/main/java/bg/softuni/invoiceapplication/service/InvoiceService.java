@@ -19,4 +19,5 @@ public interface InvoiceService {
     void editInvoice(InvoiceEditRequestDTO invoiceEditRequestDTO, String performedByUsername);
     void cancelInvoice(UUID invoiceId, String performedByUsername);
     void restoreInvoice(UUID invoiceId, String performedByUsername);
+    int markOverdueInvoices();
 }
