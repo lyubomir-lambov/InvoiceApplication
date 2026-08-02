@@ -1,5 +1,7 @@
 package bg.softuni.invoiceapplication.mapper.user;
 
+import bg.softuni.invoiceapplication.model.dto.users.UserProfileDTO;
+import bg.softuni.invoiceapplication.model.dto.users.UserProfileEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.users.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.users.UserRegistrationResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.users.UserShowAllDTO;
@@ -49,5 +51,49 @@ public class UserMapper {
                         .createdOn(user.getCreatedOn())
                         .build())
                 .toList();
+    }
+
+    public UserProfileDTO fromUserToUserProfileDTO(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        return UserProfileDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
+                .role(user.getRole())
+                .build();
+    }
+
+    public UserProfileEditRequestDTO fromUserToUserProfileEditRequestDTO(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        return UserProfileEditRequestDTO.builder()
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
+                .build();
+    }
+
+    public void updateUserFromProfileEditRequestDTO(User user,
+                                                    UserProfileEditRequestDTO userProfileEditRequestDTO) {
+        if (user == null || userProfileEditRequestDTO == null) {
+            return;
+        }
+
+        user.setEmail(userProfileEditRequestDTO.getEmail());
+        user.setFirstName(userProfileEditRequestDTO.getFirstName());
+        user.setLastName(userProfileEditRequestDTO.getLastName());
+        user.setPhoneNumber(userProfileEditRequestDTO.getPhoneNumber());
+        user.setAddress(userProfileEditRequestDTO.getAddress());
     }
 }

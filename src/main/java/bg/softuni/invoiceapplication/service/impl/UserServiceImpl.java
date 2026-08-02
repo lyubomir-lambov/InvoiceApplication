@@ -1,7 +1,10 @@
 package bg.softuni.invoiceapplication.service.impl;
 
+import bg.softuni.invoiceapplication.exception.BusinessRuleException;
 import bg.softuni.invoiceapplication.exception.ResourceNotFoundException;
 import bg.softuni.invoiceapplication.mapper.user.UserMapper;
+import bg.softuni.invoiceapplication.model.dto.users.UserProfileDTO;
+import bg.softuni.invoiceapplication.model.dto.users.UserProfileEditRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.users.UserRegistrationRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.users.UserRegistrationResponseDTO;
 import bg.softuni.invoiceapplication.model.dto.users.UserShowAllDTO;
@@ -67,6 +70,39 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userMapper.fromAllUsersToUserShowAllDTOs(
                 userRepository.findByUsernameContainingIgnoreCaseOrderByUsernameAsc(username.trim())
         );
+    }
+
+    @Override
+    public UserProfileDTO findUserProfile(UUID userId) {
+        return userRepository.findById(userId)
+                .map(userMapper::fromUserToUserProfileDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " does not exist"));
+    }
+
+    @Override
+    public UserProfileEditRequestDTO getUserProfileForEdit(UUID userId) {
+        return userRepository.findById(userId)
+                .map(userMapper::fromUserToUserProfileEditRequestDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " does not exist"));
+    }
+
+    @Override
+    public void editUserProfile(UUID userId, UserProfileEditRequestDTO userProfileEditRequestDTO) {
+        if (userProfileEditRequestDTO == null) {
+            throw new IllegalArgumentException("User profile edit request must not be null");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " does not exist"));
+
+        userRepository.findByEmail(userProfileEditRequestDTO.getEmail())
+                .filter(existingUser -> !existingUser.getId().equals(userId))
+                .ifPresent(existingUser -> {
+                    throw new BusinessRuleException("Email is already in use");
+                });
+
+        userMapper.updateUserFromProfileEditRequestDTO(user, userProfileEditRequestDTO);
+        userRepository.save(user);
     }
 
     @Override

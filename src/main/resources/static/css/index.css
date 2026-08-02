@@ -373,6 +373,37 @@ main {
     line-height: 1.4;
 }
 
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+}
+
+.profile-details div {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-details div:nth-last-child(-n + 2) {
+    border-bottom: 0;
+}
+
+.profile-details dt {
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.profile-details dd {
+    margin: 0;
+    color: var(--text);
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
 .auth-header {
     margin-bottom: 24px;
 }
@@ -1108,6 +1139,7 @@ main {
 
     .clients-grid,
     .client-details,
+    .profile-details,
     .invoice-header-grid,
     .invoice-line-grid {
         grid-template-columns: 1fr;

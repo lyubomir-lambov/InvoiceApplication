@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
+        <a class="nav-button" th:href="@{/payments}" href="/payments">Payments</a>
+        <a class="nav-button" th:href="@{/payment-reports}" href="/payment-reports">Payment Reports</a>
+        <a class="nav-button" sec:authorize="hasRole('ADMIN')" th:href="@{/users}" href="/users">Users</a>
+    </nav>
+    <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
+        <a class="nav-button nav-button-active" th:href="@{/profile}" href="/profile">Profile</a>
+        <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main class="list-page">
+    <section class="content-shell">
+        <div class="section-actions">
+            <a class="nav-button" th:href="@{/profile/edit}" href="/profile/edit">Edit profile</a>
+        </div>
+
+        <p class="form-message" th:if="${message}" th:text="${message}">Profile updated successfully</p>
+
+        <div class="table-card">
+            <dl class="profile-details">
+                <div>
+                    <dt>Username</dt>
+                    <dd th:text="${profile.username}">username</dd>
+                </div>
+                <div>
+                    <dt>Email</dt>
+                    <dd th:text="${profile.email}">user@example.com</dd>
+                </div>
+                <div>
+                    <dt>First name</dt>
+                    <dd th:text="${profile.firstName != null && !#strings.isEmpty(profile.firstName) ? profile.firstName : '-'}">John</dd>
+                </div>
+                <div>
+                    <dt>Last name</dt>
+                    <dd th:text="${profile.lastName != null && !#strings.isEmpty(profile.lastName) ? profile.lastName : '-'}">Doe</dd>
+                </div>
+                <div>
+                    <dt>Phone number</dt>
+                    <dd th:text="${profile.phoneNumber != null && !#strings.isEmpty(profile.phoneNumber) ? profile.phoneNumber : '-'}">+359 888 123 456</dd>
+                </div>
+                <div>
+                    <dt>Address</dt>
+                    <dd th:text="${profile.address != null && !#strings.isEmpty(profile.address) ? profile.address : '-'}">Sofia</dd>
+                </div>
+                <div>
+                    <dt>Role</dt>
+                    <dd th:text="${profile.role}">USER</dd>
+                </div>
+            </dl>
+        </div>
+    </section>
+</main>
+</body>
+</html>

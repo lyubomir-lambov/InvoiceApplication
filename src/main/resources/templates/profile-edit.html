@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | Invoice Application</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}" href="/css/index.css">
+</head>
+<body>
+<header class="page-header">
+    <a class="brand" th:href="@{/}">Invoice Application</a>
+    <nav class="navigation" aria-label="Main navigation">
+        <a class="nav-button" th:href="@{/invoices}" href="/invoices">Invoices</a>
+        <a class="nav-button" th:href="@{/clients}" href="/clients">Clients</a>
+        <a class="nav-button" th:href="@{/payments}" href="/payments">Payments</a>
+        <a class="nav-button" th:href="@{/payment-reports}" href="/payment-reports">Payment Reports</a>
+        <a class="nav-button" sec:authorize="hasRole('ADMIN')" th:href="@{/users}" href="/users">Users</a>
+    </nav>
+    <nav class="navigation" aria-label="User navigation" style="margin-left: auto;">
+        <a class="nav-button nav-button-active" th:href="@{/profile}" href="/profile">Profile</a>
+        <form th:action="@{/logout}" action="/logout" method="post" style="margin: 0;">
+            <button class="nav-button" type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <section class="auth">
+        <div class="auth-panel auth-panel-wide">
+            <div class="auth-header">
+                <h1>Edit profile</h1>
+                <p>Update your contact information.</p>
+            </div>
+
+            <form class="auth-form" th:object="${profile}" th:action="@{/profile/edit}" action="/profile/edit" method="post">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" th:field="*{email}" type="email" required>
+                    <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="firstName">First name</label>
+                    <input id="firstName" th:field="*{firstName}" type="text" maxlength="50">
+                    <p class="field-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">First name error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Last name</label>
+                    <input id="lastName" th:field="*{lastName}" type="text" maxlength="50">
+                    <p class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Last name error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">Phone number</label>
+                    <input id="phoneNumber" th:field="*{phoneNumber}" type="tel" maxlength="30">
+                    <p class="field-error" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}">Phone number error</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" th:field="*{address}" rows="3" maxlength="255"></textarea>
+                    <p class="field-error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">Address error</p>
+                </div>
+
+                <button class="button button-primary form-submit" type="submit">Save profile</button>
+                <a class="button button-secondary form-submit" th:href="@{/profile}" href="/profile">Cancel</a>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>
