@@ -18,4 +18,10 @@ public class InvoiceStatusScheduler {
         int updatedInvoices = invoiceService.markOverdueInvoices();
         log.info("Marked {} invoices as overdue", updatedInvoices);
     }
+
+    @Scheduled(fixedDelay = 600000)
+    public void markNoLongerOverdueInvoices() {
+        int updatedInvoices = invoiceService.markNoLongerOverdueInvoices();
+        log.info("Marked {} invoices as issued because they are no longer overdue", updatedInvoices);
+    }
 }
