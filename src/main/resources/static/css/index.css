@@ -306,6 +306,11 @@ main {
     background: #dcfae6;
 }
 
+.status-overdue {
+    color: #92400e;
+    background: #fef3c7;
+}
+
 .status-cancelled {
     color: #b42318;
     background: #fee4e2;

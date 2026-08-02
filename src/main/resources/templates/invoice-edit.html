@@ -31,7 +31,7 @@
                 <h1>Edit invoice</h1>
                 <p>Update invoice details and save the changes.</p>
                 <span class="status-badge"
-                      th:classappend="${invoice.status.name() == 'CANCELLED'} ? ' status-cancelled' : ' status-issued'"
+                      th:classappend="${invoice.status.name() == 'CANCELLED'} ? ' status-cancelled' : (${invoice.status.name() == 'OVERDUE'} ? ' status-overdue' : ' status-issued')"
                       th:text="${invoice.status.displayName}">Issued</span>
                 <p class="field-error"
                    th:if="${message != null}"
