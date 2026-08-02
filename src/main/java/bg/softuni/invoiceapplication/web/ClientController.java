@@ -1,5 +1,6 @@
 package bg.softuni.invoiceapplication.web;
 
+import bg.softuni.invoiceapplication.exception.BusinessRuleException;
 import bg.softuni.invoiceapplication.model.dto.clients.ClientCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.clients.ClientEditRequestDTO;
 import bg.softuni.invoiceapplication.model.enums.Country;
@@ -107,7 +108,7 @@ public class ClientController {
         try {
             clientService.deleteClient(id);
             return redirectToClientsWithMessage(redirectAttributes, "Client deleted successfully");
-        } catch (IllegalStateException ex) {
+        } catch (BusinessRuleException ex) {
             return redirectToClientsWithMessage(redirectAttributes, ex.getMessage());
         }
     }
