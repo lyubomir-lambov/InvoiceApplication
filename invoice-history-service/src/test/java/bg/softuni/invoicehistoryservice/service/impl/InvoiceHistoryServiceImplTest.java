@@ -1,5 +1,6 @@
 package bg.softuni.invoicehistoryservice.service.impl;
 
+import bg.softuni.invoicehistoryservice.exception.InvalidInvoiceHistoryRequestException;
 import bg.softuni.invoicehistoryservice.mapper.InvoiceHistoryMapper;
 import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryCreateRequestDTO;
 import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryResponseDTO;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class InvoiceHistoryServiceImplTest {
 
@@ -72,6 +74,16 @@ class InvoiceHistoryServiceImplTest {
     }
 
     @Test
+    void createHistoryRecord_shouldThrowException_whenRequestIsNull() {
+        FakeInvoiceHistoryRepository fakeRepository = new FakeInvoiceHistoryRepository(Optional.empty());
+        InvoiceHistoryServiceImpl invoiceHistoryService = new InvoiceHistoryServiceImpl(fakeRepository.repository(), invoiceHistoryMapper);
+
+        assertThatThrownBy(() -> invoiceHistoryService.createHistoryRecord(null))
+                .isInstanceOf(InvalidInvoiceHistoryRequestException.class)
+                .hasMessage("Invoice history create request must not be null");
+    }
+
+    @Test
     void findHistoryByInvoiceId_shouldReturnResponseDTOs_whenHistoryExists() {
         FakeInvoiceHistoryRepository fakeRepository = new FakeInvoiceHistoryRepository(
                 Optional.empty(),
@@ -89,6 +101,36 @@ class InvoiceHistoryServiceImplTest {
         assertThat(result.get(0).getAction()).isEqualTo(InvoiceHistoryAction.UPDATED);
         assertThat(result.get(1).getRevisionNumber()).isEqualTo(1);
         assertThat(result.get(1).getAction()).isEqualTo(InvoiceHistoryAction.CREATED);
+    }
+
+    @Test
+    void findHistoryByInvoiceId_shouldThrowException_whenInvoiceIdIsNull() {
+        FakeInvoiceHistoryRepository fakeRepository = new FakeInvoiceHistoryRepository(Optional.empty());
+        InvoiceHistoryServiceImpl invoiceHistoryService = new InvoiceHistoryServiceImpl(fakeRepository.repository(), invoiceHistoryMapper);
+
+        assertThatThrownBy(() -> invoiceHistoryService.findHistoryByInvoiceId(null))
+                .isInstanceOf(InvalidInvoiceHistoryRequestException.class)
+                .hasMessage("Invoice id must not be null");
+    }
+
+    @Test
+    void clearHistoryByInvoiceId_shouldDeleteHistory_whenInvoiceIdIsValid() {
+        FakeInvoiceHistoryRepository fakeRepository = new FakeInvoiceHistoryRepository(Optional.empty());
+        InvoiceHistoryServiceImpl invoiceHistoryService = new InvoiceHistoryServiceImpl(fakeRepository.repository(), invoiceHistoryMapper);
+
+        invoiceHistoryService.clearHistoryByInvoiceId(INVOICE_ID);
+
+        assertThat(fakeRepository.deletedInvoiceId()).isEqualTo(INVOICE_ID);
+    }
+
+    @Test
+    void clearHistoryByInvoiceId_shouldThrowException_whenInvoiceIdIsNull() {
+        FakeInvoiceHistoryRepository fakeRepository = new FakeInvoiceHistoryRepository(Optional.empty());
+        InvoiceHistoryServiceImpl invoiceHistoryService = new InvoiceHistoryServiceImpl(fakeRepository.repository(), invoiceHistoryMapper);
+
+        assertThatThrownBy(() -> invoiceHistoryService.clearHistoryByInvoiceId(null))
+                .isInstanceOf(InvalidInvoiceHistoryRequestException.class)
+                .hasMessage("Invoice id must not be null");
     }
 
     private InvoiceHistoryCreateRequestDTO createRequestDTO() {
@@ -137,6 +179,7 @@ class InvoiceHistoryServiceImplTest {
         private final Optional<InvoiceHistoryRecord> topRecord;
         private final List<InvoiceHistoryRecord> records;
         private InvoiceHistoryRecord savedRecord;
+        private UUID deletedInvoiceId;
 
         private FakeInvoiceHistoryRepository(Optional<InvoiceHistoryRecord> topRecord) {
             this(topRecord, List.of());
@@ -154,6 +197,10 @@ class InvoiceHistoryServiceImplTest {
                     (proxy, method, args) -> switch (method.getName()) {
                         case "findTopByInvoiceIdOrderByRevisionNumberDesc" -> topRecord;
                         case "findByInvoiceIdOrderByRevisionNumberDesc" -> records;
+                        case "deleteByInvoiceId" -> {
+                            deletedInvoiceId = (UUID) args[0];
+                            yield null;
+                        }
                         case "save" -> {
                             savedRecord = (InvoiceHistoryRecord) args[0];
                             yield savedRecord;
@@ -167,6 +214,10 @@ class InvoiceHistoryServiceImplTest {
 
         private InvoiceHistoryRecord savedRecord() {
             return savedRecord;
+        }
+
+        private UUID deletedInvoiceId() {
+            return deletedInvoiceId;
         }
     }
 }
