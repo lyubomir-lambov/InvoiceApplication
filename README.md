@@ -305,7 +305,21 @@ cd invoice-history-service
 ./mvnw test
 ```
 
-Към момента има smoke tests, които проверяват дали Spring context се зарежда успешно. По-пълните service/controller тестове са следваща планирана стъпка.
+Проектът има unit, service, mapper, controller/API и exception handling тестове.
+
+Покритие към последната проверка:
+
+| Application | Tests | Line coverage |
+| --- | ---: | ---: |
+| Main app | 205 | 97.23% |
+| Invoice history microservice | 23 | 87.15% |
+
+JaCoCo report се генерира след `./mvnw test`:
+
+```text
+target/site/jacoco/index.html
+invoice-history-service/target/site/jacoco/index.html
+```
 
 ## Структура на проекта
 
