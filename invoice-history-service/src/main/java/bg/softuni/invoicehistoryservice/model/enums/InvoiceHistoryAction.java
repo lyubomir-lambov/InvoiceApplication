@@ -5,5 +5,6 @@ public enum InvoiceHistoryAction {
     UPDATED,
     CANCELLED,
     RESTORED,
-    MARKED_OVERDUE
+    MARKED_OVERDUE,
+    MARKED_ISSUED
 }
