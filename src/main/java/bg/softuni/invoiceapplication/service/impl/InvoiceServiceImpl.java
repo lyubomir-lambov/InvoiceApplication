@@ -225,6 +225,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         overdueInvoices.forEach(invoice -> {
             invoice.setStatus(InvoiceStatus.OVERDUE);
+            invoiceRepository.flush();
             invoiceHistoryIntegrationService.createHistoryRecord(
                     invoiceHistoryMapper.fromInvoiceToHistoryCreateRequestDTO(
                             invoice,

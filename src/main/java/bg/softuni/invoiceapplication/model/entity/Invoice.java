@@ -19,7 +19,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +52,8 @@ public class Invoice extends BaseEntity {
     private InvoiceCurrency currency;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "status", nullable = false, length = 32)
     private InvoiceStatus status;
 
     @Column(name = "issue_date", nullable = false)
