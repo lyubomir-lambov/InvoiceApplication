@@ -26,10 +26,10 @@
 
 <main>
     <section class="error-panel">
-        <p class="error-status" th:text="${status}">404</p>
-        <h1 th:text="${errorTitle}">Resource Not Found</h1>
-        <p th:text="${message}">The requested resource was not found.</p>
-        <p class="error-path" th:text="${path}">/invoices/invalid-id</p>
+        <p class="error-status" th:text="${status != null ? status : 500}">404</p>
+        <h1 th:text="${errorTitle != null ? errorTitle : (error != null ? error : 'Application Error')}">Resource Not Found</h1>
+        <p th:text="${message != null && !#strings.isEmpty(message) ? message : 'The application could not complete this request.'}">The requested resource was not found.</p>
+        <p class="error-path" th:text="${path != null ? path : '-'}">/invoices/invalid-id</p>
         <a class="button button-primary" th:href="@{/invoices}" href="/invoices">Back to invoices</a>
     </section>
 </main>
