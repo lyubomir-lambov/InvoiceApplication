@@ -18,5 +18,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
 
     List<Invoice> findAllByStatusAndDueDateBefore(InvoiceStatus status, LocalDate dueDate);
 
+    List<Invoice> findAllByStatusAndDueDateGreaterThanEqual(InvoiceStatus status, LocalDate dueDate);
+
     boolean existsByClientId(UUID clientId);
 }
