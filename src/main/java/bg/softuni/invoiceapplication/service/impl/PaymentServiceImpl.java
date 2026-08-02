@@ -1,5 +1,6 @@
 package bg.softuni.invoiceapplication.service.impl;
 
+import bg.softuni.invoiceapplication.exception.ResourceNotFoundException;
 import bg.softuni.invoiceapplication.model.dto.payments.PaymentCreateRequestDTO;
 import bg.softuni.invoiceapplication.model.dto.payments.PaymentEditRequestDTO;
 import bg.softuni.invoiceapplication.model.entity.Client;
@@ -29,7 +30,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         Client client = clientRepository.findById(paymentCreateRequestDTO.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client with id " + paymentCreateRequestDTO.getClientId() + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client with id " + paymentCreateRequestDTO.getClientId() + " does not exist"));
 
         Payment payment = Payment.builder()
                 .client(client)
@@ -59,7 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentEditRequestDTO getPaymentForEdit(UUID paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new RuntimeException("Payment with id " + paymentId + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment with id " + paymentId + " does not exist"));
 
         return PaymentEditRequestDTO.builder()
                 .id(payment.getId())
@@ -78,10 +79,10 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         Payment payment = paymentRepository.findById(paymentEditRequestDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Payment with id " + paymentEditRequestDTO.getId() + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment with id " + paymentEditRequestDTO.getId() + " does not exist"));
 
         Client client = clientRepository.findById(paymentEditRequestDTO.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client with id " + paymentEditRequestDTO.getClientId() + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client with id " + paymentEditRequestDTO.getClientId() + " does not exist"));
 
         payment.setClient(client);
         payment.setAmount(paymentEditRequestDTO.getAmount());
@@ -96,7 +97,7 @@ public class PaymentServiceImpl implements PaymentService {
     @PreAuthorize("hasRole('ADMIN')")
     public void deletePayment(UUID paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new RuntimeException("Payment with id " + paymentId + " does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment with id " + paymentId + " does not exist"));
 
         paymentRepository.delete(payment);
     }
