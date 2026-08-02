@@ -241,6 +241,140 @@ class InvoiceServiceImplTest {
     }
 
     @Test
+    void getInvoiceForEdit_shouldThrowException_whenInvoiceDoesNotExist() {
+        assertThatThrownBy(() -> invoiceService.getInvoiceForEdit(INVOICE_ID))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Invoice with id " + INVOICE_ID + " does not exist");
+    }
+
+    @Test
+    void editInvoice_shouldUpdateInvoiceAndCreateHistoryRecord_whenRequestIsValid() {
+        Client oldClient = createClient(CLIENT_ID, true);
+        Client newClient = createClient(SECOND_CLIENT_ID, true);
+        Invoice invoice = createInvoice(INVOICE_ID, oldClient, 1L, InvoiceStatus.ISSUED);
+        fakeInvoiceRepository.addInvoice(invoice);
+        fakeClientRepository.addClient(newClient);
+        InvoiceEditRequestDTO requestDTO = createInvoiceEditRequestDTO(SECOND_CLIENT_ID);
+
+        invoiceService.editInvoice(requestDTO, "admin");
+
+        assertThat(invoice.getInvoiceType()).isEqualTo(InvoiceType.DEBIT_NOTE);
+        assertThat(invoice.getCurrency()).isEqualTo(InvoiceCurrency.EUR);
+        assertThat(invoice.getIssueDate()).isEqualTo(LocalDate.of(2026, 8, 3));
+        assertThat(invoice.getDueDate()).isEqualTo(LocalDate.of(2026, 8, 20));
+        assertThat(invoice.getClient()).isSameAs(newClient);
+        assertThat(invoice.getClientDisplayName()).isEqualTo("Lambi");
+        assertThat(invoice.getLineItems()).hasSize(1);
+        assertThat(invoice.getLineItems().get(0).getDescription()).isEqualTo("Updated consulting");
+        assertThat(fakeInvoiceHistoryIntegrationService.createdRequests).hasSize(1);
+        assertThat(fakeInvoiceHistoryIntegrationService.createdRequests.get(0).getAction()).isEqualTo("UPDATED");
+        assertThat(fakeInvoiceHistoryIntegrationService.createdRequests.get(0).getPerformedByUsername()).isEqualTo("admin");
+    }
+
+    @Test
+    void editInvoice_shouldSetIssuedStatus_whenInvoiceIsOverdueAndDueDateIsNotPast() {
+        Client client = createClient(CLIENT_ID, true);
+        Invoice invoice = createInvoice(INVOICE_ID, client, 1L, InvoiceStatus.OVERDUE);
+        fakeInvoiceRepository.addInvoice(invoice);
+        fakeClientRepository.addClient(client);
+        InvoiceEditRequestDTO requestDTO = createInvoiceEditRequestDTO(CLIENT_ID);
+        requestDTO.setDueDate(LocalDate.now().plusDays(1));
+
+        invoiceService.editInvoice(requestDTO, "admin");
+
+        assertThat(invoice.getStatus()).isEqualTo(InvoiceStatus.ISSUED);
+        assertThat(fakeInvoiceHistoryIntegrationService.createdRequests.get(0).getAction()).isEqualTo("UPDATED");
+    }
+
+    @Test
+    void editInvoice_shouldKeepOverdueStatus_whenInvoiceIsOverdueAndDueDateIsStillPast() {
+        Client client = createClient(CLIENT_ID, true);
+        Invoice invoice = createInvoice(INVOICE_ID, client, 1L, InvoiceStatus.OVERDUE);
+        fakeInvoiceRepository.addInvoice(invoice);
+        fakeClientRepository.addClient(client);
+        InvoiceEditRequestDTO requestDTO = createInvoiceEditRequestDTO(CLIENT_ID);
+        requestDTO.setIssueDate(LocalDate.now().minusDays(10));
+        requestDTO.setDueDate(LocalDate.now().minusDays(1));
+
+        invoiceService.editInvoice(requestDTO, "admin");
+
+        assertThat(invoice.getStatus()).isEqualTo(InvoiceStatus.OVERDUE);
+        assertThat(fakeInvoiceHistoryIntegrationService.createdRequests.get(0).getAction()).isEqualTo("UPDATED");
+    }
+
+    @Test
+    void editInvoice_shouldAllowInactiveClient_whenItIsSameInvoiceClient() {
+        Client inactiveClient = createClient(CLIENT_ID, false);
+        Invoice invoice = createInvoice(INVOICE_ID, inactiveClient, 1L, InvoiceStatus.ISSUED);
+        fakeInvoiceRepository.addInvoice(invoice);
+        fakeClientRepository.addClient(inactiveClient);
+        InvoiceEditRequestDTO requestDTO = createInvoiceEditRequestDTO(CLIENT_ID);
+
+        invoiceService.editInvoice(requestDTO, "admin");
+
+        assertThat(invoice.getClient()).isSameAs(inactiveClient);
+        assertThat(fakeInvoiceHistoryIntegrationService.createdRequests.get(0).getAction()).isEqualTo("UPDATED");
+    }
+
+    @Test
+    void editInvoice_shouldThrowException_whenRequestIsNull() {
+        assertThatThrownBy(() -> invoiceService.editInvoice(null, "admin"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invoice edit request must not be null");
+
+        assertThat(fakeInvoiceHistoryIntegrationService.createdRequests).isEmpty();
+    }
+
+    @Test
+    void editInvoice_shouldThrowException_whenInvoiceDoesNotExist() {
+        InvoiceEditRequestDTO requestDTO = createInvoiceEditRequestDTO(CLIENT_ID);
+
+        assertThatThrownBy(() -> invoiceService.editInvoice(requestDTO, "admin"))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Invoice with id " + INVOICE_ID + " does not exist");
+    }
+
+    @Test
+    void editInvoice_shouldThrowException_whenClientDoesNotExist() {
+        Invoice invoice = createInvoice(INVOICE_ID, createClient(CLIENT_ID, true), 1L, InvoiceStatus.ISSUED);
+        fakeInvoiceRepository.addInvoice(invoice);
+        InvoiceEditRequestDTO requestDTO = createInvoiceEditRequestDTO(SECOND_CLIENT_ID);
+
+        assertThatThrownBy(() -> invoiceService.editInvoice(requestDTO, "admin"))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Client with id " + SECOND_CLIENT_ID + " does not exist");
+    }
+
+    @Test
+    void editInvoice_shouldThrowException_whenMovingToInactiveClient() {
+        Client oldClient = createClient(CLIENT_ID, true);
+        Client inactiveClient = createClient(SECOND_CLIENT_ID, false);
+        Invoice invoice = createInvoice(INVOICE_ID, oldClient, 1L, InvoiceStatus.ISSUED);
+        fakeInvoiceRepository.addInvoice(invoice);
+        fakeClientRepository.addClient(inactiveClient);
+        InvoiceEditRequestDTO requestDTO = createInvoiceEditRequestDTO(SECOND_CLIENT_ID);
+
+        assertThatThrownBy(() -> invoiceService.editInvoice(requestDTO, "admin"))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessage("Cannot move invoice to inactive client");
+    }
+
+    @Test
+    void editInvoice_shouldThrowException_whenDueDateIsBeforeIssueDate() {
+        Client client = createClient(CLIENT_ID, true);
+        Invoice invoice = createInvoice(INVOICE_ID, client, 1L, InvoiceStatus.ISSUED);
+        fakeInvoiceRepository.addInvoice(invoice);
+        fakeClientRepository.addClient(client);
+        InvoiceEditRequestDTO requestDTO = createInvoiceEditRequestDTO(CLIENT_ID);
+        requestDTO.setDueDate(LocalDate.of(2026, 8, 2));
+        requestDTO.setIssueDate(LocalDate.of(2026, 8, 3));
+
+        assertThatThrownBy(() -> invoiceService.editInvoice(requestDTO, "admin"))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessage("Due date cannot be before issue date");
+    }
+
+    @Test
     void cancelInvoice_shouldSetCancelledStatusAndCreateHistoryRecord_whenInvoiceExists() {
         Invoice invoice = createInvoice(INVOICE_ID, createClient(CLIENT_ID, true), 1L, InvoiceStatus.ISSUED);
         fakeInvoiceRepository.addInvoice(invoice);
@@ -312,6 +446,26 @@ class InvoiceServiceImplTest {
                 .measurementUnit(MeasurementUnit.HOUR)
                 .unitPrice(new BigDecimal("50.00"))
                 .vatRate(VatRate.TWENTY)
+                .build();
+    }
+
+    private InvoiceEditRequestDTO createInvoiceEditRequestDTO(UUID clientId) {
+        return InvoiceEditRequestDTO.builder()
+                .id(INVOICE_ID)
+                .invoiceType(InvoiceType.DEBIT_NOTE)
+                .invoiceNumber("0000000001")
+                .currency(InvoiceCurrency.EUR)
+                .status(InvoiceStatus.ISSUED)
+                .issueDate(LocalDate.of(2026, 8, 3))
+                .dueDate(LocalDate.of(2026, 8, 20))
+                .clientId(clientId)
+                .lineItems(List.of(InvoiceLineItemCreateRequestDTO.builder()
+                        .description("Updated consulting")
+                        .quantity(new BigDecimal("3.00"))
+                        .measurementUnit(MeasurementUnit.HOUR)
+                        .unitPrice(new BigDecimal("60.00"))
+                        .vatRate(VatRate.TWENTY)
+                        .build()))
                 .build();
     }
 
