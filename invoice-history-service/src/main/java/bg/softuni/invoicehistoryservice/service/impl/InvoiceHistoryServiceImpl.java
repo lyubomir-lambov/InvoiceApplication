@@ -1,5 +1,6 @@
 package bg.softuni.invoicehistoryservice.service.impl;
 
+import bg.softuni.invoicehistoryservice.exception.InvalidInvoiceHistoryRequestException;
 import bg.softuni.invoicehistoryservice.mapper.InvoiceHistoryMapper;
 import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryCreateRequestDTO;
 import bg.softuni.invoicehistoryservice.model.dto.InvoiceHistoryResponseDTO;
@@ -24,7 +25,7 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
     @Transactional
     public InvoiceHistoryResponseDTO createHistoryRecord(InvoiceHistoryCreateRequestDTO invoiceHistoryCreateRequestDTO) {
         if (invoiceHistoryCreateRequestDTO == null) {
-            throw new IllegalArgumentException("Invoice history create request must not be null");
+            throw new InvalidInvoiceHistoryRequestException("Invoice history create request must not be null");
         }
 
         InvoiceHistoryRecord invoiceHistoryRecord = invoiceHistoryMapper.fromCreateRequestDTOToInvoiceHistoryRecord(invoiceHistoryCreateRequestDTO);
@@ -37,7 +38,7 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
     @Transactional(readOnly = true)
     public List<InvoiceHistoryResponseDTO> findHistoryByInvoiceId(UUID invoiceId) {
         if (invoiceId == null) {
-            throw new IllegalArgumentException("Invoice id must not be null");
+            throw new InvalidInvoiceHistoryRequestException("Invoice id must not be null");
         }
 
         return invoiceHistoryRepository.findByInvoiceIdOrderByRevisionNumberDesc(invoiceId)
@@ -50,7 +51,7 @@ public class InvoiceHistoryServiceImpl implements InvoiceHistoryService {
     @Transactional
     public void clearHistoryByInvoiceId(UUID invoiceId) {
         if (invoiceId == null) {
-            throw new IllegalArgumentException("Invoice id must not be null");
+            throw new InvalidInvoiceHistoryRequestException("Invoice id must not be null");
         }
 
         invoiceHistoryRepository.deleteByInvoiceId(invoiceId);
