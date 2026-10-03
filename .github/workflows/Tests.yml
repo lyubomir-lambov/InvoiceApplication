@@ -2,7 +2,14 @@ name: Run Tests
 
 on:
   push:
-  pull_request:
+    branches:
+      - main
+
+  schedule:
+    - cron: '0 6 * * *'
+      timezone: "Europe/Sofia"
+
+  workflow_dispatch:
 
 jobs:
   test:
